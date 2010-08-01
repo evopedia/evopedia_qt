@@ -1,0 +1,77 @@
+Source: evopedia
+Section: user/education
+Priority: extra
+Maintainer: Christian Reitwiessner <christian@evopedia.info>
+Build-Depends: libqt4-dev, libbz2-dev, libx11-dev, debhelper (>= 4)
+Standards-Version: 3.8.3
+Homepage: http://evopedia.info
+
+Package: evopedia
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Offline Wikipedia Viewer
+ Evopedia uses compressed dumps of Wikipedia for offline use
+ especially on embedded devices.
+ .
+ The geographical data in the articles is used to display a map of these
+ articles. The images on Wikipedia are not contained in the dump but if you
+ are connected to the internet, they are nevertheless shown.
+XSBC-Bugtracker: https://bugs.maemo.org/enter_bug.cgi?product=evopedia
+XB-Maemo-Upgrade-Description: Reimplementation of evopedia
+ using Qt.
+XB-Maemo-Icon-26:
+ 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

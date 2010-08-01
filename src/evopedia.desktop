@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Encoding=UTF-8
+Name=Evopedia
+Comment=Offline Wikipedia Reader
+Exec=/usr/bin/evopedia
+Categories=Utility
+Icon=/usr/share/pixmaps/wikipedia48.png
+Terminal=false

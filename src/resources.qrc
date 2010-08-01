@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/transtbl">
+        <file>transtbl.dat</file>
+    </qresource>
+    <qresource prefix="/web">
+        <file>footer.html</file>
+        <file>header.html</file>
+        <file>magnify-clip.png</file>
+        <file>main.css</file>
+        <file>map.png</file>
+        <file>maparticle.png</file>
+        <file>random.png</file>
+        <file>wikipedia.png</file>
+        <file>evopedia.js</file>
+    </qresource>
+    <qresource prefix="/map_icons">
+        <file>wikipedia.png</file>
+    </qresource>
+</RCC>

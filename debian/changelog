@@ -1,0 +1,5 @@
+evopedia (0.4.0) unstable; urgency=low
+
+  * Reimplementation of evopedia using Qt
+
+ -- Christian Reitwiessner <christian@evopedia.info>  Sun, 01 Aug 2010 00:34:50 +0200

@@ -1,0 +1,34 @@
+#ifndef EVOPEDIA_H
+#define EVOPEDIA_H
+
+#include <QHash>
+#include <QList>
+
+#include "storagebackend.h"
+class Evopedia;
+class EvopediaWebServer;
+#include "evopediawebserver.h"
+
+class Evopedia : public QObject
+{
+    Q_OBJECT
+public:
+    Evopedia(QObject *parent=0);
+    StorageBackend *getBackend(const QString language) const;
+    const QList<StorageBackend *> getBackends() const;
+    StorageBackend *getRandomBackend() const;
+
+    void addBackend(StorageBackend *backend);
+    void removeBackend(StorageBackend *backend);
+
+    QUrl getArticleUrl(const Title &t) const;
+
+signals:
+    void backendsChanged(const QList<StorageBackend *> backends);
+
+private:
+    QHash<QString,StorageBackend *> storages;
+    EvopediaWebServer *webServer;
+};
+
+#endif // EVOPEDIA_H
