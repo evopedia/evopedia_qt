@@ -8,7 +8,7 @@ Title::Title()
 }
 
 Title::Title(const QByteArray &encodedTitle, const QString &language)
-    : language(language)
+    : language(language), fileNr(255)
 {
     if (encodedTitle.length() < 15)
         return;

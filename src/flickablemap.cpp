@@ -49,7 +49,12 @@ void FlickableMap::paintEvent(QPaintEvent *event) {
     p.setFont(font);
 #endif
     p.drawText(rect(),  Qt::AlignBottom | Qt::TextWordWrap,
-               "Map data CCBYSA 2010 OpenStreetMap.org contributors");
+               tr("Map data CCBYSA 2010 OpenStreetMap.org contributors"));
+    if (!articleOverlay->isComplete() && articleOverlay->isEnabled()) {
+        p.drawText(rect(), Qt::AlignTop | Qt::TextWordWrap,
+                    tr("Zoom in for more articles"));
+    }
+
     p.end();
 }
 

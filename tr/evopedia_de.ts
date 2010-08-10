@@ -126,14 +126,6 @@
         <source>Zoom Out</source>
         <translation>Herauszoomen</translation>
     </message>
-    <message>
-        <source>Can&apos;t grab keys unless we have a window id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to obtain _HILDON_ZOOM_KEY_ATOM. This example will only work on a Maemo 5 device!</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>StorageBackend</name>

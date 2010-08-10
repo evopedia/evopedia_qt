@@ -13,8 +13,8 @@ DumpSettings::DumpSettings(Evopedia *evopedia, QWidget *parent) :
     ui->removeDump->setEnabled(false);
 
     backendsChanged(evopedia->getBackends());
-    connect(evopedia, SIGNAL(backendsChanged(QList<StorageBackend*>)),
-            SLOT(backendsChanged(QList<StorageBackend*>)));
+    connect(evopedia, SIGNAL(backendsChanged(const QList<StorageBackend*>)),
+            SLOT(backendsChanged(const QList<StorageBackend*>)));
 }
 
 DumpSettings::~DumpSettings()
@@ -25,13 +25,13 @@ DumpSettings::~DumpSettings()
 void DumpSettings::on_addDump_clicked()
 {
     /* TODO2 already check for dump in the file chooser */
-    QString dir = QFileDialog::getExistingDirectory(this, "Open Dump Directory",
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Dump Directory"),
                                                      QString(),
                                                      QFileDialog::ShowDirsOnly);
     StorageBackend *backend = new StorageBackend(dir, this);
     if (!backend->isReadable()) {
-        QMessageBox::critical(this, "Error",
-                              QString("Directory %1 does not contain a valid evopedia dump (%2).")
+        QMessageBox::critical(this, tr("Error"),
+                              tr("Directory %1 does not contain a valid evopedia dump (%2).")
                               .arg(dir).arg(backend->getErrorMessage()));
         delete backend;
     } else {
@@ -64,7 +64,7 @@ void DumpSettings::backendsChanged(const QList<StorageBackend *>backends)
     QListWidget *dumpList = ui->dumpList;
     dumpList->clear();
     foreach (StorageBackend *b, backends) {
-        QString label = QString("%1 (%2), %3 articles")
+        QString label = tr("%1 (%2), %3 articles")
                         .arg(b->getLanguage(), b->getDate())
                         .arg(b->getNumArticles());
         dumpList->addItem(label);

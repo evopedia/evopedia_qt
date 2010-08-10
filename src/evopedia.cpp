@@ -79,7 +79,7 @@ void Evopedia::addBackend(StorageBackend *backend)
 
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (!settings.isWritable()) {
-        QMessageBox::critical(0, "Error", "Unable to store settings.");
+        QMessageBox::critical(0, tr("Error"), tr("Unable to store settings."));
         delete backend;
         return;
     }
@@ -106,7 +106,7 @@ void Evopedia::removeBackend(StorageBackend *backend)
 
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (!settings.isWritable()) {
-        QMessageBox::critical(0, "Error", "Error storing settings.");
+        QMessageBox::critical(0, tr("Error"), tr("Error storing settings."));
         return;
     }
     settings.remove(QString("dump_%1").arg(language));

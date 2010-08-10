@@ -7,6 +7,7 @@
 
 #include "mapwindow.h"
 #include "dumpsettings.h"
+#include "utils.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -39,8 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
 
     if (evopedia->getBackends().length() == 0) {
-        QMessageBox msgBox(QMessageBox::NoIcon, "No Dumps Configured",
-                           QString("To be able to use evopedia you have to "
+        QMessageBox msgBox(QMessageBox::NoIcon, tr("No Dumps Configured"),
+                           tr("To be able to use evopedia you have to "
                                    "download and install a Wikipedia dump. "
                                    "Download at least one dump file from the "
                                    "<a href=\"%1\">website</a> and extract "
@@ -73,6 +74,9 @@ void MainWindow::on_listView_activated(QModelIndex index)
 
 void MainWindow::on_languageChooser_currentIndexChanged(const QString &text)
 {
+    Qt::LayoutDirection dir = getLayoutDirection(text);
+    ui->listView->setLayoutDirection(dir);
+    ui->searchField->setLayoutDirection(dir);
     refreshSearchResults();
 }
 
@@ -114,6 +118,8 @@ void MainWindow::showMapWindow()
 #else
     mapWindow->show();
 #endif
+    mapWindow->raise();
+    mapWindow->activateWindow();
 }
 
 void MainWindow::on_actionConfigure_Dumps_triggered()
@@ -127,8 +133,8 @@ void MainWindow::on_actionConfigure_Dumps_triggered()
 void MainWindow::on_actionAbout_triggered()
 {
     const QString version(EVOPEDIA_VERSION);
-    QMessageBox msgBox(QMessageBox::NoIcon, "About Evopedia",
-                             QString("<h2>Evopedia %1</h2>"
+    QMessageBox msgBox(QMessageBox::NoIcon, tr("About Evopedia"),
+                             tr("<h2>Evopedia %1</h2>"
                              "Offline Wikipedia Viewer"
                              "<p><b>Copyright Information<b><br/>"
                              "<small>This program shows articles from "

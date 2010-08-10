@@ -29,7 +29,7 @@ void TitleListModel::setTitleIterator(TitleIterator iter)
 void TitleListModel::fetchMore(const QModelIndex &parent)
 {
     QList<Title> newTitles;
-    while (titleIter.hasNext() && newTitles.size() < 30) {
+    while (titleIter.hasNext() && newTitles.size() < 50) {
         newTitles += titleIter.next();
     }
     beginInsertRows(QModelIndex(), titles.size(), titles.size() + newTitles.size());

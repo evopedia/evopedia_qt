@@ -5,8 +5,6 @@ DEFINES += "EVOPEDIA_BUG_SITE=\"\\\"https://bugs.maemo.org/enter_bug.cgi?product
 DEFINES += "MAPTILES_LOCATION=\"\\\"/home/user/MyDocs/.maps\\\"\""
 
 QT += core gui network
-TARGET = evopedia
-TEMPLATE = app
 INCLUDEPATH += src
 SOURCES += src/main.cpp \
  src/mainwindow.cpp \

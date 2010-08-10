@@ -22,7 +22,7 @@ public:
 private slots:
     void delayedInit() {
 #if defined(Q_OS_SYMBIAN)
-        qt_SetDefaultIap();
+//        qt_SetDefaultIap();
 #endif
 #if defined(Q_WS_MAEMO_5)
         grabZoomKeys(true);

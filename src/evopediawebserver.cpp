@@ -9,6 +9,8 @@
 #include <QDebug>
 #include <QNetworkInterface>
 #include <QRegExp>
+#include <QLocale>
+#include <QCryptographicHash>
 
 #include "utils.h"
 
@@ -28,8 +30,6 @@ void EvopediaWebServer::incomingConnection(int socket)
     s->setSocketDescriptor(socket);
 }
 
-/* TODO1 cache? */
-
 void EvopediaWebServer::readClient()
 {
     QTcpSocket* socket = (QTcpSocket*)sender();
@@ -44,8 +44,6 @@ void EvopediaWebServer::readClient()
     }
 
     const QUrl url = QUrl::fromPercentEncoding(tokens[1]);
-
-    qDebug() << QString("Client wants %1").arg(url.toString());
 
     QString path = url.path();
     if (path.endsWith("skins/common/images/magnify-clip.png"))
@@ -85,25 +83,43 @@ void EvopediaWebServer::outputIndexPage(QTcpSocket *socket)
 
 void EvopediaWebServer::outputHeader(QTcpSocket *socket, const QString responseCode, const QString contentType)
 {
+    /* TODO 404 should not have "Ok" */
     QString text = QString("HTTP/1.0 %1 Ok\r\n"
             "Content-Type: %2\r\n\r\n").arg(responseCode).arg(contentType);
     socket->write(text.toAscii());
 }
 
-void EvopediaWebServer::outputResponse(QTcpSocket *socket, const QByteArray &data, const QString contentType)
+void EvopediaWebServer::outputResponse(QTcpSocket *socket, const QByteArray &data, const QString contentType, bool cache)
 {
-    QString text = QString("HTTP/1.0 202 Ok\r\n"
+    QString header = QString("HTTP/1.1 200 Ok\r\n"
             "Content-Type: %1\r\n"
-            "Content-Length: %2\r\n\r\n")
-            .arg(contentType)
-            .arg(data.length());
-    socket->write(text.toAscii() + data);
+            "Content-Length: %2\r\n")
+            .arg(contentType).arg(data.length());
+    if (cache) {
+        QDateTime current(QDateTime::currentDateTime().toUTC());
+        QString currentUTCDate(QLocale::c().toString(current,
+                                                     "ddd, dd MMM yyyy hh:mm:ss"));
+        QString modificationDate(QLocale::c().toString(current.addDays(-30),
+                                                     "ddd, dd MMM yyyy hh:mm:ss"));
+        header += QString("Date: %1 GMT\r\nLast-Modified: %2 GMT\r\n")
+                  .arg(currentUTCDate)
+                  .arg(modificationDate);
+    }
+    header += "\r\n";
+
+    socket->write(header.toAscii() + data);
 }
 
 void EvopediaWebServer::outputRedirect(QTcpSocket *socket, const QUrl &url)
 {
+    QByteArray location;
+    if (url.host().isEmpty()) {
+        location = url.encodedPath();
+    } else {
+        location = url.toEncoded();
+    }
     socket->write(QByteArray("HTTP/1.0 302 Ok\r\n"
-            "Location: ") + url.encodedPath() + QByteArray("\r\n\r\n"));
+            "Location: ") + location + QByteArray("\r\n\r\n"));
 }
 
 void EvopediaWebServer::outputStatic(QTcpSocket *socket, const QStringList &pathParts)
@@ -158,12 +174,20 @@ void EvopediaWebServer::outputMathImage(QTcpSocket *socket, const QStringList &p
 
 void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pathParts)
 {
-    if (pathParts.length() < 3) {
+    if (pathParts.length() < 2) {
         outputHeader(socket, "404");
         return;
     }
-    StorageBackend *backend = evopedia->getBackend(pathParts[1]);
+    StorageBackend *backend = 0;
+    if (pathParts.length() >= 3)
+        backend = evopedia->getBackend(pathParts[1]);
     if (backend == 0) {
+        if (internetConnectionActive() && pathParts.length() >= 3) {
+            /* TODO special characters in title */
+            const QUrl redirectTo(QString("http://%1.wikipedia.org/wiki/%2").arg(pathParts[1]).arg(pathParts[2]));
+            outputRedirect(socket, redirectTo);
+            return;
+        }
         foreach (StorageBackend *b, evopedia->getBackends()) {
             const Title t = b->getTitleFromPath(pathParts);
             if (t.getName().isEmpty())
@@ -172,18 +196,23 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
             outputRedirect(socket, redirectTo);
             return;
         }
-
-        /* TODO1 check if we are online */
-        /* TODO1 encoding of article */
-        /* TODO1 does not yet work */
-        const QUrl redirectTo(QString("http://%1.wikipedia.org/wiki/%2").arg(pathParts[1]).arg(pathParts[2]));
-        outputRedirect(socket, redirectTo);
+        outputHeader(socket, "404");
     } else {
         const Title t = backend->getTitleFromPath(pathParts);
         QByteArray articleData = backend->getArticle(t);
         if (articleData.isNull()) {
-            outputHeader(socket, "404");
-            return;
+            QString lastPart = pathParts[pathParts.length() - 1];
+            if (lastPart.contains(':') && (lastPart.endsWith(".png", Qt::CaseInsensitive) ||
+                                           lastPart.endsWith(".svg", Qt::CaseInsensitive) ||
+                                           lastPart.endsWith(".jpg", Qt::CaseInsensitive))
+                                       && internetConnectionActive()) {
+                /* this could be a link to a file description page */
+                outputRedirect(socket, QUrl(backend->getOrigUrl() + lastPart));
+                return;
+            } else {
+               outputHeader(socket, "404");
+               return;
+            }
         }
 
         QByteArray data = getResource(":/web/header.html");
@@ -196,17 +225,21 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
                             "href=\"#\" onclick=\"showMap(%1, %2, %3);\">"
                             "<img src=\"/static/maparticle.png\"></a>")
                               .arg(coords.first).arg(coords.second).arg(zoom).toAscii();
-        data += QString("<a class=\"evopedianav\" href=\"%1\">"
-                    "<img src=\"/static/wikipedia.png\"></a>")
-                .arg(backend->getOrigUrl(t).toString()).toUtf8();
+        data += QByteArray("<a class=\"evopedianav\" href=\"") +
+                backend->getOrigUrl(t).toEncoded() +
+                QByteArray("\"><img src=\"/static/wikipedia.png\"></a>");
         data += extractInterLanguageLinks(articleData);
         data += "</div>";
+        if (getLayoutDirection(backend->getLanguage()) == Qt::RightToLeft)
+            data += "<div dir=\"rtl\">";
         if (!internetConnectionActive()) {
             articleData = disableOnlineLinks(articleData);
         }
         data += articleData;
+        if (getLayoutDirection(backend->getLanguage()) == Qt::RightToLeft)
+            data += "</div>";
         data += getResource(":/web/footer.html");
-        outputResponse(socket, data);
+        outputResponse(socket, data, "text/html; charset=\"utf-8\"", false);
     }
 }
 
@@ -228,7 +261,7 @@ QByteArray EvopediaWebServer::extractInterLanguageLinks(QByteArray &data)
 
     QByteArray result("<select onchange=\"document.location.href=this.value;\">");
 
-    /* TODO1 mark the languages we have dumps for */
+    /* TODO1 mark the languages we have dumps for / use two selects */
     const QString languageText = QString::fromUtf8(data.mid(langStart, langEnd - langStart).constData());
 
     for (int pos = 0; (pos = rx.indexIn(languageText, pos)) != -1; pos += rx.matchedLength()) {

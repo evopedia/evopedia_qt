@@ -19,12 +19,13 @@ public:
     StorageBackend(const QString &directory, QObject *parent=0);
     
     TitleIterator getTitlesWithPrefix(const QString &prefix);
-    QList<GeoTitle> getTitlesInCoords(const QRectF &rect, int maxTitles=-1);
+    QList<GeoTitle> getTitlesInCoords(const QRectF &rect, int maxTitles=-1, bool *complete=0);
     const QByteArray getArticle(const QString &title);
     const Title getTitle(const QString &title);
     const QByteArray getArticle(const Title &t);
     const Title getTitleFromPath(const QStringList &pathParts);
     QUrl getOrigUrl(const Title &title) const;
+    const QString &getOrigUrl() const { return dumpOrigURL; }
     const QByteArray getMathImage(const QByteArray &hexHash) const;
     const Title getRandomTitle();
 

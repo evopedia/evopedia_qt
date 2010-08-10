@@ -47,7 +47,6 @@ void MapWindow::grabZoomKeys(bool grab)
         return;
     }
 
-    qDebug() << "Grabbing zoom keys.";
     XChangeProperty (QX11Info::display(),
                      winId(),
                      atom,

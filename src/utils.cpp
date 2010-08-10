@@ -126,9 +126,13 @@ int parseCoordinatesZoom(const QString &zoomstr)
 /* TODO1 change for Symbian */
 bool internetConnectionActive()
 {
+#if defined(Q_OS_SYMBIAN)
+    return true;
+#else
     QNetworkInterface wlan = QNetworkInterface::interfaceFromName("wlan0");
     QNetworkInterface gprs = QNetworkInterface::interfaceFromName("gprs0");
 
     return (wlan.isValid() && wlan.flags().testFlag(QNetworkInterface::IsUp)) ||
        (gprs.isValid() && gprs.flags().testFlag(QNetworkInterface::IsUp));
+#endif
 }

@@ -32,6 +32,7 @@ public:
     QPoint coordinateToPixels(const QPointF &c) const;
     QPoint scrollOffset() const;
     void setScrollOffset(const QPoint &offset);
+    const QRect &getTilesRect() const { return m_tilesRect; }
 
     void mouseClicked(const QPoint &pos);
 
@@ -63,6 +64,24 @@ class ArticleOverlay: public QObject
 
 public:
     ArticleOverlay(Evopedia *evopedia, SlippyMap *parent);
+    bool isComplete();
+    bool isEnabled() { return enabled; }
+
+    struct ZoomTile {
+        QPoint tile;
+        int zoom;
+        explicit ZoomTile(QPoint tile=QPoint(), int zoom=0) : tile(tile), zoom(zoom) {}
+        bool operator==(const ZoomTile &other) const
+        {
+            return (tile == other.tile && zoom == other.zoom);
+        }
+    };
+    struct GeoTitleList {
+        QList<GeoTitle> list;
+        bool complete;
+        explicit GeoTitleList(const QList<GeoTitle> &list=QList<GeoTitle>(), bool complete=false)
+            : list(list), complete(complete) {}
+    };
 
 public slots:
     void setEnabled(bool value) { enabled = value; }
@@ -71,13 +90,14 @@ private slots:
     void invalidate(const QRect &tilesRect);
     void tileRendered(QPainter *p, const QPoint &tile, const QRect drawBox);
     void mouseClicked(const QPoint &tile, const QPoint &pixelPos);
+    void backendsChanged(const QList<StorageBackend *>);
 
 private:
-    QList<GeoTitle> getTitles(const QRectF &rect, int maxTitles);
-    void titleSelected(const GeoTitle &t);
+    GeoTitleList getTitles(const QRectF &rect, int maxTitles);
+    void showNearTitleList(const QList<Title> &t);
 
     bool enabled;
-    QHash<QPoint, QList<GeoTitle> > titles;
+    QHash<ZoomTile, GeoTitleList> titles;
     QPixmap wikipediaIcon;
     Evopedia *evopedia;
     SlippyMap *slippyMap;

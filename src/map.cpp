@@ -25,13 +25,14 @@
 #include <QtGui>
 #include <QtNetwork>
 #include <QMessageBox>
+#include <QtAlgorithms>
 
 #if QT_VERSION < 0x0040500
 #error You need Qt 4.5 or newer
 #endif
 
 #if defined (Q_OS_SYMBIAN)
-#include "sym_iap_util.h"
+//#include "sym_iap_util.h"
 #endif
 
 #include <math.h>
@@ -44,10 +45,16 @@
 #include "utils.h"
 #include "storagebackend.h"
 
-uint qHash(const QPoint& p)
+inline uint qHash(const QPoint& p)
 {
     return p.x() * 17 ^ p.y();
 }
+
+inline uint qHash(const ArticleOverlay::ZoomTile &key)
+{
+    return qHash(key.tile) ^ (19 * qHash(key.zoom));
+}
+
 
 // tile size in pixels
 const int tdim = 256;
@@ -133,8 +140,7 @@ void SlippyMap::invalidate() {
     // build a rect
     m_tilesRect = QRect(xs, ys, xe - xs + 1, ye - ys + 1);
 
-    if (m_url.isEmpty())
-        fetchTiles();
+    fetchTiles();
 
     emit invalidate(m_tilesRect);
 
@@ -147,7 +153,7 @@ void SlippyMap::render(QPainter *p, const QRect &rect) {
             QPoint tp(x + m_tilesRect.left(), y + m_tilesRect.top());
             QRect box = tileRect(tp);
             if (rect.intersects(box)) {
-                if (m_tilePixmaps.contains(tp))
+                if (m_tilePixmaps.contains(tp) && !m_tilePixmaps[tp].isNull())
                     p->drawPixmap(box, m_tilePixmaps.value(tp));
                 else
                     p->drawPixmap(box, m_emptyTile);
@@ -202,12 +208,29 @@ void SlippyMap::handleNetworkData(QNetworkReply *reply) {
         m_tilePixmaps[tp] = m_emptyTile;
     emit updated(tileRect(tp));
 
+    /* TODO reactivate */
+    if (false && !img.isNull()) {
+        /* TODO1 only if MyDocs is mounted! */
+        QDir().mkpath(QString("%1/%2/%3/%4/")
+             .arg(MAPTILES_LOCATION)
+             .arg("OpenStreetMap I")
+             .arg(zoom)
+             .arg(tp.x()));
+        img.save(QString("%1/%2/%3/%4/%5.png")
+               .arg(MAPTILES_LOCATION)
+               .arg("OpenStreetMap I")
+               .arg(zoom)
+               .arg(tp.x())
+               .arg(tp.y()));
+    }
+
     // purge unused spaces
     QRect bound = m_tilesRect.adjusted(-2, -2, 2, 2);
     foreach(QPoint tp, m_tilePixmaps.keys())
         if (!bound.contains(tp))
             m_tilePixmaps.remove(tp);
 
+    m_url = QUrl();
     fetchTiles();
 }
 
@@ -217,19 +240,30 @@ void SlippyMap::fetchTiles() {
         for (int y = 0; y <= m_tilesRect.height(); ++y) {
         QPoint tp = m_tilesRect.topLeft() + QPoint(x, y);
         if (!m_tilePixmaps.contains(tp)) {
-            grab = tp;
-            break;
+            QPixmap img(QString("%1/%2/%3/%4/%5.png")
+                       .arg(MAPTILES_LOCATION)
+                       .arg("OpenStreetMap I")
+                       .arg(zoom)
+                       .arg(tp.x())
+                       .arg(tp.y()));
+            m_tilePixmaps[tp] = img;
+            if (!img.isNull()) {
+                emit updated(tileRect(tp));
+            }
         }
+        if (m_tilePixmaps[tp].isNull())
+            grab = tp;
     }
+    if (!m_url.isEmpty()) return;
+
     if (grab == QPoint(-1, -1)) {
         m_url = QUrl();
         return;
     }
-    /* TODO0 also use other offline map repositories in use on this device */
 
     QString path = "http://tile.openstreetmap.org/%1/%2/%3.png";
     m_url = QUrl(path.arg(zoom).arg(grab.x()).arg(grab.y()));
-    if (!internetConnectionActive() && !m_manager.cache()->metaData(m_url).isValid()) {
+    if (!internetConnectionActive() /* TODO && !m_manager.cache()->metaData(m_url).isValid()*/) {
         m_url = QUrl();
         return;
     }
@@ -264,17 +298,21 @@ ArticleOverlay::ArticleOverlay(Evopedia *evopedia, SlippyMap *parent)
     connect(parent, SIGNAL(invalidate(QRect)), SLOT(invalidate(QRect)));
     connect(parent, SIGNAL(tileRendered(QPainter*,QPoint,QRect)), SLOT(tileRendered(QPainter*,QPoint,QRect)));
     connect(parent, SIGNAL(mouseClicked(QPoint,QPoint)), SLOT(mouseClicked(QPoint,QPoint)));
+    connect(evopedia, SIGNAL(backendsChanged(const QList<StorageBackend*>)), SLOT(backendsChanged(const QList<StorageBackend*>)));
 }
 
-QList<GeoTitle> ArticleOverlay::getTitles(const QRectF &rect, int maxTitles)
+ArticleOverlay::GeoTitleList ArticleOverlay::getTitles(const QRectF &rect, int maxTitles)
 {
-    QList<GeoTitle> list;
+    ArticleOverlay::GeoTitleList list;
+    list.complete = false;
+
     /* TODO2 fair division between languages? */
     foreach (StorageBackend *b, evopedia->getBackends()) {
-        list += b->getTitlesInCoords(rect, maxTitles - list.length());
-        if (list.length() >= maxTitles)
+        list.list += b->getTitlesInCoords(rect, maxTitles - list.list.length());
+        if (list.list.length() >= maxTitles)
             return list;
     }
+    list.complete = true;
     return list;
 }
 
@@ -283,21 +321,37 @@ void ArticleOverlay::invalidate(const QRect &tilesRect)
     for (int x = 0; x <= tilesRect.width(); ++x) {
         for (int y = 0; y <= tilesRect.height(); ++y) {
             QPoint tile(tilesRect.left() + x, tilesRect.top() + y);
-            if (titles.contains(tile))
+            ZoomTile zt(tile, slippyMap->zoom);
+            if (titles.contains(zt))
                 continue;
-            titles[tile] = getTitles(coordinatesFromTile(tile, slippyMap->zoom), 10);
-            /* TODO1: "zoom in for more articles" */
+            titles[zt] = getTitles(coordinatesFromTile(tile, slippyMap->zoom), 20);
         }
     }
     /* TODO0 keep hash small by removing members that have not been used recently */
 }
 
+bool ArticleOverlay::isComplete()
+{
+    const QRect tilesRect(slippyMap->getTilesRect());
+    for (int x = 0; x <= tilesRect.width(); ++x) {
+        for (int y = 0; y <= tilesRect.height(); ++y) {
+            QPoint tile(tilesRect.left() + x, tilesRect.top() + y);
+            ZoomTile zt(tile, slippyMap->zoom);
+            if (titles.contains(zt) && !titles[zt].complete)
+                return false;
+        }
+    }
+    return true;
+}
+
+
 void ArticleOverlay::tileRendered(QPainter *p, const QPoint &tile, const QRect drawBox)
 {
-    if (!enabled || !titles.contains(tile))
+    ZoomTile ztile(tile, slippyMap->zoom);
+    if (!enabled || !titles.contains(ztile))
         return;
 
-    foreach (GeoTitle t, titles[tile]) {
+    foreach (GeoTitle t, titles[ztile].list) {
         QPoint pos = slippyMap->coordinateToPixels(t.getCoordinate());
         QSize halfSize(wikipediaIcon.size() / 2);
         pos -= QPoint(halfSize.width(), halfSize.height());
@@ -307,27 +361,77 @@ void ArticleOverlay::tileRendered(QPainter *p, const QPoint &tile, const QRect d
 
 void ArticleOverlay::mouseClicked(const QPoint &tile, const QPoint &pixelPos)
 {
-    if (!titles.contains(tile))
-        return;
+    typedef QPair<GeoTitle,float> GeoTitleDistance;
 
-    foreach (GeoTitle t, titles[tile]) {
-        QPoint pos = slippyMap->coordinateToPixels(t.getCoordinate());
-        QPoint delta = pos - pixelPos;
-        /* TODO1 use the nearest article */
-        if (abs(delta.x()) < 20 && abs(delta.y()) < 20) {
-            titleSelected(t);
-            return;
+    QList<GeoTitleDistance> titleDistances;
+    for (int x = -1; x <= 1; x ++) {
+        for (int y = -1; y <= 1; y ++) {
+            ZoomTile zt(tile + QPoint(x, y), slippyMap->zoom);
+            if (!titles.contains(zt)) continue;
+            foreach (GeoTitle t, titles[zt].list) {
+                QPoint pos = slippyMap->coordinateToPixels(t.getCoordinate());
+                QPoint delta = pos - pixelPos;
+                float distSq = delta.x() * delta.x() + delta.y() * delta.y();
+                if (distSq > 25 * 25) continue;
+                titleDistances += GeoTitleDistance(t, distSq);
+            }
+        }
+    }
+    if (titleDistances.isEmpty()) return;
+
+    qSort(titleDistances.begin(), titleDistances.end(), GeoTitle::nearerThan);
+
+    QList<Title> titleList;
+    foreach (GeoTitleDistance t, titleDistances) {
+        titleList += t.first.getTitle();
+    }
+
+    showNearTitleList(titleList);
+}
+
+void ArticleOverlay::showNearTitleList(const QList<Title> &list)
+{
+    if (list.isEmpty()) return;
+
+    if (list.length() == 1) {
+        QMessageBox msgbox(QMessageBox::NoIcon, "Article", list[0].getReadableName(),
+                           QMessageBox::Open | QMessageBox::Cancel);
+        if (msgbox.exec() == QMessageBox::Open) {
+            QDesktopServices::openUrl(evopedia->getArticleUrl(list[0]));
+        }
+    } else {
+        QDialog dialog;
+        dialog.setWindowTitle(tr("Articles"));
+        QListWidget titleList(&dialog);
+        titleList.setSelectionMode(QAbstractItemView::SingleSelection);
+        QHBoxLayout layout(&dialog);
+        layout.addWidget(&titleList);
+        QDialogButtonBox buttons(QDialogButtonBox::Open | QDialogButtonBox::Cancel, Qt::Vertical, &dialog);
+        layout.addWidget(&buttons);
+        connect(&buttons, SIGNAL(accepted()), &dialog, SLOT(accept()));
+        connect(&buttons, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
+        /* TODO1 Use "infinite list" and show every article (not only those stored in the titles hash) */
+
+        for (int i = 0; i < list.length(); i ++) {
+            QListWidgetItem *item = new QListWidgetItem(list[i].getReadableName(), &titleList);
+            item->setData(Qt::UserRole, i);
+            if (i == 0)
+                titleList.setCurrentItem(item);
+        }
+
+        if (dialog.exec() == QDialog::Accepted) {
+            QList<QListWidgetItem *> selItems = titleList.selectedItems();
+            if (selItems.empty()) return;
+
+            Title t = list[selItems[0]->data(Qt::UserRole).toInt()];
+            QDesktopServices::openUrl(evopedia->getArticleUrl(t));
         }
     }
 }
 
-void ArticleOverlay::titleSelected(const GeoTitle &t)
+void ArticleOverlay::backendsChanged(const QList<StorageBackend *>)
 {
-    Title title = t.getTitle();
-    QMessageBox msgBox(QMessageBox::NoIcon, "Article", title.getReadableName(),
-                        QMessageBox::Open | QMessageBox::Cancel);
-    int ret = msgBox.exec();
-    if (ret == QMessageBox::Open) {
-        QDesktopServices::openUrl(evopedia->getArticleUrl(title));
-    }
+    titles.clear();
+    slippyMap->invalidate();
 }

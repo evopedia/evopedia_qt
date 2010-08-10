@@ -37,7 +37,8 @@ private:
      void outputHeader(QTcpSocket *socket, const QString responseCode="200",
                        const QString contentType="text/html; charset=\"utf-8\"");
      void outputResponse(QTcpSocket *socket, const QByteArray &data,
-                         const QString contentType="text/html; charset=\"utf-8\"");
+                         const QString contentType="text/html; charset=\"utf-8\"",
+                         bool cache=true);
      void outputRedirect(QTcpSocket *socket, const QUrl &to);
      void closeConnection(QTcpSocket *socket);
      QByteArray getResource(const QString name);

@@ -1,7 +1,5 @@
 #include "storagebackend.h"
 
-#include <iostream>
-
 #include <QDir>
 #include <QFile>
 #include <QByteArray>
@@ -41,7 +39,7 @@ StorageBackend::StorageBackend(const QString &directory, QObject *parent) :
     QFile titles(titleFile);
     titles.open(QIODevice::ReadOnly);
     if (!titles.isReadable()) {
-        errorMessage = "Title file not readable.";
+        errorMessage = tr("Title file not readable.");
         readable = false;
         return;
     } else {
@@ -64,15 +62,15 @@ bool StorageBackend::checkExistenceOfDumpfiles()
 {
     QDir dir(directory);
     if (!dir.exists()) {
-        errorMessage = "Dump directory does not exist.";
+        errorMessage = tr("Dump directory does not exist.");
         return false;
     }
     if (!QFile(directory + QString("/metadata.txt")).exists()) {
-        errorMessage = "Metadata file does not exist.";
+        errorMessage = tr("Metadata file does not exist.");
         return false;
     }
     if (!QFile(titleFile).exists()) {
-        errorMessage = "Title file does not exist.";
+        errorMessage = tr("Title file does not exist.");
         return false;
     }
     return true;
@@ -124,7 +122,7 @@ TitleIterator StorageBackend::getTitlesWithPrefix(const QString &prefix)
     return TitleIterator(titles, prefix, dumpLanguage);
 }
 
-QList<GeoTitle> StorageBackend::getTitlesInCoords(const QRectF &rect, int maxTitles)
+QList<GeoTitle> StorageBackend::getTitlesInCoords(const QRectF &rect, int maxTitles, bool *complete)
 {
     QRectF rectN(rect.normalized());
 
@@ -140,9 +138,12 @@ QList<GeoTitle> StorageBackend::getTitlesInCoords(const QRectF &rect, int maxTit
 
         QRectF globe(-181, -90.0, 361.0, 181.0);
         getTitlesInCoordsInt(list, titles, cf, 0, rectN, globe, maxTitles);
-        if (list.length() >= maxTitles)
+        if (list.length() >= maxTitles) {
+            if (complete != 0) *complete = false;
             return list;
+        }
     }
+    if (complete != 0) *complete = true;
     return list;
 }
 
@@ -183,7 +184,6 @@ const QByteArray StorageBackend::getArticle(const Title &t)
     QString fileNumber;
     fileNumber.sprintf("%02d", uint(title.getFileNr()));
     QString fileName(QString("%1/wikipedia_%2.dat").arg(directory).arg(fileNumber));
-    std::cout << fileName.toStdString() << "\n" << std::flush;
     QFile f(fileName);
     if (!f.open(QFile::ReadOnly))
         return QByteArray();
@@ -226,7 +226,7 @@ const Title StorageBackend::getRandomTitle()
 
 QUrl StorageBackend::getOrigUrl(const Title &title) const
 {
-    return QUrl(dumpOrigURL + title.getName().toUtf8());
+    return QUrl(dumpOrigURL + title.getName());
 }
 
 void StorageBackend::initializeCoords(QSettings &metadata)
