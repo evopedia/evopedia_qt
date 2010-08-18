@@ -121,7 +121,7 @@ void Evopedia::removeBackend(StorageBackend *backend)
 QUrl Evopedia::getArticleUrl(const Title &t) const
 {
     /* TODO1 direct link to title (not via name) */
-    return QUrl(QString("http://localhost:%1/wiki/%2/%3")
+    return QUrl(QString("http://127.0.0.1:%1/wiki/%2/%3")
                 .arg(webServer->serverPort())
                 .arg(t.getLanguage())
                 .arg(t.getName()));
