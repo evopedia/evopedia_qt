@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 #endif
 
     QTranslator qtTranslator;
-    qtTranslator.load("evopedia_" + QLocale::system().name());
+    qtTranslator.load(":tr/evopedia_" + QLocale::system().name());
     a.installTranslator(&qtTranslator);
 
     MainWindow w;

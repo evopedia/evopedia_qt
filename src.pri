@@ -37,7 +37,7 @@ HEADERS += src/mainwindow.h \
     src/mapwindow.h \
     src/flickablemap.h
 
-TRANSLATIONS += tr/evopedia_de.ts
+TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
 
 CONFIG += warn_on
 unix:LIBS += -lbz2

@@ -16,4 +16,8 @@
     <qresource prefix="/map_icons">
         <file>wikipedia.png</file>
     </qresource>
+    <qresource prefix="/tr">
+        <file alias="evopedia_de.qm">tr/evopedia_de.qm</file>
+        <file alias="evopedia_fr.qm">tr/evopedia_fr.qm</file>
+    </qresource>
 </RCC>
