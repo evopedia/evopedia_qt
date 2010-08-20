@@ -181,7 +181,7 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
     if (pathParts.length() >= 3)
         backend = evopedia->getBackend(pathParts[1]);
     if (backend == 0) {
-        if (evopedia->networkConnectionAllowed() && pathParts.length() >= 3) {
+        if (pathParts[1].length() > 1 && evopedia->networkConnectionAllowed() && pathParts.length() >= 3) {
             /* TODO special characters in title */
             const QUrl redirectTo(QString("http://%1.wikipedia.org/wiki/%2").arg(pathParts[1]).arg(pathParts[2]));
             outputRedirect(socket, redirectTo);
