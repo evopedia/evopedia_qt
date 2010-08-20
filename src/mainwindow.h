@@ -24,14 +24,17 @@ public:
     ~MainWindow();
 
 private slots:
+    void on_actionDeny_toggled(bool v);
+    void on_actionAllow_toggled(bool v);
+    void on_actionAuto_toggled(bool v);
     void on_actionConfigure_Dumps_triggered();
     void on_actionMap_triggered();
     void on_actionAbout_triggered();
     void on_languageChooser_currentIndexChanged(const QString &text);
     void on_listView_activated(QModelIndex index);
     void on_searchField_textChanged(const QString &text);
-    void on_evopediaWebserver_mapViewRequested(qreal lat, qreal lon, uint zoom);
-    void on_evopedia_backendsChanged(const QList<StorageBackend *>backends);
+    void mapViewRequested(qreal lat, qreal lon, uint zoom);
+    void backendsChanged(const QList<StorageBackend *>backends);
 
     void refreshSearchResults();
 
@@ -40,7 +43,6 @@ private:
 
     Ui::Evopedia *ui;
 
-    Evopedia *evopedia;
     TitleListModel *titleListModel;
     MapWindow *mapWindow;
 };

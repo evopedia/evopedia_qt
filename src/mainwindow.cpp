@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include "evopediaapplication.h"
 #include "mapwindow.h"
 #include "dumpsettings.h"
 #include "utils.h"
@@ -14,14 +15,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::Evopedia),
     titleListModel(new TitleListModel(this))
 {
-    evopedia = new Evopedia(this);
-    evopedia->setObjectName("evopedia");
     titleListModel->setTitleIterator(TitleIterator());
 
     ui->setupUi(this);
+    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
     foreach (StorageBackend *b, evopedia->getBackends())
        ui->languageChooser->addItem(b->getLanguage());
     ui->listView->setModel(titleListModel);
+
+    connect(evopedia, SIGNAL(backendsChanged(QList<StorageBackend*>)), SLOT(backendsChanged(QList<StorageBackend*>)));
+    connect(evopedia->findChild<EvopediaWebServer *>("evopediaWebserver"),
+            SIGNAL(mapViewRequested(qreal, qreal, uint)),
+            SLOT(mapViewRequested(qreal,qreal,uint)));
+
+    QActionGroup *network = new QActionGroup(this);
+    network->addAction(ui->actionAuto);
+    network->addAction(ui->actionAllow);
+    network->addAction(ui->actionDeny);
 
     /* TODO1 this should be improved:
        any key press that is accepted by
@@ -30,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setFocusProxy(ui->searchField);
     setFocus();
 
-    mapWindow = new MapWindow(evopedia, this);
+    mapWindow = new MapWindow(this);
 #ifndef Q_OS_SYMBIAN
     mapWindow->resize(600, 450);
 #endif
@@ -62,6 +72,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_searchField_textChanged(const QString &text)
 {
+    Q_UNUSED(text);
     refreshSearchResults();
 }
 
@@ -69,7 +80,7 @@ void MainWindow::on_listView_activated(QModelIndex index)
 {
     const Title title(titleListModel->getTitleAt(index));
 
-    QDesktopServices::openUrl(evopedia->getArticleUrl(title));
+    (static_cast<EvopediaApplication *>(qApp))->openArticle(title);
 }
 
 void MainWindow::on_languageChooser_currentIndexChanged(const QString &text)
@@ -80,7 +91,7 @@ void MainWindow::on_languageChooser_currentIndexChanged(const QString &text)
     refreshSearchResults();
 }
 
-void MainWindow::on_evopedia_backendsChanged(const QList<StorageBackend *> backends)
+void MainWindow::backendsChanged(const QList<StorageBackend *> backends)
 {
     ui->languageChooser->blockSignals(true);
     ui->languageChooser->clear();
@@ -90,7 +101,7 @@ void MainWindow::on_evopedia_backendsChanged(const QList<StorageBackend *> backe
     refreshSearchResults();
 }
 
-void MainWindow::on_evopediaWebserver_mapViewRequested(qreal lat, qreal lon, uint zoom)
+void MainWindow::mapViewRequested(qreal lat, qreal lon, uint zoom)
 {
     mapWindow->setPosition(lat, lon, zoom);
     showMapWindow();
@@ -98,6 +109,7 @@ void MainWindow::on_evopediaWebserver_mapViewRequested(qreal lat, qreal lon, uin
 
 void MainWindow::refreshSearchResults()
 {
+    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
     StorageBackend *backend = evopedia->getBackend(ui->languageChooser->currentText());
     TitleIterator it;
     if (backend != 0)
@@ -126,7 +138,7 @@ void MainWindow::on_actionConfigure_Dumps_triggered()
 {
     /* TODO2 list dump files and download them automatically */
 
-    DumpSettings dumpSettings(evopedia, this);
+    DumpSettings dumpSettings(this);
     dumpSettings.exec();
 }
 
@@ -158,5 +170,29 @@ void MainWindow::on_actionAbout_triggered()
         QDesktopServices::openUrl(QUrl(EVOPEDIA_DUMP_SITE));
     } else if (msgBox.clickedButton() == bugButton) {
         QDesktopServices::openUrl(QUrl(EVOPEDIA_BUG_SITE));
+    }
+}
+
+void MainWindow::on_actionAuto_toggled(bool v)
+{
+    if (v) {
+        Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
+        evopedia->setNetworkUse(0);
+    }
+}
+
+void MainWindow::on_actionAllow_toggled(bool v)
+{
+    if (v) {
+        Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
+        evopedia->setNetworkUse(1);
+    }
+}
+
+void MainWindow::on_actionDeny_toggled(bool v)
+{
+    if (v) {
+        Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
+        evopedia->setNetworkUse(-1);
     }
 }

@@ -16,8 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QListView" name="listView">
-     </widget>
+     <widget class="QListView" name="listView"/>
     </item>
     <item>
      <widget class="QWidget" name="widget" native="true">
@@ -52,8 +51,17 @@
     <property name="title">
      <string>Menu</string>
     </property>
+    <widget class="QMenu" name="menuNetwork">
+     <property name="title">
+      <string>Network</string>
+     </property>
+     <addaction name="actionAuto"/>
+     <addaction name="actionAllow"/>
+     <addaction name="actionDeny"/>
+    </widget>
     <addaction name="actionConfigure_Dumps"/>
     <addaction name="actionMap"/>
+    <addaction name="menuNetwork"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuSettings"/>
@@ -71,6 +79,33 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionAuto">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto</string>
+   </property>
+  </action>
+  <action name="actionAllow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Allow</string>
+   </property>
+  </action>
+  <action name="actionDeny">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Deny</string>
    </property>
   </action>
  </widget>

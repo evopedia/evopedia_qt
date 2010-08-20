@@ -17,9 +17,8 @@
 EvopediaWebServer::EvopediaWebServer(Evopedia *evopedia) :
     QTcpServer(evopedia), evopedia(evopedia)
 {
-    if (!listen(QHostAddress::LocalHost, 8080)) {
+    if (!listen(QHostAddress::LocalHost, 8080))
         listen(QHostAddress::LocalHost);
-    }
 }
 
 void EvopediaWebServer::incomingConnection(int socket)
@@ -182,7 +181,7 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
     if (pathParts.length() >= 3)
         backend = evopedia->getBackend(pathParts[1]);
     if (backend == 0) {
-        if (internetConnectionActive() && pathParts.length() >= 3) {
+        if (evopedia->networkConnectionAllowed() && pathParts.length() >= 3) {
             /* TODO special characters in title */
             const QUrl redirectTo(QString("http://%1.wikipedia.org/wiki/%2").arg(pathParts[1]).arg(pathParts[2]));
             outputRedirect(socket, redirectTo);
@@ -205,7 +204,7 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
             if (lastPart.contains(':') && (lastPart.endsWith(".png", Qt::CaseInsensitive) ||
                                            lastPart.endsWith(".svg", Qt::CaseInsensitive) ||
                                            lastPart.endsWith(".jpg", Qt::CaseInsensitive))
-                                       && internetConnectionActive()) {
+                                       && evopedia->networkConnectionAllowed()) {
                 /* this could be a link to a file description page */
                 outputRedirect(socket, QUrl(backend->getOrigUrl() + lastPart));
                 return;
@@ -232,7 +231,7 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
         data += "</div>";
         if (getLayoutDirection(backend->getLanguage()) == Qt::RightToLeft)
             data += "<div dir=\"rtl\">";
-        if (!internetConnectionActive()) {
+        if (!evopedia->networkConnectionAllowed()) {
             articleData = disableOnlineLinks(articleData);
         }
         data += articleData;

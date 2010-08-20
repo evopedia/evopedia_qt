@@ -10,11 +10,13 @@ TitleListModel::TitleListModel(QObject *parent) :
 
 int TitleListModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return titles.size();
 }
 
 bool TitleListModel::canFetchMore(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return titleIter.hasNext();
 }
 
@@ -28,6 +30,7 @@ void TitleListModel::setTitleIterator(TitleIterator iter)
 
 void TitleListModel::fetchMore(const QModelIndex &parent)
 {
+    Q_UNUSED(parent);
     QList<Title> newTitles;
     while (titleIter.hasNext() && newTitles.size() < 50) {
         newTitles += titleIter.next();

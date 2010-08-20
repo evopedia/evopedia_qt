@@ -122,17 +122,3 @@ int parseCoordinatesZoom(const QString &zoomstr)
     zoom = qRound(28.7253 - log(scale) / log(2.0));
     return qBound(2, zoom, 18);
 }
-
-/* TODO1 change for Symbian */
-bool internetConnectionActive()
-{
-#if defined(Q_OS_SYMBIAN)
-    return true;
-#else
-    QNetworkInterface wlan = QNetworkInterface::interfaceFromName("wlan0");
-    QNetworkInterface gprs = QNetworkInterface::interfaceFromName("gprs0");
-
-    return (wlan.isValid() && wlan.flags().testFlag(QNetworkInterface::IsUp)) ||
-       (gprs.isValid() && gprs.flags().testFlag(QNetworkInterface::IsUp));
-#endif
-}

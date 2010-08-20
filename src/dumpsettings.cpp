@@ -5,13 +5,17 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include "evopedia.h"
+#include "evopediaapplication.h"
 
-DumpSettings::DumpSettings(Evopedia *evopedia, QWidget *parent) :
-        QDialog(parent), ui(new Ui::DumpSettings), evopedia(evopedia)
+
+DumpSettings::DumpSettings(QWidget *parent) :
+        QDialog(parent), ui(new Ui::DumpSettings)
 {
     ui->setupUi(this);
     ui->removeDump->setEnabled(false);
 
+    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
     backendsChanged(evopedia->getBackends());
     connect(evopedia, SIGNAL(backendsChanged(const QList<StorageBackend*>)),
             SLOT(backendsChanged(const QList<StorageBackend*>)));
@@ -36,6 +40,7 @@ void DumpSettings::on_addDump_clicked()
         delete backend;
     } else {
         /* transfers ownership */
+        Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
         evopedia->addBackend(backend);
     }
 }
@@ -48,6 +53,7 @@ void DumpSettings::on_removeDump_clicked()
     QString text = selItems[0]->text();
     QString language = text.left(text.indexOf(QChar(' ')));
 
+    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
     StorageBackend *backend = evopedia->getBackend(language);
     if (backend == 0) return;
 

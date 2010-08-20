@@ -13,7 +13,7 @@ class MapWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit MapWindow(Evopedia *evopedia, QWidget *parent = 0);
+    explicit MapWindow(QWidget *parent = 0);
     ~MapWindow();
 
     /* TODO1 request current GPS position */

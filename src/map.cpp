@@ -41,6 +41,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#include "evopediaapplication.h"
 #include "map.h"
 #include "utils.h"
 #include "storagebackend.h"
@@ -263,7 +264,9 @@ void SlippyMap::fetchTiles() {
 
     QString path = "http://tile.openstreetmap.org/%1/%2/%3.png";
     m_url = QUrl(path.arg(zoom).arg(grab.x()).arg(grab.y()));
-    if (!internetConnectionActive() /* TODO && !m_manager.cache()->metaData(m_url).isValid()*/) {
+
+    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
+    if (!evopedia->networkConnectionAllowed() /* TODO && !m_manager.cache()->metaData(m_url).isValid()*/) {
         m_url = QUrl();
         return;
     }
@@ -287,23 +290,24 @@ QPoint SlippyMap::coordinateToPixels(const QPointF &c) const
     return ((tileForCoordinate(c.y(), c.x(), zoom) - m_tilesRect.topLeft()) * tdim + m_offset).toPoint();
 }
 
-ArticleOverlay::ArticleOverlay(Evopedia *evopedia, SlippyMap *parent)
+ArticleOverlay::ArticleOverlay(SlippyMap *parent)
     : QObject(parent),
     enabled(true),
     wikipediaIcon(":/map_icons/wikipedia.png"),
-    evopedia(evopedia),
     slippyMap(parent)
 
 {
     connect(parent, SIGNAL(invalidate(QRect)), SLOT(invalidate(QRect)));
     connect(parent, SIGNAL(tileRendered(QPainter*,QPoint,QRect)), SLOT(tileRendered(QPainter*,QPoint,QRect)));
     connect(parent, SIGNAL(mouseClicked(QPoint,QPoint)), SLOT(mouseClicked(QPoint,QPoint)));
+    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
     connect(evopedia, SIGNAL(backendsChanged(const QList<StorageBackend*>)), SLOT(backendsChanged(const QList<StorageBackend*>)));
 }
 
 ArticleOverlay::GeoTitleList ArticleOverlay::getTitles(const QRectF &rect, int maxTitles)
 {
     ArticleOverlay::GeoTitleList list;
+    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
     list.complete = false;
 
     /* TODO2 fair division between languages? */
@@ -347,6 +351,7 @@ bool ArticleOverlay::isComplete()
 
 void ArticleOverlay::tileRendered(QPainter *p, const QPoint &tile, const QRect drawBox)
 {
+    Q_UNUSED(drawBox);
     ZoomTile ztile(tile, slippyMap->zoom);
     if (!enabled || !titles.contains(ztile))
         return;
@@ -397,7 +402,7 @@ void ArticleOverlay::showNearTitleList(const QList<Title> &list)
         QMessageBox msgbox(QMessageBox::NoIcon, "Article", list[0].getReadableName(),
                            QMessageBox::Open | QMessageBox::Cancel);
         if (msgbox.exec() == QMessageBox::Open) {
-            QDesktopServices::openUrl(evopedia->getArticleUrl(list[0]));
+            (static_cast<EvopediaApplication *>(qApp))->openArticle(list[0]);
         }
     } else {
         QDialog dialog;
@@ -425,7 +430,7 @@ void ArticleOverlay::showNearTitleList(const QList<Title> &list)
             if (selItems.empty()) return;
 
             Title t = list[selItems[0]->data(Qt::UserRole).toInt()];
-            QDesktopServices::openUrl(evopedia->getArticleUrl(t));
+            (static_cast<EvopediaApplication *>(qApp))->openArticle(t);
         }
     }
 }

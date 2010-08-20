@@ -63,7 +63,7 @@ class ArticleOverlay: public QObject
     Q_OBJECT
 
 public:
-    ArticleOverlay(Evopedia *evopedia, SlippyMap *parent);
+    ArticleOverlay(SlippyMap *parent);
     bool isComplete();
     bool isEnabled() { return enabled; }
 
@@ -99,7 +99,6 @@ private:
     bool enabled;
     QHash<ZoomTile, GeoTitleList> titles;
     QPixmap wikipediaIcon;
-    Evopedia *evopedia;
     SlippyMap *slippyMap;
 };
 

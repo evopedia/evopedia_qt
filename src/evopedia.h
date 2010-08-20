@@ -13,7 +13,8 @@ class Evopedia : public QObject
 {
     Q_OBJECT
 public:
-    Evopedia(QObject *parent=0);
+    explicit Evopedia(QObject *parent=0);
+
     StorageBackend *getBackend(const QString language) const;
     const QList<StorageBackend *> getBackends() const;
     StorageBackend *getRandomBackend() const;
@@ -23,12 +24,16 @@ public:
 
     QUrl getArticleUrl(const Title &t) const;
 
+    void setNetworkUse(int use);
+    bool networkConnectionAllowed();
+
 signals:
     void backendsChanged(const QList<StorageBackend *> backends);
 
 private:
     QHash<QString,StorageBackend *> storages;
     EvopediaWebServer *webServer;
+    int networkUse;
 };
 
 #endif // EVOPEDIA_H

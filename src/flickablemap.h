@@ -11,7 +11,6 @@ class FlickableMap : public QWidget, public Flickable
     Q_OBJECT
 public:
     explicit FlickableMap(QWidget *parent = 0);
-    void setEvopedia(Evopedia *evopedia);
     void setPosition(qreal lat, qreal lng, int zoom=-1);
 
 public slots:

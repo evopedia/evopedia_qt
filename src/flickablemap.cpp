@@ -6,14 +6,10 @@ FlickableMap::FlickableMap(QWidget *parent) :
     map = new SlippyMap(this);
     connect(map, SIGNAL(updated(QRect)), SLOT(updateMap(QRect)));
 
+    articleOverlay = new ArticleOverlay(map);
+
     setMouseTracking(true);
     Flickable::setAcceptMouseClick(this);
-}
-
-void FlickableMap::setEvopedia(Evopedia *evopedia)
-{
-    if (articleOverlay) return;
-    articleOverlay = new ArticleOverlay(evopedia, map);
 }
 
 void FlickableMap::setPosition(qreal lat, qreal lng, int zoom)
@@ -27,18 +23,22 @@ void FlickableMap::setPosition(qreal lat, qreal lng, int zoom)
     externalScrollUpdate();
 }
 
-void FlickableMap::updateMap(const QRect &r) {
+void FlickableMap::updateMap(const QRect &r)
+{
     update(r);
 }
 
-void FlickableMap::resizeEvent(QResizeEvent *event) {
+void FlickableMap::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event);
     map->width = width();
     map->height = height();
     map->invalidate();
     externalScrollUpdate();
 }
 
-void FlickableMap::paintEvent(QPaintEvent *event) {
+void FlickableMap::paintEvent(QPaintEvent *event)
+{
     QPainter p;
     p.begin(this);
     map->render(&p, event->rect());
@@ -58,7 +58,8 @@ void FlickableMap::paintEvent(QPaintEvent *event) {
     p.end();
 }
 
-void FlickableMap::mousePressEvent(QMouseEvent *event) {
+void FlickableMap::mousePressEvent(QMouseEvent *event)
+{
     Flickable::handleMousePress(event);
     if (event->isAccepted())
         return;
@@ -69,11 +70,13 @@ void FlickableMap::mousePressEvent(QMouseEvent *event) {
     }
 }
 
-void FlickableMap::mouseMoveEvent(QMouseEvent *event) {
+void FlickableMap::mouseMoveEvent(QMouseEvent *event)
+{
     Flickable::handleMouseMove(event);
 }
 
-void FlickableMap::keyPressEvent(QKeyEvent *event) {
+void FlickableMap::keyPressEvent(QKeyEvent *event)
+{
     switch (event->key()) {
     case Qt::Key_Left:
         map->pan(QPoint(20, 0));
@@ -121,7 +124,8 @@ void FlickableMap::overlaysEnable(bool value)
     }
 }
 
-void FlickableMap::mouseReleaseEvent(QMouseEvent *event) {
+void FlickableMap::mouseReleaseEvent(QMouseEvent *event)
+{
     Flickable::handleMouseRelease(event);
     if (event->isAccepted())
         return;

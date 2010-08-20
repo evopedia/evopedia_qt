@@ -5,11 +5,12 @@
 #include <QDir>
 #include <QRectF>
 #include <QMessageBox>
+#include <QNetworkInterface>
 
 #include "utils.h"
 
 Evopedia::Evopedia(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), networkUse(0)
 {
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (settings.contains("evopedia/data_directory")) {
@@ -125,4 +126,23 @@ QUrl Evopedia::getArticleUrl(const Title &t) const
                 .arg(webServer->serverPort())
                 .arg(t.getLanguage())
                 .arg(t.getName()));
+}
+
+void Evopedia::setNetworkUse(int use)
+{
+    networkUse = use;
+}
+
+bool Evopedia::networkConnectionAllowed()
+{
+    if (networkUse == 0) {
+        /* see if we are online */
+        QNetworkInterface wlan = QNetworkInterface::interfaceFromName("wlan0");
+        QNetworkInterface gprs = QNetworkInterface::interfaceFromName("gprs0");
+
+        return (wlan.isValid() && wlan.flags().testFlag(QNetworkInterface::IsUp)) ||
+               (gprs.isValid() && gprs.flags().testFlag(QNetworkInterface::IsUp));
+    } else {
+        return networkUse > 0;
+    }
 }

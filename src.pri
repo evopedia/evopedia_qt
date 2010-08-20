@@ -6,8 +6,7 @@ DEFINES += "MAPTILES_LOCATION=\"\\\"/home/user/MyDocs/.maps\\\"\""
 
 QT += core gui network
 INCLUDEPATH += src
-SOURCES += src/main.cpp \
- src/mainwindow.cpp \
+SOURCES +=  src/mainwindow.cpp \
  src/storagebackend.cpp \
  src/title.cpp \
  src/titleiterator.cpp \
@@ -20,7 +19,9 @@ SOURCES += src/main.cpp \
     src/flickable.cpp \
     src/dumpsettings.cpp \
     src/mapwindow.cpp \
-    src/flickablemap.cpp
+    src/flickablemap.cpp \
+    src/evopediaapplication.cpp
+
 HEADERS += src/mainwindow.h \
  src/storagebackend.h \
  src/title.h \
@@ -35,7 +36,8 @@ HEADERS += src/mainwindow.h \
     src/flickable.h \
     src/dumpsettings.h \
     src/mapwindow.h \
-    src/flickablemap.h
+    src/flickablemap.h \
+    src/evopediaapplication.h
 
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
 

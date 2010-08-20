@@ -10,12 +10,11 @@
 
 #include <QTimer>
 
-MapWindow::MapWindow(Evopedia *evopedia, QWidget *parent) :
+MapWindow::MapWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MapWindow)
 {
     ui->setupUi(this);
-    ui->mapWidget->setEvopedia(evopedia);
     ui->mapWidget->setFocus();
 
     connect(ui->actionShow_Articles, SIGNAL(toggled(bool)), ui->mapWidget, SLOT(overlaysEnable(bool)));

@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QListWidget>
 
-#include "evopedia.h"
+#include "storagebackend.h"
 
 namespace Ui {
     class DumpSettings;
@@ -14,7 +14,7 @@ class DumpSettings : public QDialog
 {
     Q_OBJECT
 public:
-    DumpSettings(Evopedia *evopedia, QWidget *parent = 0);
+    explicit DumpSettings(QWidget *parent = 0);
     ~DumpSettings();
 
 signals:
@@ -28,7 +28,6 @@ private slots:
 private:
 
     Ui::DumpSettings *ui;
-    Evopedia *evopedia;
 };
 
 #endif // DUMPSETTINGS_H
