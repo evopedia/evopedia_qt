@@ -33,6 +33,26 @@ MainWindow::MainWindow(QWidget *parent) :
     network->addAction(ui->actionAllow);
     network->addAction(ui->actionDeny);
 
+    QSettings settings("Evopedia", "GUI");
+    int networkUse = settings.value("network use", 0).toInt();
+    //evopedia->setNetworkUse(networkUse);
+    if (networkUse < 0) ui->actionDeny->setChecked(true);
+    else if (networkUse > 0) ui->actionAllow->setChecked(true);
+    else ui->actionAuto->setChecked(true);
+
+    QString defaultLanguage = settings.value("default language", "").toString();
+    if (evopedia->hasLanguage(defaultLanguage)) {
+        for (int i = 0; i < ui->languageChooser->count(); i ++) {
+            if (ui->languageChooser->itemText(i) == defaultLanguage) {
+                ui->languageChooser->setCurrentIndex(i);
+                break;
+            }
+        }
+    }
+
+    QPointF mapPos = settings.value("map pos", QPointF(10.7387413, 59.9138204)).toPointF();
+    int mapZoom = settings.value("map zoom", 15).toInt();
+
     /* TODO1 this should be improved:
        any key press that is accepted by
        the searchField should go to the searchField */
@@ -41,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setFocus();
 
     mapWindow = new MapWindow(this);
+    mapWindow->setPosition(mapPos.y(), mapPos.x(), mapZoom);
 #ifndef Q_OS_SYMBIAN
     mapWindow->resize(600, 450);
 #endif
@@ -68,6 +89,24 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QSettings settings("Evopedia", "GUI");
+    int networkUse = 0;
+    if (ui->actionDeny->isChecked()) networkUse = -1;
+    else if (ui->actionAllow->isChecked()) networkUse = 1;
+    settings.setValue("network use", networkUse);
+    settings.setValue("default language", ui->languageChooser->currentText());
+
+    qreal lat, lng;
+    int zoom;
+    mapWindow->getPosition(lat, lng, zoom);
+    settings.setValue("map pos", QPointF(lng, lat));
+    settings.setValue("map zoom", zoom);
+
+    event->accept();
 }
 
 void MainWindow::on_searchField_textChanged(const QString &text)

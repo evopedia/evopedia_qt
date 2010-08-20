@@ -12,6 +12,7 @@ class FlickableMap : public QWidget, public Flickable
 public:
     explicit FlickableMap(QWidget *parent = 0);
     void setPosition(qreal lat, qreal lng, int zoom=-1);
+    void getPosition(qreal &lat, qreal &lng, int &zoom);
 
 public slots:
     void zoomIn();

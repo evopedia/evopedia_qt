@@ -62,3 +62,8 @@ void MapWindow::setPosition(qreal lat, qreal lon, int zoom)
 {
     ui->mapWidget->setPosition(lat, lon, zoom);
 }
+
+void MapWindow::getPosition(qreal &lat, qreal &lng, int &zoom)
+{
+    ui->mapWidget->getPosition(lat, lng, zoom);
+}

@@ -17,10 +17,17 @@ void FlickableMap::setPosition(qreal lat, qreal lng, int zoom)
     map->latitude = lat;
     map->longitude = lng;
     if (zoom > 0) {
-        map->zoom = zoom;
+        map->zoom = qBound(2, zoom, 18);
     }
     map->invalidate();
     externalScrollUpdate();
+}
+
+void FlickableMap::getPosition(qreal &lat, qreal &lng, int &zoom)
+{
+    lat = map->latitude;
+    lng = map->longitude;
+    zoom = map->zoom;
 }
 
 void FlickableMap::updateMap(const QRect &r)

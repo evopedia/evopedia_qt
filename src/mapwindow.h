@@ -18,6 +18,7 @@ public:
 
     /* TODO1 request current GPS position */
     void setPosition(qreal lat, qreal lng, int zoom=-1);
+    void getPosition(qreal &lat, qreal &lng, int &zoom);
 
 private slots:
     void delayedInit() {
