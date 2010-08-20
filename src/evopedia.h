@@ -16,6 +16,7 @@ public:
     explicit Evopedia(QObject *parent=0);
 
     StorageBackend *getBackend(const QString language) const;
+    bool hasLanguage(const QString language) const { return storages.contains(language); }
     const QList<StorageBackend *> getBackends() const;
     StorageBackend *getRandomBackend() const;
 

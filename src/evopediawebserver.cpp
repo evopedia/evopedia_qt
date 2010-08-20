@@ -252,22 +252,40 @@ QByteArray &EvopediaWebServer::disableOnlineLinks(QByteArray &data)
 
 QByteArray EvopediaWebServer::extractInterLanguageLinks(QByteArray &data)
 {
-    static QRegExp rx("<a href=\"([^\"]*)\">([^<]*)</a>");
-    int langStart = data.indexOf("<h5>Languages</h5>");
+    static QRegExp rx("<a href=\"./../([^/]*)/([^\"]*)\">([^<]*)</a>");
+    //static QRegExp startrx("<h5>[^<]*</h5>[^<]*<div class=\"pBody\">");
+    //int langStart = data.lastIndexOf("<h5>Languages</h5>");
+    int langStart = data.lastIndexOf("<h5>");
     if (langStart < 0) return QByteArray();
+    if (data.indexOf("<div class=\"pBody\">") < 0) return QByteArray();
     int langEnd = data.indexOf("<div class=\"visualClear\"></div>", langStart);
     if (langEnd < 0) return QByteArray();
 
-    QByteArray result("<select onchange=\"document.location.href=this.value;\">");
+    QByteArray installedLanguages;
+    QByteArray otherLanguages;
 
-    /* TODO1 mark the languages we have dumps for / use two selects */
     const QString languageText = QString::fromUtf8(data.mid(langStart, langEnd - langStart).constData());
 
     for (int pos = 0; (pos = rx.indexIn(languageText, pos)) != -1; pos += rx.matchedLength()) {
-        const QString link(rx.cap(1));
-        const QString language(rx.cap(2));
-        result += QString("<option value=\"%1\">%2</option>").arg(link).arg(language).toUtf8();
+        const QString langID(rx.cap(1));
+        const QString link(rx.cap(2));
+        const QString language(rx.cap(3));
+        QByteArray option(QString("<option value=\"/wiki/%1/%2\">%3</option>")
+                          .arg(langID).arg(link).arg(language).toUtf8());
+        if (evopedia->hasLanguage(langID))
+            installedLanguages += option;
+        else
+            otherLanguages += option;
     }
+
+    if (installedLanguages.isEmpty() && otherLanguages.isEmpty())
+        return QByteArray();
+
+    QByteArray result("<select onchange=\"document.location.href=this.value;\">"
+                      "<option value=\"\">" + tr("Other Languages").toUtf8() + "</option>");
+    result += installedLanguages;
+    result += "<option value=\"\">-----</option>";
+    result += otherLanguages;
     result += "</select>";
 
     data.remove(langStart, langEnd - langStart);
