@@ -89,5 +89,5 @@ unix {
   desktop.files += src/$${TARGET}.desktop
 
   iconxpm.path = $$DATADIR/pixmaps
-  iconxpm.files += src/wikipedia48.png
+  iconxpm.files += src/evopedia-64x64.png
 }
