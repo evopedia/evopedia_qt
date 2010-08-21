@@ -11,14 +11,12 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Offline Wikipedia Viewer
  Evopedia uses compressed dumps of Wikipedia for offline use
- especially on embedded devices.
+ especially on mobile devices.
  .
  The geographical data in the articles is used to display a map of these
  articles. The images on Wikipedia are not contained in the dump but if you
  are connected to the internet, they are nevertheless shown.
 XSBC-Bugtracker: https://bugs.maemo.org/enter_bug.cgi?product=evopedia
-XB-Maemo-Upgrade-Description: Reimplementation of evopedia
- using Qt.
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAAXNSR0IArs4c
  6QAACWJJREFUWMPt12twXdV1B/Dfvg9dSbYkS5aR5beReVp1DBRDGUxaSJik

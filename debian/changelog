@@ -1,3 +1,13 @@
+evopedia (0.4.1) unstable; urgency=low
+
+  * network usage settings
+  * map tiles are cached (sharing the folder of mappero)
+  * bugfix for language links
+  * German and French translation
+  * bugfixes (closes: #10833, #11053, #11153)
+
+ -- Christian Reitwiessner <christian@evopedia.info>  Sun, 21 Aug 2010 20:34:50 +0200
+
 evopedia (0.4.0) unstable; urgency=low
 
   * Reimplementation of evopedia using Qt

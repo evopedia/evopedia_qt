@@ -73,6 +73,10 @@ unix {
   BINDIR = $$PREFIX/bin
   DATADIR =$$PREFIX/share
 
+  maemo5 {
+      BINDIR = /opt/maemo/usr/bin
+  }
+
   DEFINES += DATADIR=\\\"$$DATADIR\\\" PKGDATADIR=\\\"$$PKGDATADIR\\\"
 
   #MAKE INSTALL
@@ -82,7 +86,7 @@ unix {
   target.path =$$BINDIR
 
   desktop.path = $$DATADIR/applications/hildon
-  desktop.files += $${TARGET}.desktop
+  desktop.files += src/$${TARGET}.desktop
 
   iconxpm.path = $$DATADIR/pixmaps
   iconxpm.files += src/wikipedia48.png
