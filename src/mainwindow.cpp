@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
        ui->languageChooser->addItem(b->getLanguage());
     ui->listView->setModel(titleListModel);
 
-    connect(evopedia, SIGNAL(backendsChanged(QList<StorageBackend*>)), SLOT(backendsChanged(QList<StorageBackend*>)));
+    connect(evopedia, SIGNAL(backendsChanged(const QList<StorageBackend*>)), SLOT(backendsChanged(const QList<StorageBackend*>)));
     connect(evopedia->findChild<EvopediaWebServer *>("evopediaWebserver"),
             SIGNAL(mapViewRequested(qreal, qreal, uint)),
             SLOT(mapViewRequested(qreal,qreal,uint)));
@@ -56,9 +56,12 @@ MainWindow::MainWindow(QWidget *parent) :
     /* TODO1 this should be improved:
        any key press that is accepted by
        the searchField should go to the searchField */
+    /* TODO does not work
     setFocusPolicy(Qt::StrongFocus);
     setFocusProxy(ui->searchField);
     setFocus();
+    */
+    ui->searchField->setFocus();
 
     mapWindow = new MapWindow(this);
     mapWindow->setPosition(mapPos.y(), mapPos.x(), mapZoom);

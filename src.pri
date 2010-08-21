@@ -2,7 +2,6 @@ DEFINES += "EVOPEDIA_VERSION=\"\\\"0.4.0\\\"\""
 DEFINES += "EVOPEDIA_WEBSITE=\"\\\"http://evopedia.info\\\"\""
 DEFINES += "EVOPEDIA_DUMP_SITE=\"\\\"http://dumpathome.evopedia.info/dumps/finished\\\"\""
 DEFINES += "EVOPEDIA_BUG_SITE=\"\\\"https://bugs.maemo.org/enter_bug.cgi?product=evopedia\\\"\""
-DEFINES += "MAPTILES_LOCATION=\"\\\"/home/user/MyDocs/.maps\\\"\""
 
 QT += core gui network
 INCLUDEPATH += src
@@ -43,7 +42,6 @@ TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
 
 CONFIG += warn_on
 unix:LIBS += -lbz2
-MOBILITY =
 FORMS += src/mainwindow.ui \
     src/dumpSettings.ui \
     src/mapwindow.ui

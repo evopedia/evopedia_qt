@@ -41,6 +41,14 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#ifdef Q_WS_MAEMO_5
+#define MAPTILES_LOCATION "/home/user/MyDocs/.maps"
+#else
+#define MAPTILES_LOCATION (QDir::homePath() + "/.cache/maps")
+#endif
+/* TODO symbian */
+
+
 #include "evopediaapplication.h"
 #include "map.h"
 #include "utils.h"
@@ -209,20 +217,16 @@ void SlippyMap::handleNetworkData(QNetworkReply *reply) {
         m_tilePixmaps[tp] = m_emptyTile;
     emit updated(tileRect(tp));
 
-    /* TODO reactivate */
-    if (false && !img.isNull()) {
-        /* TODO1 only if MyDocs is mounted! */
-        QDir().mkpath(QString("%1/%2/%3/%4/")
-             .arg(MAPTILES_LOCATION)
-             .arg("OpenStreetMap I")
-             .arg(zoom)
-             .arg(tp.x()));
-        img.save(QString("%1/%2/%3/%4/%5.png")
-               .arg(MAPTILES_LOCATION)
-               .arg("OpenStreetMap I")
-               .arg(zoom)
-               .arg(tp.x())
-               .arg(tp.y()));
+    if (!img.isNull()) {
+        /* TODO1 on maemo only if MyDocs is mounted! */
+        QString path = QString("%1/%2/%3/%4")
+                       .arg(MAPTILES_LOCATION)
+                       .arg("OpenStreetMap I")
+                       .arg(zoom)
+                       .arg(tp.x());
+        QDir().mkpath(path);
+        img.save(QString("%1/%2.png")
+                 .arg(path).arg(tp.y()));
     }
 
     // purge unused spaces
@@ -242,16 +246,17 @@ void SlippyMap::fetchTiles() {
         QPoint tp = m_tilesRect.topLeft() + QPoint(x, y);
         if (!m_tilePixmaps.contains(tp)) {
             QPixmap img(QString("%1/%2/%3/%4/%5.png")
-                       .arg(MAPTILES_LOCATION)
-                       .arg("OpenStreetMap I")
-                       .arg(zoom)
-                       .arg(tp.x())
-                       .arg(tp.y()));
+                        .arg(MAPTILES_LOCATION)
+                        .arg("OpenStreetMap I")
+                        .arg(zoom)
+                        .arg(tp.x())
+                        .arg(tp.y()));
             m_tilePixmaps[tp] = img;
             if (!img.isNull()) {
                 emit updated(tileRect(tp));
             }
         }
+
         if (m_tilePixmaps[tp].isNull())
             grab = tp;
     }
