@@ -3,14 +3,18 @@
 
 #include <QDialog>
 #include <QListWidget>
+#include <QList>
+#include <QNetworkAccessManager>
+#include <QMainWindow>
 
 #include "storagebackend.h"
+#include "archive.h"
 
 namespace Ui {
     class DumpSettings;
 }
 
-class DumpSettings : public QDialog
+class DumpSettings : public QMainWindow
 {
     Q_OBJECT
 public:
@@ -19,14 +23,19 @@ public:
 
 signals:
 
+protected slots:
+    void updateView();
+
 private slots:
+    void on_actionRefresh_triggered();
     void on_addDump_clicked();
-    void on_removeDump_clicked();
     void on_dumpList_itemSelectionChanged();
     void backendsChanged(const QList<StorageBackend *>backends);
+    void networkFinished(QNetworkReply *reply);
 
 private:
-
+    QNetworkAccessManager netManager;
+    QList<Archive> archives;
     Ui::DumpSettings *ui;
 };
 

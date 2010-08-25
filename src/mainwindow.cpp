@@ -4,11 +4,14 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QAbstractButton>
 
 #include "evopediaapplication.h"
 #include "mapwindow.h"
 #include "dumpsettings.h"
 #include "utils.h"
+#include "dumpdownloadlist.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -180,8 +183,9 @@ void MainWindow::on_actionConfigure_Dumps_triggered()
 {
     /* TODO2 list dump files and download them automatically */
 
-    DumpSettings dumpSettings(this);
-    dumpSettings.exec();
+    DumpSettings *dumpSettings = new DumpSettings(this);
+    dumpSettings->show();
+    /* TODO wait until closed? only one instance? */
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -206,11 +210,13 @@ void MainWindow::on_actionAbout_triggered()
 
     msgBox.exec();
 
-    if (msgBox.clickedButton() == websiteButton) {
+    QPushButton *clickedButton = dynamic_cast<QPushButton*>(msgBox.clickedButton());
+
+    if (clickedButton == websiteButton) {
         QDesktopServices::openUrl(QUrl(EVOPEDIA_WEBSITE));
-    } else if (msgBox.clickedButton() == downloadButton) {
+    } else if (clickedButton == downloadButton) {
         QDesktopServices::openUrl(QUrl(EVOPEDIA_DUMP_SITE));
-    } else if (msgBox.clickedButton() == bugButton) {
+    } else if (clickedButton == bugButton) {
         QDesktopServices::openUrl(QUrl(EVOPEDIA_BUG_SITE));
     }
 }
@@ -237,4 +243,10 @@ void MainWindow::on_actionDeny_toggled(bool v)
         Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
         evopedia->setNetworkUse(-1);
     }
+}
+
+void MainWindow::on_actionDownload_Dumps_triggered()
+{
+    DumpDownloadList *list = new DumpDownloadList(this);
+    list->show();
 }

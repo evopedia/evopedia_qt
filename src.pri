@@ -19,7 +19,9 @@ SOURCES +=  src/mainwindow.cpp \
     src/dumpsettings.cpp \
     src/mapwindow.cpp \
     src/flickablemap.cpp \
-    src/evopediaapplication.cpp
+    src/evopediaapplication.cpp \
+    src/dumpdownloadlist.cpp \
+    src/archive.cpp
 
 HEADERS += src/mainwindow.h \
  src/storagebackend.h \
@@ -36,15 +38,18 @@ HEADERS += src/mainwindow.h \
     src/dumpsettings.h \
     src/mapwindow.h \
     src/flickablemap.h \
-    src/evopediaapplication.h
+    src/evopediaapplication.h \
+    src/dumpdownloadlist.h \
+    src/archive.h
 
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
 
-CONFIG += warn_on
-unix:LIBS += -lbz2
 FORMS += src/mainwindow.ui \
     src/dumpSettings.ui \
     src/mapwindow.ui
+
+CONFIG += warn_on
+unix:LIBS += -lbz2
 DEFINES += QT_NO_CAST_TO_ASCII
 DEFINES += QT_NO_CAST_FROM_BYTEARRAY
 

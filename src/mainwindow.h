@@ -27,6 +27,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
+    void on_actionDownload_Dumps_triggered();
     void on_actionDeny_toggled(bool v);
     void on_actionAllow_toggled(bool v);
     void on_actionAuto_toggled(bool v);

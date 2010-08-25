@@ -108,6 +108,11 @@
     <string>Deny</string>
    </property>
   </action>
+  <action name="actionDownload_Dumps">
+   <property name="text">
+    <string>Download Dumps</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

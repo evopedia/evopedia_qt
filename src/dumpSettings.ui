@@ -1,36 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DumpSettings</class>
- <widget class="QDialog" name="DumpSettings">
+ <widget class="QMainWindow" name="DumpSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>270</width>
+    <height>270</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Dumps</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <property name="sizeConstraint">
-    <enum>QLayout::SetMaximumSize</enum>
+  <widget class="QListWidget" name="dumpList"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>270</width>
+     <height>23</height>
+    </rect>
    </property>
-   <item>
-    <widget class="QListWidget" name="dumpList"/>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="addDump">
-       <property name="text">
-        <string>Add Dump</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="removeDump">
-       <property name="text">
-        <string>Remove Dump</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-  </layout>
+   <widget class="QMenu" name="menuMenu">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <addaction name="actionRefresh"/>
+   </widget>
+   <addaction name="menuMenu"/>
+  </widget>
+  <action name="actionRefresh">
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
