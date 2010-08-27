@@ -9,6 +9,7 @@
 #include "evopedia.h"
 #include "mapwindow.h"
 #include "ui_dumpSettings.h"
+#include "dumpsettings.h"
 
 
 namespace Ui {
@@ -48,6 +49,7 @@ private:
 
     TitleListModel *titleListModel;
     MapWindow *mapWindow;
+    DumpSettings *dumpSettings;
 };
 
 #endif // MAINWINDOW_H

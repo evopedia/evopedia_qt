@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QProgressBar>
 #include <QVBoxLayout>
+#include <QPushButton>
 #include <QMutableListIterator>
 
 #include "evopedia.h"
@@ -66,7 +67,7 @@ void DumpSettings::networkFinished(QNetworkReply *reply)
         archives += a;
     }
 
-    /* TODO sort archives */
+    qSort(archives);
 
     updateView();
 }
@@ -77,9 +78,17 @@ void DumpSettings::updateView()
     /* TODO respect some "only display installed archives
        or archives that are downloaded" setting
        and filter accordingly */
+    {
+        QListWidgetItem *item = new QListWidgetItem;
+        QPushButton *button = new QPushButton(QIcon::fromTheme("general_add"), "add manually downloaded archive");
+        connect(button, SIGNAL(clicked()), SLOT(manualAddClicked()));
+        item->setSizeHint(button->sizeHint());
+        ui->dumpList->addItem(item);
+        ui->dumpList->setItemWidget(item, button);
+    }
     /* TODO add a "manually add archive" button into the list */
     foreach (Archive a, archives) {
-        QListWidgetItem *item = new QListWidgetItem();
+        QListWidgetItem *item = new QListWidgetItem;
         /* TODO maemo styles have grey second lines */
         QString text = QString("<b>Wikipedia %1 (%2)</b><br/><small>%3</small>")
                        .arg(a.language, a.date, a.size);
@@ -105,7 +114,7 @@ void DumpSettings::updateView()
 }
 
 
-void DumpSettings::on_addDump_clicked()
+void DumpSettings::manualAddClicked()
 {
     /* TODO2 already check for dump in the file chooser */
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Dump Directory"),
@@ -165,5 +174,6 @@ void DumpSettings::backendsChanged(const QList<StorageBackend *>backends)
         archives += a;
     }
 
+    qSort(archives);
     updateView();
 }

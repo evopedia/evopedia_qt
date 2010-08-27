@@ -28,7 +28,7 @@ protected slots:
 
 private slots:
     void on_actionRefresh_triggered();
-    void on_addDump_clicked();
+    void manualAddClicked();
     void on_dumpList_itemSelectionChanged();
     void backendsChanged(const QList<StorageBackend *>backends);
     void networkFinished(QNetworkReply *reply);

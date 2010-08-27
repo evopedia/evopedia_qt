@@ -18,6 +18,14 @@ public:
     State state;
 
     Archive();
+
+    bool operator<(const Archive &other) const {
+        if (language == other.language) {
+            return date > other.date;
+        } else {
+            return language < other.language;
+        }
+    }
 };
 
 #endif // ARCHIVE_H

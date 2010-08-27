@@ -67,15 +67,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mapWindow = new MapWindow(this);
     mapWindow->setPosition(mapPos.y(), mapPos.x(), mapZoom);
+
+    dumpSettings = new DumpSettings(this);
 #ifndef Q_OS_SYMBIAN
     mapWindow->resize(600, 450);
 #endif
 #ifdef Q_WS_MAEMO_5
     this->setAttribute(Qt::WA_Maemo5StackedWindow);
     mapWindow->setAttribute(Qt::WA_Maemo5StackedWindow);
+    dumpSettings->setAttribute(Qt::WA_Maemo5StackedWindow);
 #endif
 
     if (evopedia->getBackends().length() == 0) {
+        /* TODO change this */
         QMessageBox msgBox(QMessageBox::NoIcon, tr("No Dumps Configured"),
                            tr("To be able to use evopedia you have to "
                                    "download and install a Wikipedia dump. "
@@ -180,11 +184,7 @@ void MainWindow::showMapWindow()
 
 void MainWindow::on_actionConfigure_Dumps_triggered()
 {
-    /* TODO2 list dump files and download them automatically */
-
-    DumpSettings *dumpSettings = new DumpSettings(this);
     dumpSettings->show();
-    /* TODO wait until closed? only one instance? */
 }
 
 void MainWindow::on_actionAbout_triggered()
