@@ -252,7 +252,7 @@ QByteArray &EvopediaWebServer::disableOnlineLinks(QByteArray &data)
 
 QByteArray EvopediaWebServer::extractInterLanguageLinks(QByteArray &data)
 {
-    static QRegExp rx("<a href=\"./../([^/]*)/([^\"]*)\">([^<]*)</a>");
+    static QRegExp rx("<a href=\"(\\./)?\\.\\./([^/]*)/([^\"]*)\">([^<]*)</a>");
     //static QRegExp startrx("<h5>[^<]*</h5>[^<]*<div class=\"pBody\">");
     //int langStart = data.lastIndexOf("<h5>Languages</h5>");
     int langStart = data.lastIndexOf("<h5>");
@@ -267,9 +267,9 @@ QByteArray EvopediaWebServer::extractInterLanguageLinks(QByteArray &data)
     const QString languageText = QString::fromUtf8(data.mid(langStart, langEnd - langStart).constData());
 
     for (int pos = 0; (pos = rx.indexIn(languageText, pos)) != -1; pos += rx.matchedLength()) {
-        const QString langID(rx.cap(1));
-        const QString link(rx.cap(2));
-        const QString language(rx.cap(3));
+        const QString langID(rx.cap(2));
+        const QString link(rx.cap(3));
+        const QString language(rx.cap(4));
         QByteArray option(QString("<option value=\"/wiki/%1/%2\">%3</option>")
                           .arg(langID).arg(link).arg(language).toUtf8());
         if (evopedia->hasLanguage(langID))
