@@ -29,41 +29,69 @@ Evopedia::Evopedia(QObject *parent)
         if (!backend->isReadable()) {
             delete backend;
         } else {
-            storages[backend->getLanguage()] = backend;
+            if (group.indexOf('_', 5) < 0) {
+                /* old format, convert */
+                settings.remove(group);
+                settings.setValue(QString("dump_%1_%2/data_directory")
+                                  .arg(backend->getLanguage(), backend->getDate()),
+                                      backend->getDirectory());
+                settings.sync();
+            }
+            storages[backend->getLanguage()] += backend;
         }
     }
+
+    for (QHash<QString, QList<StorageBackend *> >::iterator
+            i = storages.begin(); i != storages.end(); i ++)
+        qSort(*i);
+
     webServer = new EvopediaWebServer(this);
     webServer->setObjectName("evopediaWebserver");
 }
 
-StorageBackend *Evopedia::getBackend(const QString language) const
+StorageBackend *Evopedia::getBackend(const QString language, const QString date) const
 {
-    if (storages.contains(language))
-        return storages[language];
-    else
+    if (!storages.contains(language))
         return 0;
+
+    QList<StorageBackend *> backends = storages[language];
+    if (backends.isEmpty())
+        return 0;
+    if (date.isEmpty())
+        return backends[0];
+    foreach (StorageBackend *b, backends) {
+        if (b->getDate() == date)
+            return b;
+    }
+    return 0;
 }
 
 const QList<StorageBackend *> Evopedia::getBackends() const
 {
-    return storages.values();
+    /* TODO is this efficient enough? */
+    QList<StorageBackend *>backends;
+    foreach (QList<StorageBackend *>backends_it, storages)
+        backends += backends_it;
+    return backends;
 
 }
 
 StorageBackend *Evopedia::getRandomBackend() const
 {
     quint32 numArticles = 0;
-    foreach (StorageBackend *b, storages) {
-        numArticles += b->getNumArticles();
-    }
+    foreach (QList<StorageBackend *>l, storages)
+        foreach (StorageBackend *b, l)
+            numArticles += b->getNumArticles();
 
     quint32 articleId = randomNumber(numArticles);
-    foreach (StorageBackend *b, storages) {
-        quint32 bArticles = b->getNumArticles();
-        if (bArticles > articleId) {
-            return b;
-        } else {
-            articleId -= bArticles;
+    foreach (QList<StorageBackend *>l, storages) {
+        foreach (StorageBackend *b, l) {
+            quint32 bArticles = b->getNumArticles();
+            if (bArticles > articleId) {
+                return b;
+            } else {
+                articleId -= bArticles;
+            }
         }
     }
     return 0;
@@ -77,6 +105,7 @@ void Evopedia::addBackend(StorageBackend *backend)
     backend->setParent(this);
 
     const QString language(backend->getLanguage());
+    const QString date(backend->getDate());
 
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (!settings.isWritable()) {
@@ -84,13 +113,18 @@ void Evopedia::addBackend(StorageBackend *backend)
         delete backend;
         return;
     }
-    settings.setValue(QString("dump_%1/data_directory").arg(language),
+    settings.setValue(QString("dump_%1_%2/data_directory")
+                      .arg(language, date),
                           backend->getDirectory());
-    if (storages.contains(language)) {
-        if (storages[language] != backend)
-            delete storages[language];
+    StorageBackend *b2 = getBackend(language, date);
+    if (b2 != 0) {
+        int i = storages[language].indexOf(b2);
+        storages[language][i] = backend;
+        delete b2;
+    } else {
+        storages[language] += backend;
+        qSort(storages[language]);
     }
-    storages[language] = backend;
     settings.sync();
 
     const QList<StorageBackend *>backends = getBackends();
@@ -102,16 +136,21 @@ void Evopedia::removeBackend(StorageBackend *backend)
     if (backend == 0) return;
 
     const QString language(backend->getLanguage());
-    if (!storages.contains(language)) return;
-    if (storages[language] != backend) return;
+    const QString date(backend->getDate());
+
+    if (getBackend(language, date) != backend) return;
 
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (!settings.isWritable()) {
         QMessageBox::critical(0, tr("Error"), tr("Error storing settings."));
         return;
     }
-    settings.remove(QString("dump_%1").arg(language));
-    storages.remove(language);
+    settings.remove(QString("dump_%1_%2").arg(language, date));
+    if (storages[language].length() == 1) {
+        storages.remove(language);
+    } else {
+        storages[language].removeOne(backend);
+    }
     delete backend;
     settings.sync();
 
@@ -121,7 +160,7 @@ void Evopedia::removeBackend(StorageBackend *backend)
 
 QUrl Evopedia::getArticleUrl(const Title &t) const
 {
-    /* TODO1 direct link to title (not via name) */
+    /* TODO1 direct link to title (not via name); include date? */
     return QUrl(QString("http://127.0.0.1:%1/wiki/%2/%3")
                 .arg(webServer->serverPort())
                 .arg(t.getLanguage())

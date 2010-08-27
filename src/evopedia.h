@@ -15,7 +15,7 @@ class Evopedia : public QObject
 public:
     explicit Evopedia(QObject *parent=0);
 
-    StorageBackend *getBackend(const QString language) const;
+    StorageBackend *getBackend(const QString language, const QString date=QString()) const;
     bool hasLanguage(const QString language) const { return storages.contains(language); }
     const QList<StorageBackend *> getBackends() const;
     StorageBackend *getRandomBackend() const;
@@ -32,7 +32,7 @@ signals:
     void backendsChanged(const QList<StorageBackend *> backends);
 
 private:
-    QHash<QString,StorageBackend *> storages;
+    QHash<QString, QList<StorageBackend *> > storages;
     EvopediaWebServer *webServer;
     int networkUse;
 };

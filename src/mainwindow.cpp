@@ -11,7 +11,6 @@
 #include "mapwindow.h"
 #include "dumpsettings.h"
 #include "utils.h"
-#include "dumpdownloadlist.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -243,10 +242,4 @@ void MainWindow::on_actionDeny_toggled(bool v)
         Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
         evopedia->setNetworkUse(-1);
     }
-}
-
-void MainWindow::on_actionDownload_Dumps_triggered()
-{
-    DumpDownloadList *list = new DumpDownloadList(this);
-    list->show();
 }

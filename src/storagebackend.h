@@ -39,6 +39,10 @@ public:
     const QString &getDirectory() const { return directory; }
     
     static const QString normalize(const QString &str);
+
+    /* newer backends are "less" */
+    bool operator<(const StorageBackend &other) const { return getDate() > other.getDate(); }
+
 private:
     void initializeCoords(QSettings &metadata);
     bool findMathImage(const QByteArray &hexHash, quint32 &pos, quint32 &length) const;
