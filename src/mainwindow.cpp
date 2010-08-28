@@ -11,6 +11,7 @@
 #include "mapwindow.h"
 #include "dumpsettings.h"
 #include "utils.h"
+#include "defines.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
