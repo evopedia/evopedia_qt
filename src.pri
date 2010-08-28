@@ -84,7 +84,10 @@ unix {
 
   target.path =$$BINDIR
 
-  desktop.path = $$DATADIR/applications/hildon
+  desktop.path = $$DATADIR/applications
+  maemo5 {
+      desktop.path = $$DATADIR/applications/hildon
+  }
   desktop.files += src/$${TARGET}.desktop
 
   iconxpm.path = $$DATADIR/pixmaps
