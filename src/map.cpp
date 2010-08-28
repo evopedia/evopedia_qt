@@ -113,10 +113,12 @@ SlippyMap::SlippyMap(QObject *parent)
     m_emptyTile = QPixmap(tdim, tdim);
     m_emptyTile.fill(Qt::lightGray);
 
+    /* disabled because default cache location is on root fs
     QNetworkDiskCache *cache = new QNetworkDiskCache;
     cache->setCacheDirectory(QDesktopServices::storageLocation
                              (QDesktopServices::CacheLocation));
     m_manager.setCache(cache);
+    */
     connect(&m_manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(handleNetworkData(QNetworkReply*)));
 }
