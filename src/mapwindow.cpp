@@ -21,7 +21,6 @@ MapWindow::MapWindow(QWidget *parent) :
     connect(ui->actionZoom_In, SIGNAL(triggered()), ui->mapWidget, SLOT(zoomIn()));
     connect(ui->actionZoom_Out, SIGNAL(triggered()), ui->mapWidget, SLOT(zoomOut()));
 
-
     QTimer::singleShot(0, this, SLOT(delayedInit()));
 }
 

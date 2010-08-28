@@ -22,6 +22,7 @@ public:
     int width;
     int height;
     int zoom;
+    bool visible;
     qreal latitude;
     qreal longitude;
 

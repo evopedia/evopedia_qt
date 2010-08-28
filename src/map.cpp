@@ -122,7 +122,7 @@ SlippyMap::SlippyMap(QObject *parent)
 }
 
 void SlippyMap::invalidate() {
-    if (width <= 0 || height <= 0)
+    if (width <= 0 || height <= 0 || !visible)
         return;
 
     QPointF ct = tileForCoordinate(latitude, longitude, zoom);
