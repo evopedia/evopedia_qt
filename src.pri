@@ -1,8 +1,3 @@
-DEFINES += "EVOPEDIA_VERSION=\"\\\"0.4.0\\\"\""
-DEFINES += "EVOPEDIA_WEBSITE=\"\\\"http://evopedia.info\\\"\""
-DEFINES += "EVOPEDIA_DUMP_SITE=\"\\\"http://dumpathome.evopedia.info/dumps/finished\\\"\""
-DEFINES += "EVOPEDIA_BUG_SITE=\"\\\"https://bugs.maemo.org/enter_bug.cgi?product=evopedia\\\"\""
-
 QT += core gui network
 INCLUDEPATH += src
 SOURCES +=  src/mainwindow.cpp \
@@ -38,7 +33,8 @@ HEADERS += src/mainwindow.h \
     src/mapwindow.h \
     src/flickablemap.h \
     src/evopediaapplication.h \
-    src/archive.h
+    src/archive.h \
+    src/defines.h
 
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
 
