@@ -1,10 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Encoding=UTF-8
 Name=Evopedia
 Comment=Offline Wikipedia Reader
+Categories=Utility;Education;Qt;
 Exec=/usr/bin/evopedia
-Categories=Utility
-Icon=/usr/share/pixmaps/wikipedia48.png
+Icon=/usr/share/pixmaps/evopedia-64x64.png
 Terminal=false

@@ -52,7 +52,6 @@ OTHER_FILES += \
     src/evopedia.desktop \
     src/evopedia.js \
     src/header.html \
-    src/wikipedia48.png \
     src/wikipedia.png \
     src/transtbl.dat \
     src/random.png \
@@ -85,9 +84,9 @@ unix {
 
   target.path =$$BINDIR
 
-  desktop.path = $$DATADIR/applications/hildon
+  desktop.path = $$DATADIR/applications
   desktop.files += src/$${TARGET}.desktop
 
   iconxpm.path = $$DATADIR/pixmaps
-  iconxpm.files += src/wikipedia48.png
+  iconxpm.files += src/evopedia-64x64.png
 }

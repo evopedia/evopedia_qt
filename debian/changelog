@@ -1,4 +1,4 @@
-evopedia (0.4.1) unstable; urgency=low
+evopedia (0.4.1) lucid; urgency=low
 
   * network usage settings
   * map tiles are cached (sharing the folder of mappero)
@@ -6,10 +6,10 @@ evopedia (0.4.1) unstable; urgency=low
   * German and French translation
   * bugfixes (closes: #10833, #11053, #11153)
 
- -- Christian Reitwiessner <christian@evopedia.info>  Sun, 21 Aug 2010 20:34:50 +0200
+ -- Evopedia Developers <devs@evopedia.info>  Sun, 21 Aug 2010 20:34:50 +0200
 
-evopedia (0.4.0) unstable; urgency=low
+evopedia (0.4.0) lucid; urgency=low
 
   * Reimplementation of evopedia using Qt
 
- -- Christian Reitwiessner <christian@evopedia.info>  Sun, 01 Aug 2010 00:34:50 +0200
+ -- Evopedia Developers <devs@evopedia.info>  Sun, 01 Aug 2010 00:34:50 +0200
