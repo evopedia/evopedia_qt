@@ -191,10 +191,11 @@ void MainWindow::on_actionConfigure_Dumps_triggered()
 void MainWindow::on_actionAbout_triggered()
 {
     const QString version(EVOPEDIA_VERSION);
-    QMessageBox msgBox(QMessageBox::NoIcon, tr("About Evopedia"),
-                             tr("<h2>Evopedia %1</h2>"
-                             "Offline Wikipedia Viewer"
-                             "<p><b>Copyright Information<b><br/>"
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(tr("About Evopedia"));
+    msgBox.setText(tr("<h2>Evopedia %1</h2>"
+                             "<p>Offline Wikipedia Viewer</p>"
+                             "<p>Copyright Information<br/>"
                              "<small>This program shows articles from "
                              "<a href=\"http://wikipedia.org\">Wikipedia</a>, "
                              "available under the "
@@ -202,11 +203,18 @@ void MainWindow::on_actionAbout_triggered()
                              "Creative Commons Attribution/Share-Alike License</a>. "
                              "Further information can be found via the links "
                              "to the online versions of the respective "
-                             "articles.</small></p>").arg(version), QMessageBox::Ok, this);
-    msgBox.setIconPixmap(QPixmap(":/static/wikipedia.png"));
-    QPushButton *websiteButton = msgBox.addButton("Visit Website", QMessageBox::AcceptRole);
-    QPushButton *downloadButton = msgBox.addButton("Download Dumps", QMessageBox::AcceptRole);
-    QPushButton *bugButton = msgBox.addButton("Report Bug", QMessageBox::AcceptRole);
+                             "articles.</small></p>"
+                             "<p>Authors<br/>"
+                             "<small>"
+                             "Code: Christian Reitwiessner<br/>"
+                             "Icon: Joachim Schiele<br/>"
+                             "Translations: mossroy (French)"
+                             "</small></p>").arg(version));
+    msgBox.setIconPixmap(QPixmap(":/web/evopedia-64x64.png"));
+    QPushButton *websiteButton = msgBox.addButton(tr("Visit Website"), QMessageBox::AcceptRole);
+    QPushButton *downloadButton = msgBox.addButton(tr("Download Dumps"), QMessageBox::AcceptRole);
+    QPushButton *bugButton = msgBox.addButton(tr("Report Bug"), QMessageBox::AcceptRole);
+    msgBox.setStandardButtons(QMessageBox::Close);
 
     msgBox.exec();
 
