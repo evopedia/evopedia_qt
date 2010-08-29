@@ -1,4 +1,6 @@
-<!DOCTYPE TS><TS>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.0" language="de_DE">
 <context>
     <name>ArticleOverlay</name>
     <message>
@@ -14,11 +16,11 @@
     </message>
     <message>
         <source>Add Dump</source>
-        <translation>Dump hinzufügen</translation>
+        <translation type="obsolete">Dump hinzufügen</translation>
     </message>
     <message>
         <source>Remove Dump</source>
-        <translation>Dump entfernen</translation>
+        <translation type="obsolete">Dump entfernen</translation>
     </message>
     <message>
         <source>Open Dump Directory</source>
@@ -34,7 +36,15 @@
     </message>
     <message>
         <source>%1 (%2), %3 articles</source>
-        <translation>%1 (%2), %3 Artikel</translation>
+        <translation type="obsolete">%1 (%2), %3 Artikel</translation>
+    </message>
+    <message>
+        <source>Menu</source>
+        <translation>Menü</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Aktualisieren</translation>
     </message>
 </context>
 <context>
@@ -71,6 +81,33 @@
         <source>Error storing settings.</source>
         <translation>Fehler beim Speichern der Einstellungen.</translation>
     </message>
+    <message>
+        <source>Network</source>
+        <translation>Netzwerk</translation>
+    </message>
+    <message>
+        <source>Network Auto</source>
+        <translation>Netzwerk auto</translation>
+    </message>
+    <message>
+        <source>Allow</source>
+        <translation>erlauben</translation>
+    </message>
+    <message>
+        <source>Deny</source>
+        <translation>verbieten</translation>
+    </message>
+    <message>
+        <source>Download Dumps</source>
+        <translation>Dumps herunterladen</translation>
+    </message>
+</context>
+<context>
+    <name>EvopediaWebServer</name>
+    <message>
+        <source>Other Languages</source>
+        <translation>Andere Sprachen</translation>
+    </message>
 </context>
 <context>
     <name>FlickableMap</name>
@@ -99,7 +136,23 @@
     </message>
     <message>
         <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;Offline Wikipedia Viewer&lt;p&gt;&lt;b&gt;Copyright Information&lt;b&gt;&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;</source>
-        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;Offline Wikipedia&lt;p&gt;&lt;b&gt;Urheberrechtsinformationen&lt;b&gt;&lt;br/&gt;&lt;small&gt;Dieses Programm zeigt Artikel aus &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, die unter der &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike Lizenz&lt;/a&gt; stehen. Nähere Informationen erhalten Sie über die Links zu den Originalversionen der entsprechenden Artikel.&lt;/small&gt;&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;h2&gt;Evopedia %1&lt;/h2&gt;Offline Wikipedia&lt;p&gt;&lt;b&gt;Urheberrechtsinformationen&lt;b&gt;&lt;br/&gt;&lt;small&gt;Dieses Programm zeigt Artikel aus &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, die unter der &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike Lizenz&lt;/a&gt; stehen. Nähere Informationen erhalten Sie über die Links zu den Originalversionen der entsprechenden Artikel.&lt;/small&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: mossroy (French)&lt;/small&gt;&lt;/p&gt;</source>
+        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia&lt;/p&gt;&lt;p&gt;Urheberrechtsinformationen&lt;br/&gt;&lt;small&gt;Dieses Programm zeigt Artikel aus &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, die unter der &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike Lizenz&lt;/a&gt; stehen. Nähere Informationen erhalten Sie über die Links zu den Originalversionen der entsprechenden Artikel.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Autoren&lt;br/&gt;&lt;small&gt;Programmcode: Christian Reitwiessner&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Übersetzungen: mossroy (Französisch)&lt;/small&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Visit Website</source>
+        <translation>Webseite anzeigen</translation>
+    </message>
+    <message>
+        <source>Download Dumps</source>
+        <translation>Dumps herunterladen</translation>
+    </message>
+    <message>
+        <source>Report Bug</source>
+        <translation>Fehler melden</translation>
     </message>
 </context>
 <context>

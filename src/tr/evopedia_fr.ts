@@ -14,11 +14,11 @@
     </message>
     <message>
         <source>Add Dump</source>
-        <translation>Ajouter un dump</translation>
+        <translation type="obsolete">Ajouter un dump</translation>
     </message>
     <message>
         <source>Remove Dump</source>
-        <translation>Supprimer le dump</translation>
+        <translation type="obsolete">Supprimer le dump</translation>
     </message>
     <message>
         <source>Open Dump Directory</source>
@@ -34,7 +34,15 @@
     </message>
     <message>
         <source>%1 (%2), %3 articles</source>
-        <translation>%1 (%2), %3 articles</translation>
+        <translation type="obsolete">%1 (%2), %3 articles</translation>
+    </message>
+    <message>
+        <source>Menu</source>
+        <translation type="unfinished">Menu</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -71,6 +79,33 @@
         <source>Error storing settings.</source>
         <translation>Erreur à l&apos;enregistrement des paramètres.</translation>
     </message>
+    <message>
+        <source>Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Network Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deny</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download Dumps</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EvopediaWebServer</name>
+    <message>
+        <source>Other Languages</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FlickableMap</name>
@@ -99,7 +134,23 @@
     </message>
     <message>
         <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;Offline Wikipedia Viewer&lt;p&gt;&lt;b&gt;Copyright Information&lt;b&gt;&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;</source>
-        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;Wikipedia Offline&lt;p&gt;&lt;b&gt;Informations de Copyright&lt;b&gt;&lt;br/&gt;&lt;small&gt;Ce programme affiche des articles issus de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, qui sont disponibles sous la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;licence Creative Commons Attribution/Share-Alike&lt;/a&gt;. Plus d&apos;information peut être trouvé via les liens vers la version originale des articles respectifs.&lt;/small&gt;&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;h2&gt;Evopedia %1&lt;/h2&gt;Wikipedia Offline&lt;p&gt;&lt;b&gt;Informations de Copyright&lt;b&gt;&lt;br/&gt;&lt;small&gt;Ce programme affiche des articles issus de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, qui sont disponibles sous la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;licence Creative Commons Attribution/Share-Alike&lt;/a&gt;. Plus d&apos;information peut être trouvé via les liens vers la version originale des articles respectifs.&lt;/small&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: mossroy (French)&lt;/small&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Visit Website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download Dumps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report Bug</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
