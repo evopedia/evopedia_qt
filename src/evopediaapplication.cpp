@@ -3,6 +3,7 @@
 #include <QTranslator>
 
 #include "mainwindow.h"
+#include "utils.h"
 
 EvopediaApplication::EvopediaApplication(int &argc, char **argv) :
     QApplication(argc, argv)
@@ -32,6 +33,9 @@ EvopediaApplication::~EvopediaApplication()
 
 int main(int argc, char *argv[])
 {
+    /* initialize random number generator */
+    randomNumber(2);
+
     EvopediaApplication app(argc, argv);
     return app.exec();
 }
