@@ -177,6 +177,26 @@
         <source>Zoom Out</source>
         <translation>Herauszoomen</translation>
     </message>
+    <message>
+        <source>Go to GPS Position</source>
+        <translation>Gehe zu GPS Position</translation>
+    </message>
+    <message>
+        <source>Use GPS</source>
+        <translation>Benutze GPS</translation>
+    </message>
+    <message>
+        <source>Follow GPS</source>
+        <translation>Folge GPS</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Fehler</translation>
+    </message>
+    <message>
+        <source>No position info source available.</source>
+        <translation>Keine Positionierungsquelle verfügbar.</translation>
+    </message>
 </context>
 <context>
     <name>StorageBackend</name>

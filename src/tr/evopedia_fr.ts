@@ -175,6 +175,26 @@
         <source>Zoom Out</source>
         <translation>Zoom -</translation>
     </message>
+    <message>
+        <source>Go to GPS Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use GPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Follow GPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished">Erreur</translation>
+    </message>
+    <message>
+        <source>No position info source available.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StorageBackend</name>

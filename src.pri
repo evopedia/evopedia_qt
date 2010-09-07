@@ -1,10 +1,10 @@
 QT += core gui network
 INCLUDEPATH += src
-SOURCES +=  src/mainwindow.cpp \
- src/storagebackend.cpp \
- src/title.cpp \
- src/titleiterator.cpp \
- src/titlelistmodel.cpp \
+SOURCES += src/mainwindow.cpp \
+    src/storagebackend.cpp \
+    src/title.cpp \
+    src/titleiterator.cpp \
+    src/titlelistmodel.cpp \
     src/evopedia.cpp \
     src/bzreader.cpp \
     src/evopediawebserver.cpp \
@@ -18,10 +18,10 @@ SOURCES +=  src/mainwindow.cpp \
     src/archive.cpp
 
 HEADERS += src/mainwindow.h \
- src/storagebackend.h \
- src/title.h \
- src/titlelistmodel.h \
- src/titleiterator.h \
+    src/storagebackend.h \
+    src/title.h \
+    src/titlelistmodel.h \
+    src/titleiterator.h \
     src/evopedia.h \
     src/bzreader.h \
     src/evopediawebserver.h \
@@ -43,7 +43,14 @@ FORMS += src/mainwindow.ui \
     src/mapwindow.ui
 
 CONFIG += warn_on
-unix:LIBS += -lbz2
+maemo5 {
+    CONFIG += mobility
+    DEFINES += USE_MOBILITY
+    MOBILITY += location
+}
+!symbian {
+    LIBS += -lbz2
+}
 DEFINES += QT_NO_CAST_TO_ASCII
 DEFINES += QT_NO_CAST_FROM_BYTEARRAY
 
