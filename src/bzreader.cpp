@@ -34,5 +34,7 @@ const QByteArray BZReader::readAt(QFile &f, quint32 blockStart, quint32 blockOff
         inbuffer = inbuffer.right(stream.avail_in);
     } while (stream.avail_out != 0);
 
+    BZ2_bzDecompressEnd(&stream);
+
     return outbuffer.mid(blockOffset, dataLength);
 }
