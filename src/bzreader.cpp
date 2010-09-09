@@ -12,7 +12,7 @@ const QByteArray BZReader::readAt(QFile &f, quint32 blockStart, quint32 blockOff
 {
     memset(&stream, 0, sizeof(stream));
     if (BZ2_bzDecompressInit(&stream, 0, 0) != BZ_OK)
-        return ByteArray();
+        return QByteArray();
 
     f.seek(blockStart);
     QByteArray outbuffer(blockOffset + dataLength, '\0');
