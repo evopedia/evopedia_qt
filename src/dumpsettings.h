@@ -1,14 +1,13 @@
 #ifndef DUMPSETTINGS_H
 #define DUMPSETTINGS_H
 
-#include <QDialog>
-#include <QListWidget>
-#include <QList>
-#include <QNetworkAccessManager>
 #include <QMainWindow>
+#include <QList>
 
 #include "storagebackend.h"
 #include "archive.h"
+
+class Evopedia;
 
 namespace Ui {
     class DumpSettings;
@@ -21,22 +20,13 @@ public:
     explicit DumpSettings(QWidget *parent = 0);
     ~DumpSettings();
 
-signals:
-
-protected slots:
-    void updateView();
-
 private slots:
-    void on_actionRefresh_triggered();
-    void manualAddClicked();
-    void on_dumpList_itemSelectionChanged();
-    void backendsChanged(const QList<StorageBackend *>backends);
-    void networkFinished(QNetworkReply *reply);
+    void addButtonClicked();
+    void refreshButtonClicked();
 
 private:
-    QNetworkAccessManager netManager;
-    QList<Archive> archives;
     Ui::DumpSettings *ui;
+    Evopedia *evopedia;
 };
 
 #endif // DUMPSETTINGS_H

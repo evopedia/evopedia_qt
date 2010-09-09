@@ -12,6 +12,7 @@
 #include <QLocale>
 #include <QCryptographicHash>
 
+#include "evopedia.h"
 #include "utils.h"
 
 EvopediaWebServer::EvopediaWebServer(Evopedia *evopedia) :
@@ -138,9 +139,9 @@ void EvopediaWebServer::redirectRandom(QTcpSocket *socket, const QStringList &pa
 {
     StorageBackend *backend = 0;
     if (pathParts.length() >= 2) {
-        backend = evopedia->getBackend(pathParts[1]);
+        backend = evopedia->archivemanager->getBackend(pathParts[1]);
     } else {
-        backend = evopedia->getRandomBackend();
+        backend = evopedia->archivemanager->getRandomBackend();
     }
     if (backend == 0) {
         outputHeader(socket, "404");
@@ -159,7 +160,7 @@ void EvopediaWebServer::outputMathImage(QTcpSocket *socket, const QStringList &p
 {
     const QByteArray hexHash = QByteArray::fromHex(pathParts.last().left(32).toAscii());
     QByteArray data;
-    foreach (StorageBackend *backend, evopedia->getBackends()) {
+    foreach (StorageBackend *backend, evopedia->archivemanager->getBackends()) {
         data = backend->getMathImage(hexHash);
         if (!data.isNull())
             break;
@@ -179,7 +180,7 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
     }
     StorageBackend *backend = 0;
     if (pathParts.length() >= 3)
-        backend = evopedia->getBackend(pathParts[1]);
+        backend = evopedia->archivemanager->getBackend(pathParts[1]);
     if (backend == 0) {
         if (pathParts[1].length() > 1 && evopedia->networkConnectionAllowed() && pathParts.length() >= 3) {
             /* TODO special characters in title */
@@ -187,7 +188,7 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
             outputRedirect(socket, redirectTo);
             return;
         }
-        foreach (StorageBackend *b, evopedia->getBackends()) {
+        foreach (StorageBackend *b, evopedia->archivemanager->getBackends()) {
             const Title t = b->getTitleFromPath(pathParts);
             if (t.getName().isEmpty())
                 continue;
@@ -272,7 +273,7 @@ QByteArray EvopediaWebServer::extractInterLanguageLinks(QByteArray &data)
         const QString language(rx.cap(4));
         QByteArray option(QString("<option value=\"/wiki/%1/%2\">%3</option>")
                           .arg(langID).arg(link).arg(language).toUtf8());
-        if (evopedia->hasLanguage(langID))
+        if (evopedia->archivemanager->hasLanguage(langID))
             installedLanguages += option;
         else
             otherLanguages += option;

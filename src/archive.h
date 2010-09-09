@@ -10,10 +10,11 @@ public:
     QString date;
     QString size;
     QString articleCount;
+    QString url;
 
     /* TODO pointer to some bittorrent object? */
 
-    enum State {Installed, Downloading, OnServer};
+    enum State {Installed, Downloading, InstallationCandidate};
 
     State state;
 

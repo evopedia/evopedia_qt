@@ -1,6 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include "evopedia.h"
+
 #include <QObject>
 #include <QList>
 #include <QRect>
@@ -10,9 +12,7 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 
-#include "evopedia.h"
 #include "flickable.h"
-
 
 class SlippyMap: public QObject
 {

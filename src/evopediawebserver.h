@@ -6,7 +6,7 @@
 #include <QString>
 #include <QUrl>
 
-#include "evopedia.h"
+class Evopedia;
 
 class EvopediaWebServer : public QTcpServer
 {

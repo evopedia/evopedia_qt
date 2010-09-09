@@ -15,7 +15,8 @@ SOURCES +=  src/mainwindow.cpp \
     src/mapwindow.cpp \
     src/flickablemap.cpp \
     src/evopediaapplication.cpp \
-    src/archive.cpp
+    src/archive.cpp \
+    src/archivemanager.cpp
 
 HEADERS += src/mainwindow.h \
  src/storagebackend.h \
@@ -34,7 +35,8 @@ HEADERS += src/mainwindow.h \
     src/flickablemap.h \
     src/evopediaapplication.h \
     src/archive.h \
-    src/defines.h
+    src/defines.h \
+    src/archivemanager.h
 
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
 

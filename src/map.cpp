@@ -308,7 +308,7 @@ ArticleOverlay::ArticleOverlay(SlippyMap *parent)
     connect(parent, SIGNAL(tileRendered(QPainter*,QPoint,QRect)), SLOT(tileRendered(QPainter*,QPoint,QRect)));
     connect(parent, SIGNAL(mouseClicked(QPoint,QPoint)), SLOT(mouseClicked(QPoint,QPoint)));
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
-    connect(evopedia, SIGNAL(backendsChanged(const QList<StorageBackend*>)), SLOT(backendsChanged(const QList<StorageBackend*>)));
+    connect(evopedia->archivemanager, SIGNAL(backendsChanged(const QList<StorageBackend*>)), SLOT(backendsChanged(const QList<StorageBackend*>)));
 }
 
 ArticleOverlay::GeoTitleList ArticleOverlay::getTitles(const QRectF &rect, int maxTitles)
@@ -318,7 +318,7 @@ ArticleOverlay::GeoTitleList ArticleOverlay::getTitles(const QRectF &rect, int m
     list.complete = false;
 
     /* TODO2 fair division between languages? */
-    foreach (StorageBackend *b, evopedia->getBackends()) {
+    foreach (StorageBackend *b, evopedia->archivemanager->getBackends()) {
         list.list += b->getTitlesInCoords(rect, maxTitles - list.list.length());
         if (list.list.length() >= maxTitles)
             return list;
