@@ -1,51 +1,132 @@
 #include "archivemanager.h"
-
 #include <QSettings>
 #include <QStringList>
 #include <QDir>
 #include <QUrl>
 #include <QMessageBox>
+#include <QStandardItemModel>
+
 #include "utils.h"
 
 ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent) {
+    m_model = new QStandardItemModel(this);
+    m_model->setColumnCount(3);
+
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (settings.contains("evopedia/data_directory")) {
-        /* old format */
+        /* update 'old format' stuff */
         QString data_dir(settings.value("evopedia/data_directory").toString());
         settings.remove("evopedia/data_directory");
         settings.setValue("dump_UNKNOWN/data_directory", data_dir);
         settings.sync();
-        connect(&netManager, SIGNAL(finished(QNetworkReply*)), SLOT(networkFinished(QNetworkReply*)));
-        updateRemoteArchives();
     }
+    connect(&netManager, SIGNAL(finished(QNetworkReply*)), SLOT(networkFinished(QNetworkReply*)));
+    QString d;
+    addArchive("/home/", d);
 
+    // restore evopedia archives (local evopedia installations)
     foreach (QString group, settings.childGroups()) {
         if (!group.startsWith("dump_"))
             continue;
         QString data_dir(settings.value(group + "/data_directory").toString());
-        StorageBackend *backend = new StorageBackend(data_dir, this);
-        if (!backend->isReadable()) {
-            delete backend;
-        } else {
+        QString ret;
+        //FIXME maybe we are interested in a error message? (js)
+        if (addArchive(data_dir, ret)) {
+            //FIXME please check this code, is that correct? (js)
+            /*
             if (group.indexOf('_', 5) < 0) {
-                /* old format, convert */
-                settings.remove(group);
-                settings.setValue(QString("dump_%1_%2/data_directory")
-                                  .arg(backend->getLanguage(), backend->getDate()),
-                                      backend->getDirectory());
-                settings.sync();
-            }
-            storages[backend->getLanguage()] += backend;
-        }
+                 // old format, convert
+                 settings.remove(group);
+                 settings.setValue(QString("dump_%1_%2/data_directory")
+                    .arg(backend->getLanguage(), backend->getDate()),
+                 backend->getDirectory());
+                 settings.sync();
+             }
+             */
+         }
+    // FIXME: restore torrent archives
     }
+    emit updateBackends();
+}
 
-    for (QHash<QString, QList<StorageBackend *> >::iterator
-            i = storages.begin(); i != storages.end(); i ++)
-        qSort(*i);
+/*! updates the list of remove downloads, torrents for example */
+void ArchiveManager::updateRemoteArchives() {
+    netManager.get(QNetworkRequest(QUrl(EVOPEDIA_URL)));
+}
+
+// add a list of possible downloads to the ArchiveManager
+void ArchiveManager::networkFinished(QNetworkReply *reply)
+{
+    //FIXME if the network does not work we need a timeout handler for error messages
+    QString data = QString::fromUtf8(reply->readAll().constData());
+
+    // remove all remote objects, then repopulate it with up2date items
+    // IMPLEMENT THIS
+    // use removeArchive(identifier);
+
+    // wikipedia_de_2010-07-27.torrent
+    QRegExp rx("wikipedia_.._....-..-..\\.torrent");
+    rx.setMinimal(true);
+
+    int pos = 0;
+    while((pos = rx.indexIn(data, pos)) != -1) {
+        /*
+        Archive a;
+        QString torrent_link = data.mid(pos, rx.matchedLength());
+        a.language = torrent_link.mid(10,2);
+        a.date = torrent_link.mid(13,10);
+        a.url = EVOPEDIA_URL + torrent_link;
+        a.size = "? GB";
+        a.state = Archive::InstallationCandidate;
+        addArchive(a);
+        */
+        pos += rx.matchedLength();
+    }
+}
+
+//FIXME implement this
+bool ArchiveManager::addArchive(QString dir, QString& ret) {
+    ArchiveItem* item = new ArchiveItem;
+    item->setText("testitem");
+    m_model->setItem(0, 0, item);
+}
+
+/*! used to store the current list of Archives. so next program start one can resume using these*/
+void ArchiveManager::store() {
+  //FIXME implement this
+}
+
+QStandardItemModel* ArchiveManager::model() {
+    return m_model;
+}
+
+/*! whenever a valid archive is added or setDefaultArchive(..) is used this function must be called
+**  also befor an archive is removed while that archive has enabled=false set */
+void ArchiveManager::updateBackends()
+{
+    //FIXME rowsAboutToBeRemoved singal should be linked here as well
+    const QList<StorageBackend *>backends = getBackends();
+    emit backendsChanged(backends);
+}
+
+const QList<StorageBackend *> ArchiveManager::getBackends() const
+{
+    //FIXME!!!
+    QList<StorageBackend *>backends;
+    //QHash<QString, QList<StorageBackend *> > storages;
+    /*
+    foreach (QList<StorageBackend *>backends_it, storages)
+        backends += backends_it;
+    return backends;
+    */
+    return backends;
 }
 
 StorageBackend *ArchiveManager::getBackend(const QString language, const QString date) const
 {
+    //FIXME!!!
+    /*
+    QHash<QString, QList<StorageBackend *> > storages = getBackends();
     if (!storages.contains(language))
         return 0;
 
@@ -58,20 +139,15 @@ StorageBackend *ArchiveManager::getBackend(const QString language, const QString
         if (b->getDate() == date)
             return b;
     }
+    */
     return 0;
-}
-
-const QList<StorageBackend *> ArchiveManager::getBackends() const
-{
-    /* TODO is this efficient enough? */
-    QList<StorageBackend *>backends;
-    foreach (QList<StorageBackend *>backends_it, storages)
-        backends += backends_it;
-    return backends;
 }
 
 StorageBackend *ArchiveManager::getRandomBackend() const
 {
+    //FIXME!!!
+    /*
+    QHash<QString, QList<StorageBackend *> > storages = getBackends();
     quint32 numArticles = 0;
     foreach (QList<StorageBackend *>l, storages)
         foreach (StorageBackend *b, l)
@@ -88,129 +164,7 @@ StorageBackend *ArchiveManager::getRandomBackend() const
             }
         }
     }
+    */
     return 0;
 }
 
-void ArchiveManager::addBackend(StorageBackend *backend)
-{
-    if (backend == 0 || !backend->isReadable())
-        return;
-
-    backend->setParent(this);
-
-    const QString language(backend->getLanguage());
-    const QString date(backend->getDate());
-
-    QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
-    if (!settings.isWritable()) {
-        QMessageBox::critical(0, tr("Error"), tr("Unable to store settings."));
-        delete backend;
-        return;
-    }
-    settings.setValue(QString("dump_%1_%2/data_directory")
-                      .arg(language, date),
-                          backend->getDirectory());
-    StorageBackend *b2 = getBackend(language, date);
-    if (b2 != 0) {
-        int i = storages[language].indexOf(b2);
-        storages[language][i] = backend;
-        delete b2;
-    } else {
-        storages[language] += backend;
-        qSort(storages[language]);
-    }
-    settings.sync();
-
-    const QList<StorageBackend *>backends = getBackends();
-    emit backendsChanged(backends);
-}
-
-void ArchiveManager::removeBackend(StorageBackend *backend)
-{
-    if (backend == 0) return;
-
-    const QString language(backend->getLanguage());
-    const QString date(backend->getDate());
-
-    if (getBackend(language, date) != backend) return;
-
-    QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
-    if (!settings.isWritable()) {
-        QMessageBox::critical(0, tr("Error"), tr("Error storing settings."));
-        return;
-    }
-    settings.remove(QString("dump_%1_%2").arg(language, date));
-    if (storages[language].length() == 1) {
-        storages.remove(language);
-    } else {
-        storages[language].removeOne(backend);
-    }
-    delete backend;
-    settings.sync();
-
-    const QList<StorageBackend *>backends = getBackends();
-    emit backendsChanged(backends);
-}
-
-/*! sets the default archive to be used for the language the archive is in*/
-bool ArchiveManager::setActiveBackend(int index) {
-    return false;
-}
-
-/*! add a new archive:
-** - a local archive    (already downloaded)
-** - a remove archive   (used for selecting downloads)
-** - a torrent download (this archive is persistent until done or removed)
-*/
-bool ArchiveManager::addArchive(QString dir, QString &ret){
-        StorageBackend *backend = new StorageBackend(dir, this);
-        if (!backend->isReadable()) {
-            ret=backend->getErrorMessage();
-            delete backend;
-        } else {
-            // transfers ownership
-            addBackend(backend);
-            return true;
-        }
-        return false;
-}
-
-/*! removes an archive from the manager */
-void ArchiveManager::delArchive(int index){
-
-}
-
-/*! updates the list of remove downloads, torrents for example */
-void ArchiveManager::updateRemoteArchives() {
-    netManager.get(QNetworkRequest(QUrl(EVOPEDIA_URL)));
-}
-
-// add a list of possible downloads to the ArchiveManager
-void ArchiveManager::networkFinished(QNetworkReply *reply)
-{
-    QString data = QString::fromUtf8(reply->readAll().constData());
-
-    // remove all remote objects, then repopulate it with up2date items
-    QMutableListIterator<Archive> i(archives);
-    while (i.hasNext())
-        if (i.next().state == Archive::InstallationCandidate)
-            i.remove();
-
-    // wikipedia_de_2010-07-27.torrent
-    QRegExp rx("wikipedia_.._....-..-..\\.torrent");
-    rx.setMinimal(true);
-
-    int pos = 0;
-    while((pos = rx.indexIn(data, pos)) != -1) {
-        Archive a;
-        QString torrent_link = data.mid(pos, rx.matchedLength());
-        a.language = torrent_link.mid(10,2);
-        a.date = torrent_link.mid(13,10);
-        a.url = EVOPEDIA_URL + torrent_link;
-        a.size = "? GB";
-        a.state = Archive::InstallationCandidate;
-        archives += a;
-
-        pos += rx.matchedLength();
-    }
-}

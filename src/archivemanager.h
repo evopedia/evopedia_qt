@@ -41,10 +41,26 @@ i will build an algorithm to enforce that policy
 
 General:
  - if a download was started, resume it when this application is started
- - the netManager should only be started when the gui is actually shown (show()), not on program start
- -> that has something to do with the 'unintuitive' design of the 'refresh' button, which
-    took me quite some time to figure out that it 'actually' existet ;P
+ - the netManager:
+  - should only be started when the gui is actually shown (show())
+  - can be 'refresh'ed manually using a button
  - the size/contents of the torrents can be queried when contacting the tracker
+
+===============================================================
+ new design:
+===============================================================
+ - an archive can be used as backend if it validates correctly
+ - everything is an archive:
+  - local evopedias (either valid or invalid)
+  - a remote object (installation candidate)
+  - torrent downloads (they are stored on program exit and restored on program start)
+   - a active download (torrent)
+   - a paused download (torrent)
+ - if an archive quallifies as a valid backend, it's status changes 'by user authority' into a backend
+  - downloads which have finished
+  - achrives which have been added manually
+  - if the newly added archive is the only archive represnting a language (as 'de') it is selected as default
+    but if there are other (or at least one additional) 'de' installation the user has to pick which one to use
 */
 
 #ifndef ARCHIVEMANAGER_H
@@ -58,10 +74,13 @@ General:
 #include <QNetworkReply>
 #include <QObject>
 
-#include "storagebackend.h"
 #include "archive.h"
+#include "storagebackend.h"
+#include "archiveitem.h"
 
 #define EVOPEDIA_URL "http://dumpathome.evopedia.info/dumps/finished"
+
+class QStandardItemModel;
 
 /*! manages different wikipedia dumps (called Archive)
 ** - this class should be instantiated only once
@@ -78,28 +97,29 @@ public:
     explicit ArchiveManager(QObject* parent);
 
     // functions to handle archives (invalid backends)
-    bool setActiveBackend(int index);
+    bool setDefaultArchive(int identifier);
     bool addArchive(QString dir, QString& ret);
-    void delArchive(int index);
+    //bool addArchive(Archive a);
+    void delArchive(int identifier);
     void updateRemoteArchives();
+    void store();
 
     // functions to handle backends (valid archives)
     StorageBackend *getBackend(const QString language, const QString date=QString()) const;
     StorageBackend *getRandomBackend() const;
     const QList<StorageBackend *> getBackends() const;
-    bool hasLanguage(const QString language) const { return storages.contains(language); }
+    //FIXME the next line is not working!
+    bool hasLanguage(const QString language) const { return false; /*storages.contains(language)*/; }
+    QStandardItemModel* model();
 
 signals:
     void backendsChanged(const QList<StorageBackend *> backends);
-
 private slots:
         void networkFinished(QNetworkReply *reply);
+        void updateBackends();
 private:
-    QHash<QString, QList<StorageBackend *> > storages;
+    QStandardItemModel* m_model;
     QNetworkAccessManager netManager;
-    QList<Archive> archives;
-    void addBackend(StorageBackend *backend);
-    void removeBackend(StorageBackend *backend);
 };
 
 #endif

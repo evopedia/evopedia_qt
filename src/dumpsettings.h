@@ -23,6 +23,7 @@ public:
 private slots:
     void addButtonClicked();
     void refreshButtonClicked();
+    void showContextMenu(const QPoint &position);
 
 private:
     Ui::DumpSettings *ui;
