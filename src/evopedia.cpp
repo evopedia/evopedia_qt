@@ -2,8 +2,6 @@
 #include "evopedia.h"
 #include "utils.h"
 #include "storagebackend.h"
-#include "archive.h"
-
 
 Evopedia::Evopedia(QObject *parent)
     : QObject(parent), networkUse(0)

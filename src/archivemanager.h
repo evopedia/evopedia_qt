@@ -1,5 +1,14 @@
 /*
 ===============================================================
+  todo
+===============================================================
+ - fix dump parser
+ - give feedback if network is down
+ - messageboxes for errors in archivemanager
+ - make removal of local evopedias possible
+ - fix random article
+
+===============================================================
  how to find torrents
 ===============================================================
 this regexp filter is needed to get all torrent links
@@ -32,12 +41,16 @@ wikipedia_de_2010-07-27.torrent <--> wikipedia_de_2010-07-27/
 ===============================================================
  how to deploy
 ===============================================================
-all files in a torrent, example:
+I) all files in a torrent, example:
   http://evopedia.info/dumps/wikipedia_en_2010-06-22.torrent
 must be in a respective directory, example:
   wikipedia_en_2010-06-22/
 
-i will build an algorithm to enforce that policy
+II) all filename <-> in torrent filenames must match, that is:
+   - language
+   - date
+
+an algorithm will be used to enforce the policies I and II
 
 General:
  - if a download was started, resume it when this application is started
@@ -53,14 +66,16 @@ General:
  - everything is an archive:
   - local evopedias (either valid or invalid)
   - a remote object (installation candidate)
-  - torrent downloads (they are stored on program exit and restored on program start)
+  - torrentArchive or downloads (they are stored on program exit and restored on program start)
    - a active download (torrent)
    - a paused download (torrent)
+   - a finished download (torrent) can potentially seed
  - if an archive quallifies as a valid backend, it's status changes 'by user authority' into a backend
   - downloads which have finished
   - achrives which have been added manually
   - if the newly added archive is the only archive represnting a language (as 'de') it is selected as default
     but if there are other (or at least one additional) 'de' installation the user has to pick which one to use
+    the default is the newer one but if an older download finishes, a dialog is asking the user
 */
 
 #ifndef ARCHIVEMANAGER_H
@@ -68,13 +83,13 @@ General:
 
 #include <QList>
 #include <QHash>
-#include <QAbstractItemModel>
+#include <QStandardItemModel>
+#include <QStandardItem>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QObject>
 
-#include "archive.h"
 #include "storagebackend.h"
 #include "archiveitem.h"
 
@@ -98,9 +113,8 @@ public:
 
     // functions to handle archives (invalid backends)
     bool setDefaultArchive(int identifier);
-    bool addArchive(QString dir, QString& ret);
-    //bool addArchive(Archive a);
-    void delArchive(int identifier);
+    ArchiveItem* addArchive(QString language, QString date, QString dir, QString torrent, QUrl url, QString& ret);
+    ArchiveItem* addArchive(QString dir, QString& ret);
     void updateRemoteArchives();
     void store();
 
@@ -108,18 +122,18 @@ public:
     StorageBackend *getBackend(const QString language, const QString date=QString()) const;
     StorageBackend *getRandomBackend() const;
     const QList<StorageBackend *> getBackends() const;
-    //FIXME the next line is not working!
-    bool hasLanguage(const QString language) const { return false; /*storages.contains(language)*/; }
+    bool hasLanguage(const QString language) const;
     QStandardItemModel* model();
-
 signals:
     void backendsChanged(const QList<StorageBackend *> backends);
+
 private slots:
         void networkFinished(QNetworkReply *reply);
         void updateBackends();
 private:
     QStandardItemModel* m_model;
     QNetworkAccessManager netManager;
+    ArchiveItem* addArchive(ArchiveItem* item);
 };
 
 #endif

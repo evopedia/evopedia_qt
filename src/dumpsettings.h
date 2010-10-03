@@ -5,7 +5,6 @@
 #include <QList>
 
 #include "storagebackend.h"
-#include "archive.h"
 
 class Evopedia;
 
@@ -23,7 +22,6 @@ public:
 private slots:
     void addButtonClicked();
     void refreshButtonClicked();
-    void showContextMenu(const QPoint &position);
 
 private:
     Ui::DumpSettings *ui;

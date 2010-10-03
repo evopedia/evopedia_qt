@@ -73,6 +73,7 @@ bool StorageBackend::checkExistenceOfDumpfiles()
         errorMessage = tr("Title file does not exist.");
         return false;
     }
+    errorMessage = tr("Valid local archive");
     return true;
 }
 
