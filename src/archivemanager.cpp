@@ -4,7 +4,6 @@
 #include <QStringList>
 #include <QDir>
 #include <QUrl>
-#include <QMessageBox>
 #include <QStandardItemModel>
 #include <QDebug>
 #include <QModelIndex>
@@ -16,8 +15,8 @@ ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent) {
     m_model = new QStandardItemModel(this);
     m_model->setColumnCount(4);
     m_model->setHeaderData(0, Qt::Horizontal, QString("lang/date"));
-    m_model->setHeaderData(1, Qt::Horizontal, QString("key"));
-    m_model->setHeaderData(2, Qt::Horizontal, QString("value"));
+    m_model->setHeaderData(1, Qt::Horizontal, QString(""));
+    m_model->setHeaderData(2, Qt::Horizontal, QString(""));
     m_model->setHeaderData(3, Qt::Horizontal, QString("status"));
 
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
@@ -37,9 +36,14 @@ ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent) {
             continue;
         QString data_dir(settings.value(group + "/data_directory").toString());
         QString ret;
-        //FIXME maybe we are interested in a error message? (js)
-
         ArchiveItem* archiveItem = addArchive(data_dir, ret);
+        if (archiveItem==NULL) {
+            //TODO find a nice way how to handle this
+            QMessageBox::critical ( NULL, "session restore: previously used evopedia archives",
+                                QString("'%1' could not be opened because: '%2'. Are you still in USB-mass storage mode or have the files moved?")
+                                .arg(data_dir)
+                                .arg(ret));
+        }
         if (archiveItem) {
             //FIXME please check this code, is that correct? (js)
             if (group.indexOf('_', 5) < 0) {
@@ -64,6 +68,12 @@ void ArchiveManager::updateRemoteArchives() {
 /*! updates the list of remote downloads, torrents for example */
 void ArchiveManager::networkFinished(QNetworkReply *reply)
 {
+    if (reply->error() != QNetworkReply::NoError) {
+        QMessageBox::critical ( NULL, "network error",
+                                QString("Can not access the network to find evopedia torrents because: '%1'")
+                                .arg(reply->errorString()));
+        return;
+    }
     //FIXME if the network does not work we need a timeout handler for error messages
     QString data = QString::fromUtf8(reply->readAll().constData());
 
@@ -72,8 +82,6 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
     rx.setMinimal(true);
 
     // let's remove all old RemoteTorrent(s) first
-    // FIXME use iterators
-
     QVector<ArchiveItem*> c;
     for(int i=0; i < m_model->rowCount(); ++i) {
         QStandardItem* langItem = m_model->item(i,0);
@@ -90,10 +98,8 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
             }
         }
     }
-//    foreach(ArchiveItem* i, c)
-//        m_model->removeRow(i->row(), i->parent()->index());
-    int pos = 0;
 
+    int pos = 0;
     // now we parse the html page to generate new RemoteTorrent(s)
     while((pos = rx.indexIn(data, pos)) != -1) {
         // FIXME use ret and display the message
@@ -148,7 +154,7 @@ ArchiveItem* ArchiveManager::addArchive(QString dir, QString& ret) {
     return addArchive(item);
 }
 
-/*! used for local archives which were torrent archives once, either with the *.torrent still around or deleted */
+/*! used for torrent based local archives which either have the *.torrent still around or not */
 ArchiveItem* ArchiveManager::addArchive(QString language, QString date, QString dir, QString torrent, QUrl url, QString& ret) {
     // 0. is it a torrent archive? was it already validated by the torrent subsystem?
     // ....
@@ -207,11 +213,6 @@ ArchiveItem* ArchiveManager::addArchive(ArchiveItem* item) {
     emit updateBackends();
 }
 
-/*! used to store the current list of Archives. so next program start one can resume using these*/
-void ArchiveManager::store() {
-
-}
-
 QStandardItemModel* ArchiveManager::model() {
     return m_model;
 }
@@ -227,7 +228,7 @@ void ArchiveManager::updateBackends()
 
 /*! retunrs a list of backends by parsing the archives structure:
 ** - validate() == true
-** - enabled() == true
+** - activated() == true
 */
 const QList<StorageBackend *> ArchiveManager::getBackends() const
 {
@@ -242,7 +243,7 @@ const QList<StorageBackend *> ArchiveManager::getBackends() const
                 ArchiveItem* item = static_cast<ArchiveItem*>(sItem);
                 // 3. add the backend
                 QString r;
-                if (item->validate(r) /*&& item->isEnabled()*/) {
+                if (item->validate(r) && item->activated()) {
                     if (item->storageBackend())
                         backends += item->storageBackend();
                 }
@@ -268,29 +269,20 @@ StorageBackend *ArchiveManager::getBackend(const QString language, const QString
 
 StorageBackend *ArchiveManager::getRandomBackend() const
 {
-    //FIXME this is not impelmented yet
-    /*
-    QHash<QString, QList<StorageBackend *> > storages = getBackends();
+    QList<StorageBackend *> backends =  getBackends();
     quint32 numArticles = 0;
-    foreach (QList<StorageBackend *>l, storages)
-        foreach (StorageBackend *b, l)
-            numArticles += b->getNumArticles();
-
+    foreach (StorageBackend *b, backends)
+        numArticles += b->getNumArticles();
     quint32 articleId = randomNumber(numArticles);
-    foreach (QList<StorageBackend *>l, storages) {
-        foreach (StorageBackend *b, l) {
-            quint32 bArticles = b->getNumArticles();
-            if (bArticles > articleId) {
-                return b;
-            } else {
-                articleId -= bArticles;
-            }
+    foreach (StorageBackend *b, backends) {
+        quint32 bArticles = b->getNumArticles();
+        if (bArticles > articleId) {
+            return b;
+        } else {
+            articleId -= bArticles;
         }
     }
-    */
-    QList<StorageBackend *> b =  getBackends();
-    if (b.size() > 0)
-        return b.first();
+
     return 0;
 }
 

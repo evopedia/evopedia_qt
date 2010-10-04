@@ -5,6 +5,7 @@
 #include <QUrl>
 #include <QString>
 #include "storagebackend.h"
+#include "storagefrontend.h"
 
 class QMenu;
 
@@ -22,6 +23,7 @@ protected:
     void extend();
     void changeBackend(int type);
     bool validate(QString &ret);
+    StorageFrontend* muffin;
     QString language();
     QString date();
     QString dir();
@@ -34,6 +36,7 @@ protected:
     void setState(QString state);
     void update();
     void store();
+    bool activated();
 public:
     QMenu* createContextMenu();
 
@@ -45,7 +48,7 @@ private:
     QString m_dir;
     QUrl m_url;
     QString m_state; // message for the user
-    bool m_enabled; // is item in use?
+    bool m_activated; // is item in use?
     StorageBackend *m_storageBackend;
 //Q_SIGNALS:
   //  void updateBackends();

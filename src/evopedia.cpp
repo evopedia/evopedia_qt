@@ -6,7 +6,7 @@
 Evopedia::Evopedia(QObject *parent)
     : QObject(parent), networkUse(0)
 {
-    archivemanager = new ArchiveManager(this); // FIXME (js) add this so that delete archivemanager is not needed
+    archivemanager = new ArchiveManager(this);
     webServer = new EvopediaWebServer(this);
     webServer->setObjectName("evopediaWebserver");
 }

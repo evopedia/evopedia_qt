@@ -1,44 +1,50 @@
 QT += core gui network
 INCLUDEPATH += src
 SOURCES +=  src/mainwindow.cpp \
- src/storagebackend.cpp \
- src/title.cpp \
- src/titleiterator.cpp \
- src/titlelistmodel.cpp \
-    src/evopedia.cpp \
-    src/bzreader.cpp \
-    src/evopediawebserver.cpp \
-    src/utils.cpp \
-    src/map.cpp \
-    src/flickable.cpp \
-    src/dumpsettings.cpp \
-    src/mapwindow.cpp \
-    src/flickablemap.cpp \
-    src/evopediaapplication.cpp \
-    src/archivemanager.cpp \
-    src/archiveitem.cpp \
-    src/treeview.cpp
+	src/storagebackend.cpp \
+	src/title.cpp \
+	src/titleiterator.cpp \
+	src/titlelistmodel.cpp \
+	src/evopedia.cpp \
+	src/bzreader.cpp \
+	src/evopediawebserver.cpp \
+	src/utils.cpp \
+	src/map.cpp \
+	src/flickable.cpp \
+	src/dumpsettings.cpp \
+	src/mapwindow.cpp \
+	src/flickablemap.cpp \
+	src/evopediaapplication.cpp \
+	src/archivemanager.cpp \
+	src/archiveitem.cpp \
+	src/treeview.cpp \
+	src/abstractfrontend.cpp \
+	src/storagefrontend.cpp \
+	src/torrentfrontend.cpp
 
 HEADERS += src/mainwindow.h \
- src/storagebackend.h \
- src/title.h \
- src/titlelistmodel.h \
- src/titleiterator.h \
-    src/evopedia.h \
-    src/bzreader.h \
-    src/evopediawebserver.h \
-    src/utils.h \
-    src/map.h \
-    src/geotitle.h \
-    src/flickable.h \
-    src/dumpsettings.h \
-    src/mapwindow.h \
-    src/flickablemap.h \
-    src/evopediaapplication.h \
-    src/defines.h \
-    src/archivemanager.h \
-    src/archiveitem.h \
-    src/treeview.h
+	src/storagebackend.h \
+	src/title.h \
+	src/titlelistmodel.h \
+	src/titleiterator.h \
+	src/evopedia.h \
+	src/bzreader.h \
+	src/evopediawebserver.h \
+	src/utils.h \
+	src/map.h \
+	src/geotitle.h \
+	src/flickable.h \
+	src/dumpsettings.h \
+	src/mapwindow.h \
+	src/flickablemap.h \
+	src/evopediaapplication.h \
+	src/defines.h \
+	src/archivemanager.h \
+	src/archiveitem.h \
+	src/treeview.h \
+	src/abstractfrontend.h \
+	src/storagefrontend.h \
+	src/torrentfrontend.h
 
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
 

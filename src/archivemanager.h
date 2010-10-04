@@ -2,11 +2,8 @@
 ===============================================================
   todo
 ===============================================================
- - fix dump parser
- - give feedback if network is down
- - messageboxes for errors in archivemanager
  - make removal of local evopedias possible
- - fix random article
+ - fix dump parser
 
 ===============================================================
  how to find torrents
@@ -88,6 +85,7 @@ General:
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QMessageBox>
 #include <QObject>
 
 #include "storagebackend.h"
@@ -116,7 +114,6 @@ public:
     ArchiveItem* addArchive(QString language, QString date, QString dir, QString torrent, QUrl url, QString& ret);
     ArchiveItem* addArchive(QString dir, QString& ret);
     void updateRemoteArchives();
-    void store();
 
     // functions to handle backends (valid archives)
     StorageBackend *getBackend(const QString language, const QString date=QString()) const;

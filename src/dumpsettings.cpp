@@ -41,17 +41,17 @@ void DumpSettings::refreshButtonClicked()
 
 void DumpSettings::addButtonClicked()
 {
-    /* TODO2 already check for dump in the file chooser */
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Dump Directory"),
-                                                     QString(),
-                                                     QFileDialog::ShowDirsOnly);
-    QString ret; // return error message, if any
-    if (!evopedia->archivemanager->addArchive(dir, ret)) {
-        /*
-        QMessageBox::critical(NULL, tr("Error"),
-                              tr("Directory %1 does not contain a valid evopedia dump (%2).")
-                              .arg(dir).arg(ret));
-                              */
+    QFileDialog dialog(this, tr("Open Dump Directory"), QString());
+    dialog.setFileMode(QFileDialog::DirectoryOnly);
+
+    if (dialog.exec()) {
+        QString dir = dialog.selectedFiles().first();
+        QString ret; // return error message, if any
+        if (!evopedia->archivemanager->addArchive(dir, ret)) {
+            QMessageBox::critical(NULL, tr("Error"),
+                                  tr("Directory '%1'' does not contain a valid evopedia dump:\n '%2'")
+                                  .arg(dir).arg(ret));
+        }
     }
 }
 

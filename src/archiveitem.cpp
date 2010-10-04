@@ -3,32 +3,37 @@
 
 #include <QMenu>
 #include <QSettings>
+#include <QMessageBox>
+#include <QObject>
 #include <QDir>
+#include "storagefrontend.h"
 
 /*! this code is needed to prevent a crash as the m_storageBackend usage is bypassing the MVC concepts */
-ArchiveItem::~ArchiveItem(){
-    m_enabled=false;
-    //emit updateBackends();
+ArchiveItem::~ArchiveItem() {
+    delete muffin;
 }
 
 /*! adding a local archive */
 ArchiveItem::ArchiveItem(QString dir) : QStandardItem() {
-    m_dir = dir;
+    muffin = new StorageFrontend;
     m_storageBackend=NULL;
+    m_dir = dir;
     m_itemState=ItemState::Local;
     QString ret;
     if (validate(ret)) {
         m_size = "todo2";
+        store(); // store this archive for session resume only if it is valid once
     }
-    store();
+    m_activated=true;
 }
 
 /*! adding a remote or local torrent archive */
 ArchiveItem::ArchiveItem(QString language, QString date, QString dir, QString torrent, QUrl url) : QStandardItem() {
+    muffin = new StorageFrontend;
     m_language = language;
     m_date = date;
     m_url = url;
-    m_enabled=false;
+    m_activated=false;
     m_size="todo1";
     m_storageBackend=NULL;
     // if dir is given and a valid QDIR we assume it's a LocalTorrent and we search for a torrent file in 'dir' and
@@ -148,21 +153,22 @@ void ArchiveItem::setState(QString state) {
 }
 
 QMenu* ArchiveItem::createContextMenu() {
-    QMenu* m = new QMenu();
-    m->addAction("remote entry");
-    m->addAction("remote entry and delete files");
-    m->addAction("pause torrent download");
-    m->addAction("resume torrent download");
-    m->addAction("cancel torrent download & remove files");
-    return m;
+    StorageFrontend* s = new StorageFrontend();
+    s->foo();
+    StorageFrontend* muffin = s;
+    muffin->foo();
+    //ArchiveItem::muffin = s; // ahahahah, when i un-comment this it crashes
+    return s->createContextMenu();
 }
 
+bool ArchiveItem::activated() {
+    return m_activated;
+}
 
 void ArchiveItem::store() {
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (!settings.isWritable()) {
-        //FIXME
-        //QMessageBox::critical(0, tr("Error"), tr("Unable to store settings."));
+        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr("Unable to store settings."));
         return;
     }
     settings.setValue(QString("dump_%1_%2/data_directory")
