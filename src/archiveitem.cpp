@@ -107,7 +107,7 @@ void ArchiveItem::extend() {
     itemList.append(item1_1Col1);
     itemList.append(item1_1Col2);
     itemList.append(item1_1Col3);
-    appendRow(itemList); // Child an Child hngen
+    appendRow(itemList); // append Child
 }
 
 QString ArchiveItem::language() {
@@ -176,7 +176,14 @@ void ArchiveItem::store() {
 
 /*! uses qsettings to remove previous stores */
 void ArchiveItem::unstore() {
-    //TODO
+    QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
+    if (!settings.isWritable()) {
+        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr("Unable to store settings."));
+        return;
+    }
+    settings.remove(QString("dump_%1_%2/data_directory")
+                      .arg(language(), date()));
+    settings.sync();
 }
 
 void ArchiveItem::removeEntry() {
