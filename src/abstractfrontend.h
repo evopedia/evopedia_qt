@@ -4,7 +4,7 @@
 #include <QObject>
 
 class AbstractFrontend : public QObject {
-    Q_OBJECT
+Q_OBJECT
 public:
     AbstractFrontend();
 };

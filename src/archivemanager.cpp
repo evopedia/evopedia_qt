@@ -167,6 +167,8 @@ ArchiveItem* ArchiveManager::addArchive(QString language, QString date, QString 
 }
 
 ArchiveItem* ArchiveManager::addArchive(ArchiveItem* item) {
+    connect(item->m_storagefrontend, SIGNAL(updateBackends()), SLOT(updateBackends()));
+
     // 1. find the language group
     QStandardItem* langItem = NULL;
     for(int i=0; i < m_model->rowCount(); ++i) {

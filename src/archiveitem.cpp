@@ -6,16 +6,18 @@
 #include <QMessageBox>
 #include <QObject>
 #include <QDir>
+#include <QDebug>
 #include "storagefrontend.h"
 
 /*! this code is needed to prevent a crash as the m_storageBackend usage is bypassing the MVC concepts */
 ArchiveItem::~ArchiveItem() {
-    delete muffin;
+    delete m_storagefrontend;
 }
 
 /*! adding a local archive */
 ArchiveItem::ArchiveItem(QString dir) : QStandardItem() {
-    muffin = new StorageFrontend;
+    m_storagefrontend = new StorageFrontend(this);
+
     m_storageBackend=NULL;
     m_dir = dir;
     m_itemState=ItemState::Local;
@@ -29,7 +31,7 @@ ArchiveItem::ArchiveItem(QString dir) : QStandardItem() {
 
 /*! adding a remote or local torrent archive */
 ArchiveItem::ArchiveItem(QString language, QString date, QString dir, QString torrent, QUrl url) : QStandardItem() {
-    muffin = new StorageFrontend;
+    m_storagefrontend = new StorageFrontend(this);
     m_language = language;
     m_date = date;
     m_url = url;
@@ -153,18 +155,14 @@ void ArchiveItem::setState(QString state) {
 }
 
 QMenu* ArchiveItem::createContextMenu() {
-    StorageFrontend* s = new StorageFrontend();
-    s->foo();
-    StorageFrontend* muffin = s;
-    muffin->foo();
-    //ArchiveItem::muffin = s; // ahahahah, when i un-comment this it crashes
-    return s->createContextMenu();
+    return m_storagefrontend->createContextMenu();
 }
 
 bool ArchiveItem::activated() {
     return m_activated;
 }
 
+/*! uses qsettings to store this archive for program resume after exit */
 void ArchiveItem::store() {
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (!settings.isWritable()) {
@@ -174,4 +172,13 @@ void ArchiveItem::store() {
     settings.setValue(QString("dump_%1_%2/data_directory")
                       .arg(language(), date()), dir());
     settings.sync();
+}
+
+/*! uses qsettings to remove previous stores */
+void ArchiveItem::unstore() {
+    //TODO
+}
+
+void ArchiveItem::removeEntry() {
+    model()->removeRow(0, parent()->index());
 }

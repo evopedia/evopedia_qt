@@ -13,8 +13,9 @@ namespace ItemState {
     enum {Local, RemoteTorrent, LocalTorrent};
 }
 
-class ArchiveItem : protected QStandardItem {
+class ArchiveItem : public QStandardItem {
   friend class ArchiveManager;
+  friend class StorageFrontend;
 
 protected:
     ArchiveItem(QString language, QString date, QString dir, QString torrent, QUrl url);
@@ -23,7 +24,7 @@ protected:
     void extend();
     void changeBackend(int type);
     bool validate(QString &ret);
-    StorageFrontend* muffin;
+    StorageFrontend* m_storagefrontend;
     QString language();
     QString date();
     QString dir();
@@ -36,7 +37,10 @@ protected:
     void setState(QString state);
     void update();
     void store();
+    void unstore();
     bool activated();
+    void removeEntry();
+
 public:
     QMenu* createContextMenu();
 

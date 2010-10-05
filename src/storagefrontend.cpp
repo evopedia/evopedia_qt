@@ -3,19 +3,20 @@
 #include <QAction>
 #include <QDebug>
 
-StorageFrontend::StorageFrontend() {
+#include <archiveitem.h>
+
+StorageFrontend::StorageFrontend(ArchiveItem* item) {
+    m_archiveitem = item;
 }
 
 StorageFrontend::~StorageFrontend() {
-    //m_activated=false;
-    emit updateBackends();
 }
 
 QMenu* StorageFrontend::createContextMenu() {
     QMenu* m = new QMenu();
 
     QAction* openAct = new QAction(QIcon(), "remove entry", this);
-    connect(openAct, SIGNAL(triggered()), this, SLOT(foo()));
+    connect(openAct, SIGNAL(triggered()), this, SLOT(removeEntry()));
 
     m->addAction(openAct);
     /*
@@ -27,6 +28,9 @@ QMenu* StorageFrontend::createContextMenu() {
     return m;
 }
 
-void StorageFrontend::foo() {
-    qDebug() << __PRETTY_FUNCTION__;
+void StorageFrontend::removeEntry() {
+    m_archiveitem->m_activated=false;
+    emit updateBackends();
+    m_archiveitem->unstore();
+    m_archiveitem->removeEntry();
 }
