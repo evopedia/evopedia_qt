@@ -36,7 +36,7 @@ HEADERS += src/mainwindow.h \
     src/archive.h \
     src/defines.h
 
-TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
+TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts
 
 FORMS += src/mainwindow.ui \
     src/dumpSettings.ui \
