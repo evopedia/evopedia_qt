@@ -140,11 +140,13 @@ void FlickableMap::mouseReleaseEvent(QMouseEvent *event)
 
 void FlickableMap::showEvent(QShowEvent *event)
 {
+    //Q_UNUSED(event);
     map->visible = true;
     map->invalidate();
 }
 
 void FlickableMap::hideEvent(QHideEvent *event)
 {
+    //Q_UNUSED(event);
     map->visible = false;
 }

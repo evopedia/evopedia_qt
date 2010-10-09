@@ -156,12 +156,8 @@ ArchiveItem* ArchiveManager::addArchive(QString dir, QString& ret) {
 
 /*! used for torrent based local archives which either have the *.torrent still around or not */
 ArchiveItem* ArchiveManager::addArchive(QString language, QString date, QString dir, QString torrent, QUrl url, QString& ret) {
-    // 0. is it a torrent archive? was it already validated by the torrent subsystem?
-    // ....
-
-    // 1. check if dir contains a valid archive
     ArchiveItem* item = new ArchiveItem(language, date, dir, torrent, url);
-    // FIXME: need a special implementation here for torrent archives
+    item->setData(true, Qt::UserRole + 1);
     item->validate(ret);
     return addArchive(item);
 }
@@ -212,7 +208,9 @@ ArchiveItem* ArchiveManager::addArchive(ArchiveItem* item) {
     itemList.append(item1_1Col4);
     langItem->appendRow(itemList); // Child an Child haengen
     item->update(); // mendatory function to update the all items in one row using the model
+
     emit updateBackends();
+    return item;
 }
 
 QStandardItemModel* ArchiveManager::model() {

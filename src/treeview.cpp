@@ -1,6 +1,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QStandardItemModel>
+#include <QDebug>
 
 #include "treeview.h"
 #include "archiveitem.h"
@@ -34,3 +35,9 @@ void TreeView::mouseReleaseEvent ( QMouseEvent * event ) {
     QTreeView::mouseReleaseEvent(event);
 }
 
+/*! will automatically expand the torrent items childs, like clicking the '+'-sign on the tree */
+void TreeView::rowsInserted ( const QModelIndex & parent, int start, int end ) {
+    QTreeView::rowsInserted(parent,start,end);
+    if (parent.data(Qt::UserRole + 1).toBool())
+        expand(parent);
+}

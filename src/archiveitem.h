@@ -2,60 +2,56 @@
 #define ARCHIVEITEM_H
 
 #include <QStandardItem>
-#include <QUrl>
 #include <QString>
-#include "storagebackend.h"
+#include <QUrl>
 #include "storagefrontend.h"
+#include "torrentfrontend.h"
 
 class QMenu;
+class StorageBackend;
 
 namespace ItemState {
-    enum {Local, RemoteTorrent, LocalTorrent};
+    enum {Local, LocalTorrent, RemoteTorrent};
 }
 
 class ArchiveItem : public QStandardItem {
   friend class ArchiveManager;
   friend class StorageFrontend;
+  friend class TorrentFrontend;
 
 protected:
     ArchiveItem(QString language, QString date, QString dir, QString torrent, QUrl url);
     ArchiveItem(QString dir);
     ~ArchiveItem();
-    void extend();
-    void changeBackend(int type);
-    bool validate(QString &ret);
+    StorageBackend* storageBackend();
     StorageFrontend* m_storagefrontend;
+    TorrentFrontend* m_torrentfrontend;
     QString language();
     QString date();
     QString dir();
     QString size();
-    int itemState();
     QUrl url();
     QString state();
+    int itemState();
     int type() const;
-    StorageBackend* storageBackend();
-    void setState(QString state);
+    void setStateString(QString state);
     void update();
-    void store();
-    void unstore();
     bool activated();
     void removeEntry();
 
 public:
     QMenu* createContextMenu();
+    bool validate(QString& ret);
 
 private:
-    int m_itemState; // describes what kind of item we have, see namespace ItemState
     QString m_size;
     QString m_language;
     QString m_date;
+    QString m_torrent;
     QString m_dir;
     QUrl m_url;
-    QString m_state; // message for the user
-    bool m_activated; // is item in use?
-    StorageBackend *m_storageBackend;
-//Q_SIGNALS:
-  //  void updateBackends();
+    int m_itemState; // describes what kind of item we have, see namespace ItemState
+    QString m_state;  // message for the user
 };
 
 #endif // ARCHIVEITEM_H

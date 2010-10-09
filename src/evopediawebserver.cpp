@@ -78,6 +78,7 @@ void EvopediaWebServer::readClient()
 
 void EvopediaWebServer::outputIndexPage(QTcpSocket *socket)
 {
+    //Q_UNUSED(socket);
     /* TODO1 */
 }
 

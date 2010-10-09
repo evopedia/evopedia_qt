@@ -22,6 +22,7 @@ DumpSettings::DumpSettings(QWidget *parent) :
     ui->treeView->setModel(evopedia->archivemanager->model());
     ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    // TODO fix this font metrics issue, remove hardcoded stuff
     ui->treeView->setColumnWidth(0, 200);//fm.width("lang/2010-07-07");
     ui->treeView->setColumnWidth(1, 120);//fm.width(""));
     ui->treeView->setColumnWidth(2, 100);//fm.width(""));

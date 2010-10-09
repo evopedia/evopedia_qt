@@ -20,7 +20,16 @@ SOURCES +=  src/mainwindow.cpp \
 	src/treeview.cpp \
 	src/abstractfrontend.cpp \
 	src/storagefrontend.cpp \
-	src/torrentfrontend.cpp
+	src/torrentfrontend.cpp \
+	src/torrent/bencodeparser.cpp \
+	src/torrent/connectionmanager.cpp \
+	src/torrent/filemanager.cpp \
+	src/torrent/metainfo.cpp \
+	src/torrent/peerwireclient.cpp \
+	src/torrent/ratecontroller.cpp \
+	src/torrent/torrentclient.cpp \
+	src/torrent/torrentserver.cpp \
+	src/torrent/trackerclient.cpp
 
 HEADERS += src/mainwindow.h \
 	src/storagebackend.h \
@@ -44,7 +53,16 @@ HEADERS += src/mainwindow.h \
 	src/treeview.h \
 	src/abstractfrontend.h \
 	src/storagefrontend.h \
-	src/torrentfrontend.h
+	src/torrentfrontend.h \
+	src/torrent/bencodeparser.h \
+	src/torrent/connectionmanager.h \
+	src/torrent/filemanager.h \
+	src/torrent/metainfo.h \
+	src/torrent/peerwireclient.h \
+	src/torrent/ratecontroller.h \
+	src/torrent/torrentclient.h \
+	src/torrent/torrentserver.h \
+	src/torrent/trackerclient.h
 
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
 
@@ -72,7 +90,8 @@ OTHER_FILES += \
     src/footer.html
 
 RESOURCES += \
-    src/resources.qrc
+    src/resources.qrc \
+    src/torrent/icons.qrc
 
 unix {
   #VARIABLES
