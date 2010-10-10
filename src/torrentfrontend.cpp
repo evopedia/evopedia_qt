@@ -19,7 +19,7 @@ TorrentFrontend::TorrentFrontend(ArchiveItem* item) {
 }
 
 void TorrentFrontend::extend() {
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 2; ++i) {
         QStandardItem *item1_1Col1 = new QStandardItem(QString("")); // Spalte 1 vom ChildChild
         QStandardItem *item1_1Col2 = new QStandardItem(QString("item1_1Col2")); // Spalte 2 vom ChildChild
         QStandardItem *item1_1Col3 = new QStandardItem(QString("item1_1Col2")); // Spalte 2 vom ChildChild
@@ -122,47 +122,49 @@ void TorrentFrontend::startTorrentDownload() {
             return;
         }
     }
-   // download the torrent to m_dir
-    qDebug() << __PRETTY_FUNCTION__ << "here";
+    // download the torrent to m_dir
+    qDebug() << __PRETTY_FUNCTION__ << "download here";
 
 
-   // METADATA from the dumps webpage must match 'lang' and 'date' with the contents of the torrent
-   extend();
+    // METADATA from the dumps webpage must match 'lang' and 'date' with the contents of the torrent
+    extend();
 
-   m_torrentclient = new TorrentClient(this);
-   QString torrentName = m_archiveitem->m_dir + "/" + m_archiveitem->m_torrent;
-   qDebug() << torrentName;
-   if (!m_torrentclient->setTorrent(torrentName)) {
-        QMessageBox::warning(NULL, tr("Error"),
-                             tr("The torrent file %1 cannot not be opened/resumed.").arg(torrentName));
-        delete m_torrentclient;
-        m_torrentclient = NULL;
-        return;
-    }
-
-    m_torrentclient->setDestinationFolder(m_archiveitem->m_dir);
-    QByteArray resumeState;// = settings.value("resumeState").toByteArray();
-    m_torrentclient->setDumpedState(resumeState);
-
+    m_torrentclient = new TorrentClient(this);
     // Setup the client connections
     connect(m_torrentclient, SIGNAL(stateChanged(TorrentClient::State)),
-            this, SLOT(updateState(TorrentClient::State)));
+           this, SLOT(updateState(TorrentClient::State)));
     connect(m_torrentclient, SIGNAL(peerInfoUpdated()),
-            this, SLOT(updatePeerInfo()));
+           this, SLOT(updatePeerInfo()));
     connect(m_torrentclient, SIGNAL(progressUpdated(int)),
-            this, SLOT(updateProgress(int)));
+           this, SLOT(updateProgress(int)));
     connect(m_torrentclient, SIGNAL(downloadRateUpdated(int)),
-            this, SLOT(updateDownloadRate(int)));
+           this, SLOT(updateDownloadRate(int)));
     connect(m_torrentclient, SIGNAL(uploadRateUpdated(int)),
-            this, SLOT(updateUploadRate(int)));
+           this, SLOT(updateUploadRate(int)));
     connect(m_torrentclient, SIGNAL(stopped()),
-            this, SLOT(torrentStopped()));
+           this, SLOT(torrentStopped()));
     connect(m_torrentclient, SIGNAL(error(TorrentClient::Error)),
-            this, SLOT(torrentError(TorrentClient::Error)));
+           this, SLOT(torrentError(TorrentClient::Error)));
 
-    m_torrentclient->start();
-    qDebug() << __PRETTY_FUNCTION__ << "started";
-    saveSettings();
+    QString torrentName = m_archiveitem->m_dir + "/" + m_archiveitem->m_torrent;
+    qDebug() << torrentName;
+    if (!m_torrentclient->setTorrent(torrentName)) {
+            QMessageBox::warning(NULL, tr("Error"),
+                             tr("The torrent file %1 cannot not be opened/resumed.").arg(torrentName));
+            delete m_torrentclient;
+            m_torrentclient = NULL;
+            return;
+     }
+
+     m_torrentclient->setDestinationFolder(m_archiveitem->m_dir);
+     qDebug() << __PRETTY_FUNCTION__ << " destination folder = " << m_archiveitem->m_dir;
+     QByteArray resumeState;// = settings.value("resumeState").toByteArray();
+     m_torrentclient->setDumpedState(resumeState);
+
+
+     m_torrentclient->start();
+     qDebug() << __PRETTY_FUNCTION__ << "started";
+     saveSettings();
 }
 
 void TorrentFrontend::resumeTorrentDownload() {
@@ -175,6 +177,9 @@ void TorrentFrontend::pauseTorrentDownload() {
 
 void TorrentFrontend::cancelTorrentDownload() {
     qDebug() << __PRETTY_FUNCTION__;
+    //client->disconnect();
+    //connect(client, SIGNAL(stopped()), this, SLOT(torrentStopped()));
+    //client->stop();
 }
 
 void TorrentFrontend::torrentDownloadFinished() {
