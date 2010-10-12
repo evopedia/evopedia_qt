@@ -148,6 +148,7 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
 /*! used for local archives, manual downloads*/
 ArchiveItem* ArchiveManager::addArchive(QString dir, QString& ret) {
     ArchiveItem* item = new ArchiveItem(dir);
+    connect(item->m_storagefrontend, SIGNAL(updateBackends()), SLOT(updateBackends()));
     if (!item->validate(ret)) {
         delete item;
         return NULL;
@@ -156,15 +157,17 @@ ArchiveItem* ArchiveManager::addArchive(QString dir, QString& ret) {
 }
 
 /*! used for torrent based local archives which either have the *.torrent still around or not */
-ArchiveItem* ArchiveManager::addArchive(QString language, QString date, QString dir, QString torrent, QUrl url, QString& ret) {
-    ArchiveItem* item = new ArchiveItem(language, date, dir, torrent, url);
+ArchiveItem* ArchiveManager::addArchive(QString language, QString date, QString archiveDir, QString torrent, QUrl url, QString& ret) {
+    QString workingDir, size;
+    //FIXME handle size parameter
+    ArchiveItem* item = new ArchiveItem(language, date, size, workingDir, archiveDir, torrent, url);
     item->setData(true, Qt::UserRole + 1);
     item->validate(ret);
     return addArchive(item);
 }
 
 ArchiveItem* ArchiveManager::addArchive(ArchiveItem* item) {
-    connect(item->m_storagefrontend, SIGNAL(updateBackends()), SLOT(updateBackends()));
+
 
     // 1. find the language group
     QStandardItem* langItem = NULL;
@@ -254,7 +257,7 @@ const QList<StorageBackend *> ArchiveManager::getBackends() const
     return backends;
 }
 
-StorageBackend *ArchiveManager::getBackend(const QString language, const QString date) const
+StorageBackend *ArchiveManager::getBackend(const QString language, const QString /*date*/) const
 {
     //FIXME the data object seems to be unused, why?!
     //qDebug() << language << date;

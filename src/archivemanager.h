@@ -111,7 +111,7 @@ public:
 
     // functions to handle archives (invalid backends)
     bool setDefaultArchive(int identifier);
-    ArchiveItem* addArchive(QString language, QString date, QString dir, QString torrent, QUrl url, QString& ret);
+    ArchiveItem* addArchive(QString language, QString date, QString archiveDir, QString torrent, QUrl url, QString& ret);
     ArchiveItem* addArchive(QString dir, QString& ret);
     void updateRemoteArchives();
 

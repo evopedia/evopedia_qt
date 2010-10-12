@@ -11,17 +11,15 @@ class QMenu;
 class StorageBackend;
 
 namespace ItemState {
-    enum {Local, LocalTorrent, RemoteTorrent};
+    enum {Local, LocalTorrent, DownloadingTorrent, RemoteTorrent};
 }
 
 class ArchiveItem : public QStandardItem {
   friend class ArchiveManager;
-  friend class StorageFrontend;
-  friend class TorrentFrontend;
 
 protected:
-    ArchiveItem(QString language, QString date, QString dir, QString torrent, QUrl url);
-    ArchiveItem(QString dir);
+    ArchiveItem(QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url);
+    ArchiveItem(QString archiveDir);
     ~ArchiveItem();
     StorageBackend* storageBackend();
     StorageFrontend* m_storagefrontend;
@@ -31,27 +29,20 @@ protected:
     QString dir();
     QString size();
     QUrl url();
-    QString state();
+    QString stateString();
+    bool activated();
     int itemState();
     int type() const;
-    void setStateString(QString state);
-    void update();
-    bool activated();
-    void removeEntry();
 
 public:
     QMenu* createContextMenu();
     bool validate(QString& ret);
+    void removeEntry();
+    void update();
+    void setItemState(int s);
 
 private:
-    QString m_size;
-    QString m_language;
-    QString m_date;
-    QString m_torrent;
-    QString m_dir;
-    QUrl m_url;
     int m_itemState; // describes what kind of item we have, see namespace ItemState
-    QString m_state;  // message for the user
 };
 
 #endif // ARCHIVEITEM_H

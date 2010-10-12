@@ -15,9 +15,16 @@
 #include "torrent/torrentclient.h"
 #include "torrent/ratecontroller.h"
 
-TorrentFrontend::TorrentFrontend(ArchiveItem* item) {
+TorrentFrontend::TorrentFrontend(ArchiveItem* item, QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url) {
     m_archiveitem = item;
     m_torrentclient = NULL;
+    m_language = language;
+    m_date = date;
+    m_size = size;
+    m_workingDir = workingDir;
+    m_archiveDir = archiveDir;
+    m_torrent = torrent;
+    m_url = url;
 }
 
 void TorrentFrontend::extend() {
@@ -121,26 +128,25 @@ void TorrentFrontend::startTorrentDownload() {
     //FIXME check if download has already started, don't start twice!
     qDebug() << __PRETTY_FUNCTION__;
 
-    if (!QDir(m_archiveitem->m_dir).exists() || m_archiveitem->m_dir == "") {
+    if (!QDir(m_workingDir).exists() || m_workingDir == "") {
         QFileDialog dialog(NULL, tr("Select a directory"), QString());
         dialog.setFileMode(QFileDialog::DirectoryOnly);
         if (dialog.exec()) {
-            m_archiveitem->m_dir=dialog.selectedFiles().first();
+            m_workingDir=dialog.selectedFiles().first();
         } else {
             return;
         }
     }
-    qDebug() << m_archiveitem->m_dir;
-    m_archiveitem->m_torrent;
+    qDebug() << m_workingDir;
 
-    QFile f(m_archiveitem->m_dir + "/" + m_archiveitem->m_torrent);
+    QFile f(m_workingDir + "/" + m_torrent);
     if (f.exists()) {
         startDownloadViaTorrent();
     } else {
         QNetworkAccessManager* manager = new QNetworkAccessManager(this);
         QObject::connect(manager, SIGNAL(finished(QNetworkReply* )),
                          this, SLOT(torrentDownloadFinished(QNetworkReply* )));
-        manager->get(QNetworkRequest(m_archiveitem->m_url));
+        manager->get(QNetworkRequest(m_url));
         //FIXME 1. set status message
         //FIXME 2. create timeout error
     }
@@ -148,7 +154,7 @@ void TorrentFrontend::startTorrentDownload() {
 
 /*! when the *.torrent is downloaded successfully, we start the actual download using it */
 void TorrentFrontend::torrentDownloadFinished(QNetworkReply* reply) {
-    QFile file(m_archiveitem->m_dir + "/" + m_archiveitem->m_torrent);
+    QFile file(m_workingDir + "/" + m_torrent);
     file.open(QIODevice::WriteOnly);
     file.write(reply->readAll());
     file.close();
@@ -182,7 +188,7 @@ void TorrentFrontend::startDownloadViaTorrent() {
     connect(m_torrentclient, SIGNAL(error(TorrentClient::Error)),
            this, SLOT(torrentError(TorrentClient::Error)));
 
-    QString torrentName = m_archiveitem->m_dir + "/" + m_archiveitem->m_torrent;
+    QString torrentName = m_workingDir + "/" + m_torrent;
     qDebug() << torrentName;
     if (!m_torrentclient->setTorrent(torrentName)) {
             QMessageBox::warning(NULL, tr("Error"),
@@ -192,14 +198,14 @@ void TorrentFrontend::startDownloadViaTorrent() {
             return;
      }
 
-     m_torrentclient->setDestinationFolder(m_archiveitem->m_dir);
-     qDebug() << __PRETTY_FUNCTION__ << " destination folder = " << m_archiveitem->m_dir;
+     m_torrentclient->setDestinationFolder(m_workingDir);
+     qDebug() << __PRETTY_FUNCTION__ << " destination folder = " << m_workingDir;
      QByteArray resumeState;// = settings.value("resumeState").toByteArray();
      m_torrentclient->setDumpedState(resumeState);
 
      m_torrentclient->start();
 
-     m_archiveitem->m_itemState=ItemState::RemoteTorrent;
+     m_archiveitem->setItemState(ItemState::DownloadingTorrent);
      saveSettings();
 }
 
@@ -222,8 +228,9 @@ void TorrentFrontend::cancelTorrentDownload() {
 void TorrentFrontend::updateState(TorrentClient::State s) {
     qDebug() << __PRETTY_FUNCTION__ << m_torrentclient->stateString();
     if (s == TorrentClient::Endgame || s == TorrentClient::Seeding) {
+        //FIXME m_archiveDir = ...
+        m_archiveitem->setItemState(ItemState::LocalTorrent);
         qDebug() << "download done, now using this as a local archive";
-        // emit
     }
 }
 
@@ -280,9 +287,39 @@ void TorrentFrontend::updateUploadRate(int rate) {
 
 void TorrentFrontend::torrentStopped() {
     qDebug() << __PRETTY_FUNCTION__;
+    //FIXME handle this
     //m_torrentclient->deleteLater();
 }
 
 void TorrentFrontend::torrentError(TorrentClient::Error) {
+    //FIXME handle this
     qDebug() << __PRETTY_FUNCTION__ << m_torrentclient->errorString();
+}
+
+QString TorrentFrontend::language() {
+    return m_language;
+}
+
+QString TorrentFrontend::date(){
+    return m_date;
+}
+
+QString TorrentFrontend::workingDir(){
+    return m_workingDir;
+}
+
+QString TorrentFrontend::archiveDir(){
+    return m_archiveDir;
+}
+
+QString TorrentFrontend::size(){
+    return m_size;
+}
+
+QUrl TorrentFrontend::url(){
+    return m_url;
+}
+
+QString TorrentFrontend::stateString(){
+    return "torrent download running...";
 }

@@ -19,32 +19,18 @@ ArchiveItem::~ArchiveItem() {
 }
 
 /*! adding a local archive */
-ArchiveItem::ArchiveItem(QString dir) : QStandardItem() {
-    m_dir = dir;
+ArchiveItem::ArchiveItem(QString archiveDir) : QStandardItem() {
     // initialize local variables first (above), before creating the frontends
-    m_storagefrontend = new StorageFrontend(this);
+    m_storagefrontend = new StorageFrontend(this, archiveDir);
     m_torrentfrontend=NULL;
     m_itemState=ItemState::Local;
 }
 
 /*! adding a remote or local torrent archive */
-ArchiveItem::ArchiveItem(QString language, QString date, QString workingDir, QString torrent, QUrl url) : QStandardItem() {
-    QString archiveDir;
-    m_language = language;
-    m_date = date;
-    m_torrent=torrent;
-    m_url = url;
-    m_size="todo1";
-    m_dir = workingDir;
-    // initialize local variables first (above), before creating the frontends
-    m_storagefrontend = new StorageFrontend(this);
-    m_torrentfrontend = new TorrentFrontend(this);
-
-    // if dir is given and a valid QDIR we assume it's a LocalTorrent and we search for a torrent file in 'dir' and
-    // we try to resume the download... and stuff like that
-    // -> m_itemState=ItemState::LocalTorrent;
-    // else
+ArchiveItem::ArchiveItem(QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url) : QStandardItem() {
+    m_torrentfrontend = new TorrentFrontend(this, language, date, size, workingDir, archiveDir, torrent, url);
     m_itemState=ItemState::RemoteTorrent;
+    m_storagefrontend = NULL;//new StorageFrontend(this)
 }
 
 /*! update() might not work when being called from the ctor as the other items are most likely not added to the model yet
@@ -60,33 +46,75 @@ void ArchiveItem::update() {
           i->setText("m_size");
       i = parent()->child(row(),3);
       if (i)
-          i->setText(m_state);
+          i->setText(stateString());
     }
 }
 
 QString ArchiveItem::language() {
-    return m_language;
+    if (itemState() == ItemState::RemoteTorrent || itemState() == ItemState::LocalTorrent)
+        return m_torrentfrontend->language();
+    if (itemState() == ItemState::Local && m_storagefrontend)
+        return m_storagefrontend->language();
+    return QString();
 }
 
 QString ArchiveItem::date() {
-    return m_date;
+    if (itemState() == ItemState::RemoteTorrent || itemState() == ItemState::LocalTorrent)
+        return m_torrentfrontend->date();
+    if (itemState() == ItemState::Local && m_storagefrontend)
+        return m_storagefrontend->date();
+    return QString();
 }
 
 QString ArchiveItem::dir() {
-    return m_dir;
+    if (itemState() == ItemState::RemoteTorrent || itemState() == ItemState::LocalTorrent)
+        return m_torrentfrontend->archiveDir();
+    if (itemState() == ItemState::Local && m_storagefrontend)
+        return m_storagefrontend->archiveDir();
+    return QString();
 }
 
 QUrl ArchiveItem::url() {
-    return m_url;
+    if (itemState() == ItemState::RemoteTorrent || itemState() == ItemState::LocalTorrent)
+        return m_torrentfrontend->url();
+    return QUrl();
 }
 
 QString ArchiveItem::size() {
-    return m_size;
+    if (itemState() == ItemState::RemoteTorrent || itemState() == ItemState::LocalTorrent)
+        return m_torrentfrontend->size();
+    if (itemState() == ItemState::Local && m_storagefrontend)
+        return m_storagefrontend->size();
+    return QString();
 }
 
+
 /*! text for the state-column */
-QString ArchiveItem::state() {
-    return m_state;
+QString ArchiveItem::stateString() {
+    if (itemState() == ItemState::RemoteTorrent || itemState() == ItemState::LocalTorrent)
+        return m_torrentfrontend->stateString();
+    if (itemState() == ItemState::Local && m_storagefrontend)
+        return m_storagefrontend->stateString();
+    return QString();
+}
+
+StorageBackend *ArchiveItem::storageBackend() {
+    if (itemState() == ItemState::Local && m_storagefrontend)
+        return m_storagefrontend->storageBackend();
+    return NULL;
+}
+
+/*! can this storagebackend be used? */
+bool ArchiveItem::activated() {
+    if (!m_storagefrontend)
+        return false;
+    return m_storagefrontend->m_activated;
+}
+
+bool ArchiveItem::validate(QString& ret) {
+    if (!m_storagefrontend)
+        return false;
+    return m_storagefrontend->validate(ret);
 }
 
 /*! used to change the backend used for the item, local vs torrent */
@@ -94,27 +122,24 @@ int ArchiveItem::itemState() {
     return m_itemState;
 }
 
+void ArchiveItem::setItemState(int s) {
+    qDebug() << s;
+    if (itemState() == ItemState::RemoteTorrent && s == ItemState::DownloadingTorrent)
+        m_itemState = s;
+    if (itemState() == ItemState::DownloadingTorrent && s == ItemState::LocalTorrent) {
+        m_storagefrontend = new StorageFrontend(this, m_torrentfrontend->archiveDir());
+    }
+    //FIXME if a torrent download is started successfully:
+    //      ItemState::RemoteTorrent will change to ItemState::LocalTorrent
+
+    //FIXME if a torrent download is complete we need to enable the archive
+    //      this will change the state from ItemState::LocalTorrent to ItemState::Local
+    //      prior to that we need to create a StorageFrontend object
+}
+
 /*! used to convert QStandardItem(s) into ArchiveItem(s), QStandardItem related */
 int ArchiveItem::type() const {
     return QStandardItem::UserType + 1;
-}
-
-StorageBackend *ArchiveItem::storageBackend() {
-    return m_storagefrontend->storageBackend();
-}
-
-void ArchiveItem::setStateString(QString state) {
-    m_state = state;
-    update();
-}
-
-/*! can this storagebackend be used? */
-bool ArchiveItem::activated() {
-    return m_storagefrontend->m_activated;
-}
-
-bool ArchiveItem::validate(QString& ret) {
-    return m_storagefrontend->validate(ret);
 }
 
 /*! removes the entry from the (QStandardItemModel) QTreeView */
@@ -124,9 +149,12 @@ void ArchiveItem::removeEntry() {
 
 QMenu* ArchiveItem::createContextMenu() {
     QMenu* main = new QMenu();
-    QMenu* m1 = m_storagefrontend->createContextMenu();
-    m1->setTitle("Local");
-    main->addMenu(m1);
+    QMenu* m1;
+    if (m_storagefrontend) {
+            m1 = m_storagefrontend->createContextMenu();
+            m1->setTitle("Local");
+            main->addMenu(m1);
+    }
     if (m_torrentfrontend) {
         QMenu* m2 = m_torrentfrontend->createContextMenu();
         m2->setTitle("Torrent");

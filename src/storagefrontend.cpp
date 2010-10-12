@@ -7,12 +7,12 @@
 #include "storagefrontend.h"
 #include "archiveitem.h"
 
-StorageFrontend::StorageFrontend(ArchiveItem* item) {
+StorageFrontend::StorageFrontend(ArchiveItem* item, QString archiveDir) {
+    m_archiveDir = archiveDir;
     m_archiveitem = item;
     m_storageBackend=NULL;
     QString ret;
     if (validate(ret)) {
-        saveSettings(); // store this archive for session resume only if it is valid once
         m_activated=true;
     }
 }
@@ -47,17 +47,18 @@ bool StorageFrontend::validate(QString& ret) {
         delete m_storageBackend;
         m_storageBackend=NULL;
     }
-    StorageBackend *backend = new StorageBackend(m_archiveitem->dir());
+    StorageBackend *backend = new StorageBackend(m_archiveDir);
     ret = backend->getErrorMessage();
-    m_archiveitem->setStateString(ret);
+    m_stateString = ret;
     if (!backend->isReadable()) {
          delete backend;
          m_storageBackend=NULL;
      } else {
          m_storageBackend = backend;
-         m_archiveitem->m_language = m_storageBackend->getLanguage();
-         m_archiveitem->m_date = m_storageBackend->getDate();
+         m_language = m_storageBackend->getLanguage();
+         m_date = m_storageBackend->getDate();
          m_archiveitem->update();
+         saveSettings(); // store this archive for session resume only if it is valid
          return true;
      }
      m_archiveitem->update();
@@ -72,7 +73,7 @@ void StorageFrontend::saveSettings() {
         return;
     }
     settings.setValue(QString("dump_%1_%2/data_directory")
-                      .arg(m_archiveitem->language(), m_archiveitem->date()), m_archiveitem->dir());
+                      .arg(m_language, m_date), m_archiveDir);
     settings.sync();
 }
 
@@ -84,10 +85,31 @@ void StorageFrontend::unsaveSettings() {
         return;
     }
     settings.remove(QString("dump_%1_%2/data_directory")
-                      .arg(m_archiveitem->language(), m_archiveitem->date()));
+                      .arg(m_language, m_date));
     settings.sync();
 }
 
 StorageBackend *StorageFrontend::storageBackend() {
     return m_storageBackend;
+}
+
+
+QString StorageFrontend::language() {
+    return m_language;
+}
+
+QString StorageFrontend::date(){
+    return m_date;
+}
+
+QString StorageFrontend::archiveDir() {
+    return m_archiveDir;
+}
+
+QString StorageFrontend::size() {
+    return m_size;
+}
+
+QString StorageFrontend::stateString() {
+    return "torrent download running...";
 }
