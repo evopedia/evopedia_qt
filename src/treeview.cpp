@@ -10,6 +10,7 @@ TreeView::TreeView(QWidget * parent = 0) : QTreeView(parent) {
 }
 
 void TreeView::mouseReleaseEvent ( QMouseEvent * event ) {
+    //#ifdef Q_WS_MAEMO_5
     QPoint a = event->pos();
     QModelIndex clickedIndex = indexAt(a);
     if (clickedIndex.isValid()) {
@@ -32,6 +33,7 @@ void TreeView::mouseReleaseEvent ( QMouseEvent * event ) {
             }
         }
     }
+    //#endif
     QTreeView::mouseReleaseEvent(event);
 }
 

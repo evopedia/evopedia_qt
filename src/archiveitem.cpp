@@ -28,13 +28,14 @@ ArchiveItem::ArchiveItem(QString dir) : QStandardItem() {
 }
 
 /*! adding a remote or local torrent archive */
-ArchiveItem::ArchiveItem(QString language, QString date, QString dir, QString torrent, QUrl url) : QStandardItem() {
+ArchiveItem::ArchiveItem(QString language, QString date, QString workingDir, QString torrent, QUrl url) : QStandardItem() {
+    QString archiveDir;
     m_language = language;
     m_date = date;
     m_torrent=torrent;
     m_url = url;
     m_size="todo1";
-    m_dir = dir;
+    m_dir = workingDir;
     // initialize local variables first (above), before creating the frontends
     m_storagefrontend = new StorageFrontend(this);
     m_torrentfrontend = new TorrentFrontend(this);
@@ -53,7 +54,7 @@ void ArchiveItem::update() {
       QStandardItem* i;
       i = parent()->child(row(),1);
       if (i)
-          i->setText("size");
+          i->setText("");
       i = parent()->child(row(),2);
       if (i)
           i->setText("m_size");

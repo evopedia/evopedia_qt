@@ -334,6 +334,7 @@ void MainWindow::torrentError(TorrentClient::Error)
                          tr("An error occurred while downloading %0: %1")
                          .arg(fileName)
                          .arg(client->errorString()));
+    qDebug() << __PRETTY_FUNCTION__ << client->errorString();
 
     delete torrentView->takeTopLevelItem(row);
     client->deleteLater();
@@ -447,6 +448,8 @@ void MainWindow::updateState(TorrentClient::State)
 
         item->setText(5, client->stateString());
     }
+    qDebug() << __PRETTY_FUNCTION__ << client->stateString();
+
     setActionsEnabled();
 }
 
@@ -459,6 +462,9 @@ void MainWindow::updatePeerInfo()
     QTreeWidgetItem *item = torrentView->topLevelItem(row);
     item->setText(1, tr("%1/%2").arg(client->connectedPeerCount())
                   .arg(client->seedCount()));
+    qDebug() << __PRETTY_FUNCTION__ << "peers" << client->connectedPeerCount()
+            << ", seeds: " << client->seedCount();
+
 }
 
 void MainWindow::updateProgress(int percent)
@@ -468,8 +474,11 @@ void MainWindow::updateProgress(int percent)
 
     // Update the progressbar.
     QTreeWidgetItem *item = torrentView->topLevelItem(row);
-    if (item)
+    if (item) {
         item->setText(2, QString::number(percent));
+        qDebug() << __PRETTY_FUNCTION__ << percent << "% " << client->stateString();
+    }
+
 }
 
 void MainWindow::setActionsEnabled()
@@ -507,6 +516,7 @@ void MainWindow::updateDownloadRate(int bytesPerSecond)
     QString num;
     num.sprintf("%.1f KB/s", bytesPerSecond / 1024.0);
     torrentView->topLevelItem(row)->setText(3, num);
+    qDebug() << __PRETTY_FUNCTION__ << bytesPerSecond << " download rate kb/s";
 
     if (!saveChanges) {
         saveChanges = true;
@@ -522,6 +532,7 @@ void MainWindow::updateUploadRate(int bytesPerSecond)
     QString num;
     num.sprintf("%.1f KB/s", bytesPerSecond / 1024.0);
     torrentView->topLevelItem(row)->setText(4, num);
+    qDebug() << __PRETTY_FUNCTION__ << bytesPerSecond << " upload rate kb/s";
 
     if (!saveChanges) {
         saveChanges = true;

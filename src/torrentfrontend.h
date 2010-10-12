@@ -7,6 +7,7 @@
 
 class QMenu;
 class ArchiveItem;
+class QNetworkReply;
 
 class TorrentFrontend : public AbstractFrontend {
     Q_OBJECT
@@ -23,11 +24,13 @@ private:
     TorrentClient* m_torrentclient;
 private Q_SLOTS:
     void extend();
+    void collapse();
     void startTorrentDownload();
+    void startDownloadViaTorrent();
+    void torrentDownloadFinished(QNetworkReply* reply);
     void resumeTorrentDownload();
     void pauseTorrentDownload();
     void cancelTorrentDownload();
-    void torrentDownloadFinished();
 
     void updateState(TorrentClient::State);
     void updatePeerInfo();
@@ -36,7 +39,6 @@ private Q_SLOTS:
     void updateUploadRate(int);
     void torrentStopped();
     void torrentError(TorrentClient::Error);
-
 };
 
 #endif // TORRENTFRONTEND_H

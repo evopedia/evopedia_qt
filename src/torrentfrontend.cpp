@@ -7,6 +7,8 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QDebug>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 #include "torrentfrontend.h"
 #include "archiveitem.h"
@@ -20,10 +22,10 @@ TorrentFrontend::TorrentFrontend(ArchiveItem* item) {
 
 void TorrentFrontend::extend() {
     for (int i = 0; i < 2; ++i) {
-        QStandardItem *item1_1Col1 = new QStandardItem(QString("")); // Spalte 1 vom ChildChild
-        QStandardItem *item1_1Col2 = new QStandardItem(QString("item1_1Col2")); // Spalte 2 vom ChildChild
-        QStandardItem *item1_1Col3 = new QStandardItem(QString("item1_1Col2")); // Spalte 2 vom ChildChild
-        QStandardItem *item1_1Col4 = new QStandardItem(QString("")); // Spalte 3 vom ChildChild
+        QStandardItem *item1_1Col1 = new QStandardItem();
+        QStandardItem *item1_1Col2 = new QStandardItem();
+        QStandardItem *item1_1Col3 = new QStandardItem();
+        QStandardItem *item1_1Col4 = new QStandardItem();
 
         // Spalten vorbereiten
         QList<QStandardItem*> itemList;
@@ -31,27 +33,42 @@ void TorrentFrontend::extend() {
         itemList.append(item1_1Col2);
         itemList.append(item1_1Col3);
         itemList.append(item1_1Col4);
-        m_archiveitem->appendRow(itemList); // append Child
+
+        foreach(QStandardItem* item, itemList)
+            item->setEnabled(false);
+
+        m_archiveitem->appendRow(itemList);
+    }
+}
+
+void TorrentFrontend::collapse() {
+    while (m_archiveitem->rowCount()>0) {
+        m_archiveitem->removeRow(0);
     }
 }
 
 QMenu* TorrentFrontend::createContextMenu() {
     QMenu* m = new QMenu();
 
-    /*
-    QAction* pauseTorrentAct = new QAction(QIcon(), "pause torrent download", this);
-    connect(pauseTorrentAct, SIGNAL(triggered()), this, SLOT(removeEntry()));
-    m->addAction(pauseTorrentAct);
-    */
     QAction* startTorrentDownloadAct = new QAction(QIcon(), "start torrent download", this);
     connect(startTorrentDownloadAct, SIGNAL(triggered()), this, SLOT(startTorrentDownload()));
     m->addAction(startTorrentDownloadAct);
 
-    /*
-    m->addAction("pause torrent download");
-    m->addAction("resume torrent download");
-    m->addAction("cancel torrent download & remove files");
-    */
+    QAction* pauseTorrentAct = new QAction(QIcon(), "pause torrent download", this);
+    connect(pauseTorrentAct, SIGNAL(triggered()), this, SLOT(removeEntry()));
+    m->addAction(pauseTorrentAct);
+
+    QAction* resumeTorrentAct = new QAction(QIcon(), "resume torrent download", this);
+    connect(resumeTorrentAct, SIGNAL(triggered()), this, SLOT(resumeTorrentDownload()));
+    m->addAction(resumeTorrentAct);
+
+    QAction* cancelTorrentAndRemoveFilesAct = new QAction(QIcon(), "cancel torrent download & remove files", this);
+    connect(cancelTorrentAndRemoveFilesAct, SIGNAL(triggered()), this, SLOT(cancelTorrentDownload()));
+    m->addAction(cancelTorrentAndRemoveFilesAct);
+
+    //FIXME start seeding
+    //FIXME stop seeding
+
     return m;
 }
 
@@ -97,39 +114,58 @@ bool TorrentFrontend::validate(QString &ret) {
     //  return true;
     // }
     // return false;
-    return true;
+    return false;
 }
 
 void TorrentFrontend::startTorrentDownload() {
     //FIXME check if download has already started, don't start twice!
     qDebug() << __PRETTY_FUNCTION__;
-    qDebug() << m_archiveitem->m_dir;
+
     if (!QDir(m_archiveitem->m_dir).exists() || m_archiveitem->m_dir == "") {
         QFileDialog dialog(NULL, tr("Select a directory"), QString());
         dialog.setFileMode(QFileDialog::DirectoryOnly);
-
         if (dialog.exec()) {
-            QString dir = dialog.selectedFiles().first();
-            /*
-            if ) {
-                QMessageBox::critical(NULL, tr("Error"),
-                                      tr("Directory '%1'' does not contain a valid evopedia dump:\n '%2'")
-                                      .arg(dir).arg(ret));
-            }
-            */
-            m_archiveitem->m_dir=dir;
+            m_archiveitem->m_dir=dialog.selectedFiles().first();
         } else {
             return;
         }
     }
-    // download the torrent to m_dir
-    qDebug() << __PRETTY_FUNCTION__ << "download here";
+    qDebug() << m_archiveitem->m_dir;
+    m_archiveitem->m_torrent;
 
+    QFile f(m_archiveitem->m_dir + "/" + m_archiveitem->m_torrent);
+    if (f.exists()) {
+        startDownloadViaTorrent();
+    } else {
+        QNetworkAccessManager* manager = new QNetworkAccessManager(this);
+        QObject::connect(manager, SIGNAL(finished(QNetworkReply* )),
+                         this, SLOT(torrentDownloadFinished(QNetworkReply* )));
+        manager->get(QNetworkRequest(m_archiveitem->m_url));
+        //FIXME 1. set status message
+        //FIXME 2. create timeout error
+    }
+}
 
-    // METADATA from the dumps webpage must match 'lang' and 'date' with the contents of the torrent
+/*! when the *.torrent is downloaded successfully, we start the actual download using it */
+void TorrentFrontend::torrentDownloadFinished(QNetworkReply* reply) {
+    QFile file(m_archiveitem->m_dir + "/" + m_archiveitem->m_torrent);
+    file.open(QIODevice::WriteOnly);
+    file.write(reply->readAll());
+    file.close();
+    startDownloadViaTorrent();
+}
+
+void TorrentFrontend::startDownloadViaTorrent() {
+    // FIXME parse METADATA from the dumps webpage must match 'lang' and 'date' with the contents of the torrent
     extend();
 
     m_torrentclient = new TorrentClient(this);
+
+    // setting a rate is important: not doing so will result in no seeds reported & silent fails
+    int rate = 1000*1000*10; // 10mb/s
+    RateController::instance()->setUploadLimit(rate);
+    RateController::instance()->setDownloadLimit(rate);
+
     // Setup the client connections
     connect(m_torrentclient, SIGNAL(stateChanged(TorrentClient::State)),
            this, SLOT(updateState(TorrentClient::State)));
@@ -161,9 +197,9 @@ void TorrentFrontend::startTorrentDownload() {
      QByteArray resumeState;// = settings.value("resumeState").toByteArray();
      m_torrentclient->setDumpedState(resumeState);
 
-
      m_torrentclient->start();
-     qDebug() << __PRETTY_FUNCTION__ << "started";
+
+     m_archiveitem->m_itemState=ItemState::RemoteTorrent;
      saveSettings();
 }
 
@@ -175,6 +211,7 @@ void TorrentFrontend::pauseTorrentDownload() {
     qDebug() << __PRETTY_FUNCTION__;
 }
 
+/*! cancel torrent download and remove all files */
 void TorrentFrontend::cancelTorrentDownload() {
     qDebug() << __PRETTY_FUNCTION__;
     //client->disconnect();
@@ -182,33 +219,63 @@ void TorrentFrontend::cancelTorrentDownload() {
     //client->stop();
 }
 
-void TorrentFrontend::torrentDownloadFinished() {
-    qDebug() << __PRETTY_FUNCTION__;
-}
-
-
-
-
-
-void TorrentFrontend::updateState(TorrentClient::State) {
+void TorrentFrontend::updateState(TorrentClient::State s) {
     qDebug() << __PRETTY_FUNCTION__ << m_torrentclient->stateString();
+    if (s == TorrentClient::Endgame || s == TorrentClient::Seeding) {
+        qDebug() << "download done, now using this as a local archive";
+        // emit
+    }
 }
 
 void TorrentFrontend::updatePeerInfo() {
-    qDebug() << __PRETTY_FUNCTION__ << "peers" << m_torrentclient->connectedPeerCount()
-            << ", seeds: " << m_torrentclient->seedCount();
+
+    if (m_archiveitem->rowCount() > 0) {
+      QStandardItem* i;
+      i = m_archiveitem->child(0,0);
+      if (i)
+          i->setText("seeds/peers");
+      i = m_archiveitem->child(0,1);
+      if (i)
+          i->setText(QString("%1/%2")
+                 .arg(m_torrentclient->connectedPeerCount())
+                 .arg(m_torrentclient->seedCount()));
+    }
 }
 
 void TorrentFrontend::updateProgress(int percent) {
-    qDebug() << __PRETTY_FUNCTION__ << percent << "% " << m_torrentclient->stateString();
+    if (m_archiveitem->rowCount() > 0) {
+      QStandardItem* i;
+      i = m_archiveitem->child(0,2);
+      if (i)
+          i->setText(QString("%1 \%").arg(percent));
+      i = m_archiveitem->child(0,3);
+      if (i)
+          i->setText(m_torrentclient->stateString());
+    }
 }
 
-void TorrentFrontend::updateDownloadRate(int downrate) {
-    qDebug() << __PRETTY_FUNCTION__ << downrate << " download rate kb/s";
+void TorrentFrontend::updateDownloadRate(int rate) {
+    if (m_archiveitem->rowCount() > 0) {
+      QStandardItem* i;
+      i = m_archiveitem->child(1,0);
+      if (i)
+          i->setText(QString("down/up rate"));
+      i = m_archiveitem->child(1,2);
+      if (i)
+          i->setText(QString("%1 kb/s").arg(rate/1000.0));
+    }
 }
 
-void TorrentFrontend::updateUploadRate(int uprate) {
-    qDebug() << __PRETTY_FUNCTION__ << uprate << " upload rate kb/s";
+void TorrentFrontend::updateUploadRate(int rate) {
+    if (m_archiveitem->rowCount() > 0) {
+      QStandardItem* i;
+      i = m_archiveitem->child(1,0);
+      if (i)
+          i->setText(QString("down/up rate"));
+      i = m_archiveitem->child(1,3);
+      if (i)
+          i->setText(QString("%1 kb/s").arg(rate/1000.0));
+    }
 }
 
 void TorrentFrontend::torrentStopped() {

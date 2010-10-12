@@ -13,8 +13,6 @@
 #include "utils.h"
 #include "defines.h"
 
-//sollte dann so was wie qApp().evopedia().archiveManager() werden
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Evopedia),

@@ -125,6 +125,7 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
         http://evopedia.info/dumps/wikipedia_sl_2010-08-12.torrent; 216360675
         */
 
+        //FIXME only add a 'remote archive' if it is not there already
         //addArchive(language, date, dir, torrent, url, ret);
         pos += rx.matchedLength();
     }
