@@ -170,7 +170,6 @@ void MainWindow::refreshSearchResults()
 
 void MainWindow::on_actionMap_triggered()
 {
-    /* TODO0 show current location? */
     showMapWindow();
 }
 

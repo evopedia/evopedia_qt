@@ -1,5 +1,6 @@
 QT += core gui network
 INCLUDEPATH += src
+
 SOURCES +=  src/mainwindow.cpp \
 	src/storagebackend.cpp \
 	src/title.cpp \
@@ -64,14 +65,57 @@ HEADERS += src/mainwindow.h \
 	src/torrent/torrentserver.h \
 	src/torrent/trackerclient.h
 
-TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
+SOURCES += src/mainwindow.cpp \
+    src/storagebackend.cpp \
+    src/title.cpp \
+    src/titleiterator.cpp \
+    src/titlelistmodel.cpp \
+    src/evopedia.cpp \
+    src/bzreader.cpp \
+    src/evopediawebserver.cpp \
+    src/utils.cpp \
+    src/map.cpp \
+    src/flickable.cpp \
+    src/dumpsettings.cpp \
+    src/mapwindow.cpp \
+    src/flickablemap.cpp \
+    src/evopediaapplication.cpp \
+    src/archive.cpp
+
+HEADERS += src/mainwindow.h \
+    src/storagebackend.h \
+    src/title.h \
+    src/titlelistmodel.h \
+    src/titleiterator.h \
+    src/evopedia.h \
+    src/bzreader.h \
+    src/evopediawebserver.h \
+    src/utils.h \
+    src/map.h \
+    src/geotitle.h \
+    src/flickable.h \
+    src/dumpsettings.h \
+    src/mapwindow.h \
+    src/flickablemap.h \
+    src/evopediaapplication.h \
+    src/archive.h \
+    src/defines.h
+
+TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts
 
 FORMS += src/mainwindow.ui \
     src/dumpSettings.ui \
     src/mapwindow.ui
 
 CONFIG += warn_on
-unix:LIBS += -lbz2
+maemo5 {
+    CONFIG += mobility
+    DEFINES += USE_MOBILITY
+    MOBILITY += location
+}
+!symbian {
+    LIBS += -lbz2
+}
 DEFINES += QT_NO_CAST_TO_ASCII
 DEFINES += QT_NO_CAST_FROM_BYTEARRAY
 

@@ -8,12 +8,13 @@
 #include <QPair>
 #include <QHash>
 #include <QNetworkInterface>
+#include <QTime>
 
 quint32 randomNumber(quint32 maxExcl)
 {
     static bool seedInitialized(false);
     if (!seedInitialized) {
-        srand(time(0));
+        qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
         seedInitialized = true;
     }
     if (maxExcl > RAND_MAX) {
@@ -21,7 +22,7 @@ quint32 randomNumber(quint32 maxExcl)
         quint32 b = randomNumber(1 << 4);
         return ((a << 4) | b) % maxExcl;
     } else {
-        return rand() % maxExcl;
+        return qrand() % maxExcl;
     }
 }
 
