@@ -11,11 +11,12 @@ BZReader::BZReader()
 const QByteArray BZReader::readAt(QFile &f, quint32 blockStart, quint32 blockOffset, quint32 dataLength)
 {
     memset(&stream, 0, sizeof(stream));
-    BZ2_bzDecompressInit(&stream, 0, 0);
+    if (BZ2_bzDecompressInit(&stream, 0, 0) != BZ_OK)
+        return QByteArray();
 
     f.seek(blockStart);
     QByteArray outbuffer(blockOffset + dataLength, '\0');
-    /* TODO2 we do not need to save the first blockOffset bytes */
+    /* actually we do not need to save the first blockOffset bytes */
     stream.avail_out = outbuffer.size();
     stream.next_out = outbuffer.data();
 
@@ -33,6 +34,8 @@ const QByteArray BZReader::readAt(QFile &f, quint32 blockStart, quint32 blockOff
 
         inbuffer = inbuffer.right(stream.avail_in);
     } while (stream.avail_out != 0);
+
+    BZ2_bzDecompressEnd(&stream);
 
     return outbuffer.mid(blockOffset, dataLength);
 }

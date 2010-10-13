@@ -64,14 +64,21 @@ HEADERS += src/mainwindow.h \
 	src/torrent/torrentserver.h \
 	src/torrent/trackerclient.h
 
-TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
+TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts
 
 FORMS += src/mainwindow.ui \
     src/dumpSettings.ui \
     src/mapwindow.ui
 
 CONFIG += warn_on
-unix:LIBS += -lbz2
+maemo5 {
+    CONFIG += mobility
+    DEFINES += USE_MOBILITY
+    MOBILITY += location
+}
+!symbian {
+    LIBS += -lbz2
+}
 DEFINES += QT_NO_CAST_TO_ASCII
 DEFINES += QT_NO_CAST_FROM_BYTEARRAY
 
