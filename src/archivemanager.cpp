@@ -97,17 +97,17 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
         }
     }
 
-    QRegExp rx("<!-- METAINFO ([^>]*/wikipedia_([^_>]*)_([^_>]*)\\.[^>]*\\.torrent) ([0-9]*) -->");
+    QRegExp rx("<!-- METAINFO ([^>]*/(wikipedia_([^_>]*)_([^_>]*)\\.[^>]*\\.torrent)) ([0-9]*) -->");
     rx.setMinimal(true);
 
     // now we parse the html page to generate new RemoteTorrent(s)
     for (int pos = 0; (pos = rx.indexIn(data, pos)) != -1; pos += rx.matchedLength()) {
         QString ret;
         QUrl url(rx.cap(1));
-        QString language(rx.cap(2));
-        QString date(rx.cap(3));
-        QString size(rx.cap(4));
-        QString torrent = "";
+        QString torrent(rx.cap(2));
+        QString language(rx.cap(3));
+        QString date(rx.cap(4));
+        QString size(rx.cap(5));
         QString dir("/tmp"); // FIXME
 
         //FIXME only add a 'remote archive' if it is not there already

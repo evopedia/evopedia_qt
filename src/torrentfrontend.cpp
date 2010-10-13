@@ -139,7 +139,7 @@ void TorrentFrontend::startTorrentDownload() {
     qDebug() << m_workingDir;
 
     QFile f(m_workingDir + "/" + m_torrent);
-    if (f.exists()) {
+    if (!m_torrent.isEmpty() && f.exists()) {
         startDownloadViaTorrent();
     } else {
         QNetworkAccessManager* manager = new QNetworkAccessManager(this);
