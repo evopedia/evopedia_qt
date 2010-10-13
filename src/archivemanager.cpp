@@ -75,14 +75,10 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
         return;
     }
     //FIXME if the network does not work we need a timeout handler for error messages
+    //FIXME is it possible that we get the data only in partial chunks?
     QString data = QString::fromUtf8(reply->readAll().constData());
 
-    // wikipedia_de_2010-07-27.torrent
-    QRegExp rx("wikipedia_.._....-..-..\\.torrent");
-    rx.setMinimal(true);
-
     // let's remove all old RemoteTorrent(s) first
-    QVector<ArchiveItem*> c;
     for(int i=0; i < m_model->rowCount(); ++i) {
         QStandardItem* langItem = m_model->item(i,0);
         for(int y=0; y < langItem->rowCount();) {
@@ -92,47 +88,33 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
                 // 2. type cast
                 ArchiveItem* item = static_cast<ArchiveItem*>(sItem);
                 // 3. delete all ItemState::RemoteTorrent objects
-                if (item->itemState() == ItemState::RemoteTorrent)
+                if (item->itemState() == ItemState::RemoteTorrent) {
                     m_model->removeRow(item->row(), item->parent()->index());
-                ++y;
+                    continue;
+                }
             }
+            ++y;
         }
     }
 
-    int pos = 0;
-    // now we parse the html page to generate new RemoteTorrent(s)
-    while((pos = rx.indexIn(data, pos)) != -1) {
-        // FIXME use ret and display the message
-        // FIXME the use of EVOPEDIA_URL to construct the torrent link is problematic
-        //       rewrite this to use a regexp to find the whole url as:
-        //       http://evopedia.info/dumps/wikipedia_de_2010-07-27.torrent
-        QString ret; // return argument
-        QString torrent_link = data.mid(pos, rx.matchedLength());
-        QUrl url(EVOPEDIA_URL + torrent_link);
-        QString language = torrent_link.mid(10,2);
-        QString date = torrent_link.mid(13,10);
-        QString torrent = "";
-        QString dir("/tmp");
-        /*
-        wget "http://dumpathome.evopedia.info/dumps/finished" -O dumps;
-        cat dumps | grep 'wikipedia_.._....-..-...torrent' | grep META | grep -o 'http://.*torrent [0-9]*'
+    QRegExp rx("<!-- METAINFO ([^>]*/wikipedia_([^_>]*)_([^_>]*)\\.[^>]*\\.torrent) ([0-9]*) -->");
+    rx.setMinimal(true);
 
-        http://evopedia.info/dumps/wikipedia_de_2010-07-27.torrent; 2842735141
-        http://evopedia.info/dumps/wikipedia_el_2010-08-15.torrent; 156453782
-        http://evopedia.info/dumps/wikipedia_en_2010-06-22.torrent; 11297506467
-        http://evopedia.info/dumps/wikipedia_fr_2010-08-02.torrent; 2953095765
-        http://evopedia.info/dumps/wikipedia_it_2010-09-02.torrent; 2363497456
-        http://evopedia.info/dumps/wikipedia_sl_2010-08-12.torrent; 216360675
-        */
+    // now we parse the html page to generate new RemoteTorrent(s)
+    for (int pos = 0; (pos = rx.indexIn(data, pos)) != -1; pos += rx.matchedLength()) {
+        QString ret;
+        QUrl url(rx.cap(1));
+        QString language(rx.cap(2));
+        QString date(rx.cap(3));
+        QString size(rx.cap(4));
+        QString torrent = "";
+        QString dir("/tmp"); // FIXME
 
         //FIXME only add a 'remote archive' if it is not there already
-        //addArchive(language, date, dir, torrent, url, ret);
-        pos += rx.matchedLength();
+        addArchive(language, date, dir, torrent, url, ret);
+        //FIXME decide when to display the error message ret
+        //and when to ignore it
     }
-    QString ret; // return argument
-    addArchive("de", "2010-07-27", "", "wikipedia_de_2010-07-27.torrent", QUrl("http://evopedia.info/dumps/wikipedia_de_2010-07-27.torrent"), ret);
-    addArchive("sl", "2010-08-12", "", "wikipedia_sl_2010-08-12.torrent", QUrl("http://evopedia.info/dumps/wikipedia_sl_2010-08-12.torrent"), ret);
-    addArchive("small", "2010-08-14", "", "wikipedia_small_2010-08-14.torrent", QUrl("http://evopedia.info/dumps/wikipedia_small_2010-08-14.torrent"), ret);
 }
 
 /*
