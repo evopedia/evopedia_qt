@@ -29,8 +29,8 @@ ArchiveItem::ArchiveItem(QString archiveDir) : QStandardItem() {
 /*! adding a remote or local torrent archive */
 ArchiveItem::ArchiveItem(QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url) : QStandardItem() {
     m_torrentfrontend = new TorrentFrontend(this, language, date, size, workingDir, archiveDir, torrent, url);
-    m_itemState=ItemState::RemoteTorrent;
     m_storagefrontend = new StorageFrontend(this);
+    m_itemState=ItemState::RemoteTorrent;
 }
 
 /*! update() might not work when being called from the ctor as the other items are most likely not added to the model yet
@@ -99,7 +99,7 @@ QString ArchiveItem::stateString() {
 }
 
 StorageBackend *ArchiveItem::storageBackend() {
-    if (itemState() == ItemState::Local && m_storagefrontend)
+    if (m_storagefrontend)
         return m_storagefrontend->storageBackend();
     return NULL;
 }
@@ -124,11 +124,11 @@ int ArchiveItem::itemState() {
 
 void ArchiveItem::setItemState(int s) {
     if (itemState() == ItemState::RemoteTorrent && s == ItemState::DownloadingTorrent) {
-        qDebug() << __PRETTY_FUNCTION__ << "changing state to ItemState::DownloadingTorrent";
+//        qDebug() << __PRETTY_FUNCTION__ << "changing state to ItemState::DownloadingTorrent";
         m_itemState = s;
     }
     if (itemState() == ItemState::DownloadingTorrent && s == ItemState::LocalTorrent) {
-        qDebug() << __PRETTY_FUNCTION__ << "changing state to ItemState::LocalTorrent";
+//        qDebug() << __PRETTY_FUNCTION__ << "changing state to ItemState::LocalTorrent";
         m_storagefrontend->setArchiveDirectory(m_torrentfrontend->archiveDir());
     }
     //FIXME if a torrent download is started successfully:
@@ -153,9 +153,9 @@ QMenu* ArchiveItem::createContextMenu() {
     QMenu* main = new QMenu();
     QMenu* m1;
     if (m_storagefrontend) {
-            m1 = m_storagefrontend->createContextMenu();
-            m1->setTitle("Local");
-            main->addMenu(m1);
+        m1 = m_storagefrontend->createContextMenu();
+        m1->setTitle("Local");
+        main->addMenu(m1);
     }
     if (m_torrentfrontend) {
         QMenu* m2 = m_torrentfrontend->createContextMenu();

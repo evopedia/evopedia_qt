@@ -148,7 +148,6 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
 /*! used for local archives, manual downloads*/
 ArchiveItem* ArchiveManager::addArchive(QString dir, QString& ret) {
     ArchiveItem* item = new ArchiveItem(dir);
-    connect(item->m_storagefrontend, SIGNAL(updateBackends()), SLOT(updateBackends()));
     if (!item->validate(ret)) {
         delete item;
         return NULL;
@@ -167,7 +166,7 @@ ArchiveItem* ArchiveManager::addArchive(QString language, QString date, QString 
 }
 
 ArchiveItem* ArchiveManager::addArchive(ArchiveItem* item) {
-
+    connect(item->m_storagefrontend, SIGNAL(updateBackends()), SLOT(updateBackends()));
 
     // 1. find the language group
     QStandardItem* langItem = NULL;
@@ -227,7 +226,6 @@ void ArchiveManager::updateBackends()
 {
     //FIXME rowsAboutToBeRemoved singal should be linked here as well
     const QList<StorageBackend *>backends = getBackends();
-    qDebug() << __PRETTY_FUNCTION__ << "backend count" << backends.size();
     emit backendsChanged(backends);
 }
 
