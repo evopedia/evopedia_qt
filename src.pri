@@ -65,42 +65,6 @@ HEADERS += src/mainwindow.h \
 	src/torrent/torrentserver.h \
 	src/torrent/trackerclient.h
 
-SOURCES += src/mainwindow.cpp \
-    src/storagebackend.cpp \
-    src/title.cpp \
-    src/titleiterator.cpp \
-    src/titlelistmodel.cpp \
-    src/evopedia.cpp \
-    src/bzreader.cpp \
-    src/evopediawebserver.cpp \
-    src/utils.cpp \
-    src/map.cpp \
-    src/flickable.cpp \
-    src/dumpsettings.cpp \
-    src/mapwindow.cpp \
-    src/flickablemap.cpp \
-    src/evopediaapplication.cpp \
-    src/archive.cpp
-
-HEADERS += src/mainwindow.h \
-    src/storagebackend.h \
-    src/title.h \
-    src/titlelistmodel.h \
-    src/titleiterator.h \
-    src/evopedia.h \
-    src/bzreader.h \
-    src/evopediawebserver.h \
-    src/utils.h \
-    src/map.h \
-    src/geotitle.h \
-    src/flickable.h \
-    src/dumpsettings.h \
-    src/mapwindow.h \
-    src/flickablemap.h \
-    src/evopediaapplication.h \
-    src/archive.h \
-    src/defines.h
-
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts
 
 FORMS += src/mainwindow.ui \
