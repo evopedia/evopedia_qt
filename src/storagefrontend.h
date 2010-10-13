@@ -4,8 +4,8 @@
 #include "abstractfrontend.h"
 #include "storagebackend.h"
 
+#include <QString>
 class QMenu;
-class QString;
 class ArchiveItem;
 
 class StorageFrontend : public AbstractFrontend {
@@ -13,7 +13,7 @@ class StorageFrontend : public AbstractFrontend {
     friend class ArchiveItem;
 
 protected:
-    StorageFrontend(ArchiveItem* item, QString archiveDir);
+    StorageFrontend(ArchiveItem* item, QString archiveDir = QString());
     ~StorageFrontend();
     QMenu* createContextMenu();
     void saveSettings();
@@ -27,6 +27,7 @@ public:
     QString archiveDir();
     QString size();
     QString stateString();
+    void setArchiveDirectory(QString archiveDir);
 private:
     ArchiveItem* m_archiveitem;
     StorageBackend *m_storageBackend;

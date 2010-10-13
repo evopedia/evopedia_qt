@@ -227,6 +227,7 @@ void ArchiveManager::updateBackends()
 {
     //FIXME rowsAboutToBeRemoved singal should be linked here as well
     const QList<StorageBackend *>backends = getBackends();
+    qDebug() << __PRETTY_FUNCTION__ << "backend count" << backends.size();
     emit backendsChanged(backends);
 }
 

@@ -30,7 +30,7 @@ ArchiveItem::ArchiveItem(QString archiveDir) : QStandardItem() {
 ArchiveItem::ArchiveItem(QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url) : QStandardItem() {
     m_torrentfrontend = new TorrentFrontend(this, language, date, size, workingDir, archiveDir, torrent, url);
     m_itemState=ItemState::RemoteTorrent;
-    m_storagefrontend = NULL;//new StorageFrontend(this)
+    m_storagefrontend = new StorageFrontend(this);
 }
 
 /*! update() might not work when being called from the ctor as the other items are most likely not added to the model yet
@@ -123,11 +123,13 @@ int ArchiveItem::itemState() {
 }
 
 void ArchiveItem::setItemState(int s) {
-    qDebug() << s;
-    if (itemState() == ItemState::RemoteTorrent && s == ItemState::DownloadingTorrent)
+    if (itemState() == ItemState::RemoteTorrent && s == ItemState::DownloadingTorrent) {
+        qDebug() << __PRETTY_FUNCTION__ << "changing state to ItemState::DownloadingTorrent";
         m_itemState = s;
+    }
     if (itemState() == ItemState::DownloadingTorrent && s == ItemState::LocalTorrent) {
-        m_storagefrontend = new StorageFrontend(this, m_torrentfrontend->archiveDir());
+        qDebug() << __PRETTY_FUNCTION__ << "changing state to ItemState::LocalTorrent";
+        m_storagefrontend->setArchiveDirectory(m_torrentfrontend->archiveDir());
     }
     //FIXME if a torrent download is started successfully:
     //      ItemState::RemoteTorrent will change to ItemState::LocalTorrent

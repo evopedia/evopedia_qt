@@ -7,7 +7,7 @@
 #include "storagefrontend.h"
 #include "archiveitem.h"
 
-StorageFrontend::StorageFrontend(ArchiveItem* item, QString archiveDir) {
+StorageFrontend::StorageFrontend(ArchiveItem* item, QString archiveDir ) {
     m_archiveDir = archiveDir;
     m_archiveitem = item;
     m_storageBackend=NULL;
@@ -26,7 +26,6 @@ QMenu* StorageFrontend::createContextMenu() {
     QAction* removeEntryAct = new QAction(QIcon(), "remove entry", this);
     connect(removeEntryAct, SIGNAL(triggered()), this, SLOT(removeEntry()));
     m->addAction(removeEntryAct);
-
     /*
     m->addAction("remote entry and delete files");
     */
@@ -42,7 +41,7 @@ void StorageFrontend::removeEntry() {
 }
 
 bool StorageFrontend::validate(QString& ret) {
-    //FIXME maybe this code can implement better (js)
+    //FIXME maybe this code can be implemented better (js)
     if (m_storageBackend) {
         delete m_storageBackend;
         m_storageBackend=NULL;
@@ -93,7 +92,6 @@ StorageBackend *StorageFrontend::storageBackend() {
     return m_storageBackend;
 }
 
-
 QString StorageFrontend::language() {
     return m_language;
 }
@@ -112,4 +110,13 @@ QString StorageFrontend::size() {
 
 QString StorageFrontend::stateString() {
     return "torrent download running...";
+}
+
+void StorageFrontend::setArchiveDirectory(QString archiveDir){
+    m_archiveDir = archiveDir;
+    QString ret;
+    if (validate(ret)) {
+        m_activated=true;
+    }
+    emit updateBackends();
 }

@@ -75,7 +75,6 @@ QMenu* TorrentFrontend::createContextMenu() {
 
     //FIXME start seeding
     //FIXME stop seeding
-
     return m;
 }
 
@@ -228,9 +227,10 @@ void TorrentFrontend::cancelTorrentDownload() {
 void TorrentFrontend::updateState(TorrentClient::State s) {
     qDebug() << __PRETTY_FUNCTION__ << m_torrentclient->stateString();
     if (s == TorrentClient::Endgame || s == TorrentClient::Seeding) {
-        //FIXME m_archiveDir = ...
+        //FIXME this should be done differently: use the contents of the torrent (the direcotry) and not the torrent
+        m_archiveDir = m_workingDir + "/" + m_torrent.left(m_torrent.length()-8);
+        qDebug() << "download done, now using this as a local archive " << m_archiveDir;
         m_archiveitem->setItemState(ItemState::LocalTorrent);
-        qDebug() << "download done, now using this as a local archive";
     }
 }
 
