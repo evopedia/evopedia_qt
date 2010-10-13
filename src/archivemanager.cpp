@@ -97,7 +97,7 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
         }
     }
 
-    QRegExp rx("<!-- METAINFO ([^>]*/(wikipedia_([^_>]*)_([^_>]*)\\.[^>]*\\.torrent)) ([0-9]*) -->");
+    QRegExp rx("<!-- METAINFO ([^>]*/(wikipedia_([^_>]*)_([^_.>]*)\\.([^>]*\\.)?torrent)) ([0-9]*) -->");
     rx.setMinimal(true);
 
     // now we parse the html page to generate new RemoteTorrent(s)
