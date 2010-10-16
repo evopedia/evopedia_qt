@@ -20,7 +20,7 @@ public:
     ~DumpSettings();
 
 private slots:
-    void addButtonClicked();
+    void on_actionManually_add_archive_triggered();
 
 private:
     Ui::DumpSettings *ui;

@@ -58,6 +58,39 @@ LocalArchive::LocalArchive(const QString &directory, QObject *parent) :
     readable = true;
 }
 
+LocalArchive *LocalArchive::restoreArchive(QSettings &settings, QObject *parent)
+{
+    QString data_dir(settings.value("data_directory").toString());
+
+    LocalArchive *archive = new LocalArchive(data_dir, parent);
+    if (!archive->isReadable()) {
+        delete archive;
+        return 0;
+    }
+
+    /* convert old settings format */
+    if (settings.group().indexOf('_', 5) < 0) {
+        QString newGroup = QString("dump_%1_%2").arg(archive->getLanguage(), archive->getDate());
+        settings.endGroup();
+        settings.remove(settings.group());
+        settings.beginGroup(newGroup);
+        settings.setValue(QString("data_directory"), data_dir);
+        settings.sync();
+    }
+
+    return archive;
+}
+
+void LocalArchive::saveToSettings(QSettings &settings) const
+{
+    settings.beginGroup(QString("dump_%1_%2").arg(language, date));
+    settings.setValue("complete", true);
+    settings.setValue("data_directory", directory);
+    settings.endGroup();
+
+    settings.sync();
+}
+
 bool LocalArchive::checkExistenceOfDumpfiles()
 {
     QDir dir(directory);

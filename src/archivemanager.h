@@ -87,6 +87,7 @@ General:
 #include <QMessageBox>
 #include <QObject>
 #include <QDir>
+#include <QSettings>
 
 #include "localarchive.h"
 #include "partialarchive.h"
@@ -105,6 +106,22 @@ General:
 */
 class ArchiveManager : public QObject {
 Q_OBJECT
+
+    QHash<ArchiveID, Archive *> archives;
+    /*! subset of archives */
+    QHash<QString, LocalArchive *> defaultLocalArchives;
+
+    QNetworkAccessManager netManager;
+
+    void restoreLocalAndPartialArchives(QSettings &settings);
+    bool addArchiveInternal(Archive *a);
+    bool addArchiveAndStoreInSettings(Archive *a);
+
+private slots:
+    void networkFinished(QNetworkReply *reply);
+    void updateDefaultLocalArchives(const QList<Archive *> &archives);
+
+
 public:
     explicit ArchiveManager(QObject* parent);
 
@@ -137,17 +154,7 @@ signals:
 
 public slots:
     void updateRemoteArchives();
-
-private slots:
-    void networkFinished(QNetworkReply *reply);
-    /*! called from archivesChanged, filters default local archives and emits defaultLocalArchivesChanged */
-    void updateDefaultLocalArchives(const QList<Archive *> &archives);
-private:
-    QHash<ArchiveID, Archive *> archives;
-    /*! subset of archives */
-    QHash<QString, LocalArchive *> defaultLocalArchives;
-
-    QNetworkAccessManager netManager;
+    void setDownloadsPaused(bool value);
 };
 
 #endif

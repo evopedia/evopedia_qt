@@ -19,7 +19,11 @@ class LocalArchive : public Archive
     Q_OBJECT
 public:
     LocalArchive(const QString &directory, QObject *parent=0);
-    
+
+    static LocalArchive *restoreArchive(QSettings &settings, QObject *parent=0);
+
+    void saveToSettings(QSettings &settings) const;
+
     TitleIterator getTitlesWithPrefix(const QString &prefix);
     QList<GeoTitle> getTitlesInCoords(const QRectF &rect, int maxTitles=-1, bool *complete=0);
     const QByteArray getArticle(const QString &title);

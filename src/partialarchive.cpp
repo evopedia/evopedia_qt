@@ -1,6 +1,7 @@
 #include "partialarchive.h"
 
 #include <QMessageBox>
+#include <QDir>
 
 #include "torrent/torrentclient.h"
 #include "torrent/ratecontroller.h"
@@ -13,6 +14,54 @@ PartialArchive::PartialArchive(const QString &language, const QString &date,
 {
     this->language = language;
     this->date = date;
+}
+
+PartialArchive *PartialArchive::restoreArchive(QSettings &settings, QObject *parent)
+{
+    QStringList groupParts(settings.group().split('_'));
+    if (groupParts.length() < 3) return 0;
+
+    QString dir(settings.value("data_directory").toString());
+    if (!QDir(dir).exists()) return 0;
+
+    QString torrent_file(settings.value("torrent_file").toString());
+    if (!QDir(dir).exists(torrent_file)) return 0;
+
+    return new PartialArchive(groupParts[1], groupParts[2],
+                              settings.value("torrent_url").toString(), settings.value("download_size", "0").toString(),
+                              torrent_file, dir, parent);
+}
+
+void PartialArchive::saveToSettings(QSettings &settings) const
+{
+    settings.beginGroup(QString("dump_%1_%2").arg(language, date));
+    settings.setValue("complete", false);
+    settings.setValue("data_directory", dir);
+    settings.setValue("torrent_url", url.toString());
+    settings.setValue("download_size", size);
+    settings.setValue("torrent_file", torrentFile);
+    settings.endGroup();
+
+    settings.sync();
+}
+
+void PartialArchive::togglePauseDownload()
+{
+    if (!torrentClient) {
+        startDownload();
+    } else {
+        torrentClient->setPaused(isDownloading());
+    }
+}
+
+void PartialArchive::setExternallyPaused(bool value)
+{
+    /* TODO save current paused state and set to paused */
+}
+
+QString PartialArchive::getSizeMB() const
+{
+    return size.left(size.length() - 6);
 }
 
 bool PartialArchive::validate(QString &ret)
@@ -68,16 +117,16 @@ void PartialArchive::startDownload()
      torrentClient->setDumpedState(resumeState);
 
      torrentClient->start();
+}
 
-     /*
-     m_archiveitem->setItemState(ItemState::DownloadingTorrent);
-     saveSettings();
-     */
+bool PartialArchive::isDownloading() const
+{
+    return (torrentClient != 0 && torrentClient->state() != TorrentClient::Paused);
 }
 
 void PartialArchive::pauseDownload()
 {
-
+    torrentClient->setPaused(true);
 }
 
 void PartialArchive::cancelDownload()
@@ -90,6 +139,28 @@ void PartialArchive::cancelDownload()
 
 void PartialArchive::updateState(TorrentClient::State s)
 {
+    QString statusText;
+    switch (s) {
+    case TorrentClient::Idle: statusText = tr("idle"); break;
+    case TorrentClient::Paused: statusText = tr("paused"); break;
+    case TorrentClient::Stopping: statusText = tr("stopping"); break;
+    case TorrentClient::Preparing: statusText = tr("preparing"); break;
+    case TorrentClient::Searching: statusText = tr("searching"); break;
+    case TorrentClient::Connecting: statusText = tr("connecting"); break;
+    case TorrentClient::WarmingUp: statusText = tr("warming up"); break;
+    case TorrentClient::Downloading: statusText = tr("downloading"); break;
+    case TorrentClient::Endgame: statusText = tr("endgame"); break;
+    case TorrentClient::Seeding: statusText = tr("seeding"); break;
+    }
+
+    emit statusTextUpdated(statusText);
+
+    if (s == TorrentClient::Paused)
+        emit downloadPaused();
+    else
+        emit downloadStarted();
+    /* TODO correct? */
+
     qDebug() << __PRETTY_FUNCTION__ << torrentClient->stateString();
     if (s == TorrentClient::Endgame || s == TorrentClient::Seeding) {
         //FIXME this should be done differently: use the contents of the torrent (the direcotry) and not the torrent
@@ -110,16 +181,18 @@ void PartialArchive::updatePeerInfo()
 
 void PartialArchive::updateDownloadRate(int rate)
 {
-    downloadRate = rate;
-    emit speedTextUpdated(tr("%n kb/s down, ", "", downloadRate) +
-                          tr("%n kb/s up", "", uploadRate));
+    downloadRate = rate / 1024.0;
+    emit speedTextUpdated(tr("%1/%2 kB/s down/up")
+                          .arg(downloadRate, 0, 'f', 2)
+                          .arg(uploadRate, 0, 'f', 2));
 }
 
 void PartialArchive::updateUploadRate(int rate)
 {
-    uploadRate = rate;
-    emit speedTextUpdated(tr("%n kb/s down, ", "", downloadRate) +
-                          tr("%n kb/s up", "", uploadRate));
+    uploadRate = rate / 1024.0;
+    emit speedTextUpdated(tr("%1/%2 kB/s down/up")
+                          .arg(downloadRate, 0, 'f', 2)
+                          .arg(uploadRate, 0, 'f', 2));
 }
 
 void PartialArchive::torrentStopped()

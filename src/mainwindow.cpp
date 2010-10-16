@@ -253,4 +253,3 @@ void MainWindow::on_actionDeny_toggled(bool v)
         evopedia->setNetworkUse(-1);
     }
 }
-

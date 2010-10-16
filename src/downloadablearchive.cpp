@@ -41,6 +41,8 @@ bool DownloadableArchive::startDownload()
     manager->get(QNetworkRequest(url));
 
     /* TODO indicator (progress bar, throbber) while file is downloaded */
+    /* TODO it could be possible that we have to move this code to
+       PartialArchive in order to achive that */
     return true;
 }
 

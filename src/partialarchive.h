@@ -1,6 +1,7 @@
 #ifndef PARTIALARCHIVE_H
 #define PARTIALARCHIVE_H
 
+#include <QSettings>
 #include <QUrl>
 
 #include "archive.h"
@@ -16,32 +17,43 @@ class PartialArchive : public Archive
     QString torrentFile;
     QString dir;
 
-    int uploadRate;
-    int downloadRate;
+    float uploadRate;
+    float downloadRate;
 
     TorrentClient* torrentClient;
 
 public:
-    explicit PartialArchive(const QString &language, const QString &date,
+    PartialArchive(const QString &language, const QString &date,
                                  const QUrl &url, const QString &size,
                                  const QString &torrentFile, const QString &dir,
                                  QObject *parent = 0);
+    static PartialArchive *restoreArchive(QSettings &settings, QObject *parent = 0);
+
+    void saveToSettings(QSettings &settings) const;
 
 
+    void setExternallyPaused(bool value);
+    bool isDownloading() const;
+    QString getSizeMB() const;
 
     /*! torrent based chunk validation */
     bool validate(QString &ret);
 
 signals:
     void progressUpdated(int percent);
-    void peerInfoUpdated(QString peerInfo);
-    void speedTextUpdated(QString speedText);
+    void peerInfoUpdated(const QString &peerInfo);
+    void speedTextUpdated(const QString &speedText);
+    void statusTextUpdated(const QString &statusText);
+
+    void downloadPaused();
+    void downloadStarted();
 
 public slots:
 
     void startDownload();
     void pauseDownload();
     void cancelDownload();
+    void togglePauseDownload();
 
     void updateState(TorrentClient::State s);
     void updatePeerInfo();

@@ -16,11 +16,8 @@ DumpSettings::DumpSettings(QWidget *parent) :
 
     evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
 
-    connect(ui->addButton, SIGNAL(clicked()), SLOT(addButtonClicked()));
-    connect(ui->refreshButton, SIGNAL(clicked()), evopedia->getArchiveManager(), SLOT(updateRemoteArchives()));
-
-    //ui->treeView->setModel(evopedia->archivemanager->model());
-    //ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->actionRefresh_archive_list, SIGNAL(triggered()), evopedia->getArchiveManager(), SLOT(updateRemoteArchives()));
+    connect(ui->actionPause_all_downloads, SIGNAL(toggled(bool)), evopedia->getArchiveManager(), SLOT(setDownloadsPaused(bool)));
 
     connect(evopedia->getArchiveManager(),
             SIGNAL(archivesChanged(QList<Archive*>)),
@@ -32,6 +29,8 @@ DumpSettings::DumpSettings(QWidget *parent) :
             SLOT(exchangeArchives(DownloadableArchive*,PartialArchive*)));
     ui->archiveList->updateArchives(evopedia->getArchiveManager()->getArchives().values());
 
+    /* TODO show some message explaining how to use this. mention menu. only for the first time? */
+
     show();
 }
 
@@ -40,8 +39,10 @@ DumpSettings::~DumpSettings()
     delete ui;
 }
 
-void DumpSettings::addButtonClicked()
+void DumpSettings::on_actionManually_add_archive_triggered()
 {
+    /* TODO creates a rather complicated dialog. */
+
     QFileDialog dialog(this, tr("Open Dump Directory"), QString());
     dialog.setFileMode(QFileDialog::DirectoryOnly);
 

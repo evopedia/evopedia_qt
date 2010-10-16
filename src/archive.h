@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QPair>
 #include <QString>
+#include <QSettings>
 
 /* (language, date) uniquely identifies archive */
 typedef QPair<QString, QString> ArchiveID;
@@ -21,6 +22,8 @@ public:
     const QString &getLanguage() const { return language; }
     const QString &getDate() const { return date; }
     const ArchiveID getID() const { return ArchiveID(language, date); }
+
+    virtual void saveToSettings(QSettings &settings) const { Q_UNUSED(settings); }
 
     /* newer archives are "less" */
     bool operator<(const Archive &other) const {

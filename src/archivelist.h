@@ -5,6 +5,7 @@
 #include <QHash>
 #include <QPair>
 #include <QString>
+#include <QSignalMapper>
 
 #include "archive.h"
 #include "localarchive.h"
@@ -15,9 +16,18 @@ class ArchiveList : public QTreeWidget
 {
     Q_OBJECT
 
+    QSignalMapper *downloadPausedMapper;
+    QSignalMapper *downloadStartedMapper;
+
     void fillLocalArchiveItem(LocalArchive *a, QTreeWidgetItem *item);
     void fillPartialArchiveItem(PartialArchive *a, QTreeWidgetItem *item);
     void fillDownloadableArchiveItem(DownloadableArchive *a, QTreeWidgetItem *item);
+
+private slots:
+
+    void itemClickedHandler(QTreeWidgetItem *item, int column);
+    void downloadPausedHandler(QWidget *button);
+    void downloadStartedHandler(QWidget *button);
 
 public:
     explicit ArchiveList(QWidget *parent = 0);

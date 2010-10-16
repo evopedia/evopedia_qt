@@ -15,6 +15,9 @@
 
 ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent)
 {
+    connect(&netManager, SIGNAL(finished(QNetworkReply*)), SLOT(networkFinished(QNetworkReply*)));
+    connect(this, SIGNAL(archivesChanged(QList<Archive*>)), SLOT(updateDefaultLocalArchives(QList<Archive*>)));
+
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (settings.contains("evopedia/data_directory")) {
         /* update 'old format' stuff */
@@ -23,47 +26,58 @@ ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent)
         settings.setValue("dump_UNKNOWN/data_directory", data_dir);
         settings.sync();
     }
-    connect(&netManager, SIGNAL(finished(QNetworkReply*)),
-            SLOT(networkFinished(QNetworkReply*)));
-    connect(this, SIGNAL(archivesChanged(QList<Archive*>)), SLOT(updateDefaultLocalArchives(QList<Archive*>)));
 
-    // restore local archives
+    restoreLocalAndPartialArchives(settings);
+
+    emit archivesChanged(archives.values());
+}
+
+void ArchiveManager::restoreLocalAndPartialArchives(QSettings &settings)
+{
     foreach (QString group, settings.childGroups()) {
         if (!group.startsWith("dump_"))
             continue;
-        QString data_dir(settings.value(group + "/data_directory").toString());
-        LocalArchive *archive = new LocalArchive(data_dir, this);
-        if (archive->isReadable()) {
-            /* TODO check there is already an archive in the hash */
-            archives[archive->getID()] = archive;
-            if (group.indexOf('_', 5) < 0) {
-                // old format, convert
-                settings.remove(group);
-                settings.setValue(QString("dump_%1_%2/data_directory")
-                                  .arg(archive->getLanguage(), archive->getDate()),
-                                  data_dir);
-                settings.sync();
+
+        settings.beginGroup(group);
+
+        if (settings.value("complete", true).toBool()) {
+            LocalArchive *archive = LocalArchive::restoreArchive(settings, this);
+            if (archive) {
+                if (!addArchiveInternal(archive))
+                    delete archive;
             }
-        } else {
-            delete archive;
-            //TODO find a nice way how to handle this
+
+            //TODO error handling
+            //TODO add another archive type CorruptedArchive? Just ignore it?
             /*
             QMessageBox::critical ( NULL, "session restore: previously used evopedia archives",
                                 QString("'%1' could not be opened because: '%2'. Are you still in USB-mass storage mode or have the files moved?")
                                 .arg(data_dir)
                                 .arg(ret));
               */
+        } else {
+            PartialArchive *archive = PartialArchive::restoreArchive(settings, this);
+            if (archive) {
+                if (!addArchiveInternal(archive))
+                    delete archive;
+            }
         }
+        settings.endGroup();
     }
-
-    /* TODO restore torrent sessions (PartialArchives) */
-
-    emit archivesChanged(archives.values());
 }
 
 void ArchiveManager::updateRemoteArchives()
 {
     netManager.get(QNetworkRequest(QUrl(EVOPEDIA_DUMP_SITE)));
+}
+
+void ArchiveManager::setDownloadsPaused(bool value)
+{
+    foreach (Archive *a, archives) {
+        PartialArchive *pa = qobject_cast<PartialArchive *>(a);
+        if (pa)
+            pa->setExternallyPaused(value);
+    }
 }
 
 void ArchiveManager::networkFinished(QNetworkReply *reply)
@@ -84,7 +98,7 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
         DownloadableArchive *a = qobject_cast<DownloadableArchive *>(i.value());
         if (a) {
             i = archives.erase(i);
-            a->deleteLater();
+            // TODO a->deleteLater();
         }
     }
 
@@ -102,35 +116,37 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
         if (archives.contains(ArchiveID(language, date)))
             continue;
 
-        archives[ArchiveID(language, date)] = new DownloadableArchive(language, date,
-                                                                      url, size,
-                                                                      this);
+        archives[ArchiveID(language, date)] =
+                new DownloadableArchive(language, date, url, size, this);
     }
 
     emit archivesChanged(archives.values());
 }
 
-
-bool ArchiveManager::addArchive(Archive* archive)
+bool ArchiveManager::addArchiveInternal(Archive *archive)
 {
     ArchiveID id(archive->getID());
 
     if (!archives.contains(id)) {
         archives[id] = archive;
         archive->setParent(this);
-        emit archivesChanged(archives.values());
         return true;
     }
 
     /* only add archive if it is really "more local" than the present one */
 
+    /* TODO this will not "refresh" information on the same
+     * downloadable archive. Is that bad? */
     if (qobject_cast<DownloadableArchive *>(archive))
         return false;
 
     Archive *other(archives[id]);
+
+    if (qobject_cast<LocalArchive *>(other))
+        return false;
+
     if (qobject_cast<PartialArchive *>(archive) &&
-            (qobject_cast<PartialArchive *>(other) ||
-             qobject_cast<LocalArchive *>(other)))
+            qobject_cast<PartialArchive *>(other))
         return false;
 
     if (qobject_cast<LocalArchive *>(archive) &&
@@ -138,10 +154,35 @@ bool ArchiveManager::addArchive(Archive* archive)
         return false;
 
     archives[id]->deleteLater();
+    /* note that it is not removed from the settings,
+     * since the LocalArchive will overwrite it */
+
     archives[id] = archive;
     archive->setParent(this);
-    emit archivesChanged(archives.values());
+
     return true;
+}
+
+
+bool ArchiveManager::addArchiveAndStoreInSettings(Archive *a)
+{
+    if (addArchiveInternal(a)) {
+        QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
+        a->saveToSettings(settings);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool ArchiveManager::addArchive(Archive* archive)
+{
+    if (addArchiveAndStoreInSettings(archive)) {
+        emit archivesChanged(archives.values());
+        return true;
+    } else {
+       return false;
+    }
 #if 0
     connect(item->m_storagefrontend, SIGNAL(updateBackends()), SLOT(updateBackends()));
 
@@ -193,6 +234,27 @@ bool ArchiveManager::addArchive(Archive* archive)
     return item;
 #endif
 }
+
+void ArchiveManager::exchangeArchives(DownloadableArchive *from, PartialArchive *to)
+{
+    if (!from || !to || from->getID() != to->getID() || !archives.contains(from->getID()))
+        return;
+
+    addArchiveAndStoreInSettings(to);
+
+    emit archivesExchanged(from, to);
+}
+
+void ArchiveManager::exchangeArchives(PartialArchive *from, LocalArchive *to)
+{
+    if (!from || !to || from->getID() != to->getID() || !archives.contains(from->getID()))
+        return;
+
+    addArchiveAndStoreInSettings(to);
+
+    emit archivesExchanged(from, to);
+}
+
 
 void ArchiveManager::updateDefaultLocalArchives(const QList<Archive *> &archives)
 {
@@ -249,24 +311,4 @@ LocalArchive *ArchiveManager::getRandomLocalArchive() const
 
 bool ArchiveManager::hasLanguage(const QString language) const {
     return defaultLocalArchives.contains(language);
-}
-
-
-void ArchiveManager::exchangeArchives(DownloadableArchive *from, PartialArchive *to)
-{
-    if (!from || !to || from->getID() != to->getID() || !archives.contains(from->getID()))
-        return;
-
-    archives[from->getID()] = to;
-    to->setParent(this);
-
-    emit archivesExchanged(from, to);
-
-    if (from->parent() == this)
-        from->deleteLater();
-}
-
-void ArchiveManager::exchangeArchives(PartialArchive *from, LocalArchive *to)
-{
-    /* TODO */
 }
