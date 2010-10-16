@@ -1,4 +1,4 @@
-#include "storagebackend.h"
+#include "localarchive.h"
 
 #include <QDir>
 #include <QFile>
@@ -23,8 +23,8 @@ QPointF readCoordinate(QDataStream &s)
 }
 
 
-StorageBackend::StorageBackend(const QString &directory, QObject *parent) :
-        QObject(parent),
+LocalArchive::LocalArchive(const QString &directory, QObject *parent) :
+        Archive(parent),
         readable(false),
         directory(directory),
         titleFile(directory + QString("/titles.idx")),
@@ -47,8 +47,8 @@ StorageBackend::StorageBackend(const QString &directory, QObject *parent) :
     }
 
     QSettings metadata(directory + QString("/metadata.txt"), QSettings::IniFormat);
-    dumpDate = metadata.value("dump/date").toString();
-    dumpLanguage = metadata.value("dump/language").toString();
+    date = metadata.value("dump/date").toString();
+    language = metadata.value("dump/language").toString();
     dumpOrigURL = metadata.value("dump/orig_url").toString();
     dumpVersion = metadata.value("dump/version").toString();
     dumpNumArticles = metadata.value("dump/num_articles").toString();
@@ -58,7 +58,7 @@ StorageBackend::StorageBackend(const QString &directory, QObject *parent) :
     readable = true;
 }
 
-bool StorageBackend::checkExistenceOfDumpfiles()
+bool LocalArchive::checkExistenceOfDumpfiles()
 {
     QDir dir(directory);
     if (!dir.exists()) {
@@ -77,7 +77,7 @@ bool StorageBackend::checkExistenceOfDumpfiles()
     return true;
 }
 
-TitleIterator StorageBackend::getTitlesWithPrefix(const QString &prefix)
+TitleIterator LocalArchive::getTitlesWithPrefix(const QString &prefix)
 {
     QFile *titles = new QFile(titleFile);
     if (!titles->open(QIODevice::ReadOnly))
@@ -120,10 +120,10 @@ TitleIterator StorageBackend::getTitlesWithPrefix(const QString &prefix)
         lo ++;
     }
     titles->seek(lo);
-    return TitleIterator(titles, prefix, dumpLanguage);
+    return TitleIterator(titles, prefix, language);
 }
 
-QList<GeoTitle> StorageBackend::getTitlesInCoords(const QRectF &rect, int maxTitles, bool *complete)
+QList<GeoTitle> LocalArchive::getTitlesInCoords(const QRectF &rect, int maxTitles, bool *complete)
 {
     QRectF rectN(rect.normalized());
 
@@ -148,7 +148,7 @@ QList<GeoTitle> StorageBackend::getTitlesInCoords(const QRectF &rect, int maxTit
     return list;
 }
 
-const Title StorageBackend::getTitle(const QString &title)
+const Title LocalArchive::getTitle(const QString &title)
 {
     /* TODO1 not very efficient: we should be able to stop once the
      * normalized title in the list is longer than our normalized title */
@@ -162,7 +162,7 @@ const Title StorageBackend::getTitle(const QString &title)
     return Title();
 }
 
-const QByteArray StorageBackend::getArticle(const QString &title)
+const QByteArray LocalArchive::getArticle(const QString &title)
 {
     Title t = getTitle(title);
     if (t.getName().isEmpty()) {
@@ -172,7 +172,7 @@ const QByteArray StorageBackend::getArticle(const QString &title)
     }
 }
 
-const QByteArray StorageBackend::getArticle(const Title &t)
+const QByteArray LocalArchive::getArticle(const Title &t)
 {
     Title title(t);
     if (title.getFileNr() == 0xff) { /* redirect */
@@ -196,7 +196,7 @@ const QByteArray StorageBackend::getArticle(const Title &t)
                          title.getArticleLength());
 }
 
-const Title StorageBackend::getTitleFromPath(const QStringList &pathParts)
+const Title LocalArchive::getTitleFromPath(const QStringList &pathParts)
 {
     static QRegExp endpattern("(_[0-9a-f]{4})?(\\.html(\\.redir)?)?$", Qt::CaseInsensitive);
     QString t;
@@ -209,7 +209,7 @@ const Title StorageBackend::getTitleFromPath(const QStringList &pathParts)
     return getTitle(t);
 }
 
-const Title StorageBackend::getRandomTitle()
+const Title LocalArchive::getRandomTitle()
 {
     /* long titles are preferred by this method, oh well... */
 
@@ -222,15 +222,15 @@ const Title StorageBackend::getRandomTitle()
     titles.readLine();
     if (titles.atEnd())
         titles.seek(0);
-    return Title(titles.readLine(), dumpLanguage);
+    return Title(titles.readLine(), language);
 }
 
-QUrl StorageBackend::getOrigUrl(const Title &title) const
+QUrl LocalArchive::getOrigUrl(const Title &title) const
 {
     return QUrl(dumpOrigURL + title.getName());
 }
 
-void StorageBackend::initializeCoords(QSettings &metadata)
+void LocalArchive::initializeCoords(QSettings &metadata)
 {
     coordinateFiles = QStringList();
     for (int i = 1; ; i ++) {
@@ -243,7 +243,7 @@ void StorageBackend::initializeCoords(QSettings &metadata)
 
 
 
-bool StorageBackend::findMathImage(const QByteArray &hexHash, quint32 &pos, quint32 &length) const
+bool LocalArchive::findMathImage(const QByteArray &hexHash, quint32 &pos, quint32 &length) const
 {
     QFile f(mathIndexFile);
     if (!f.open(QIODevice::ReadOnly))
@@ -271,7 +271,7 @@ bool StorageBackend::findMathImage(const QByteArray &hexHash, quint32 &pos, quin
     return false;
 }
 
-void StorageBackend::getTitlesInCoordsInt(QList<GeoTitle> &list, QFile &titles, QFile &coordFile, qint64 coordFilePos,
+void LocalArchive::getTitlesInCoordsInt(QList<GeoTitle> &list, QFile &titles, QFile &coordFile, qint64 coordFilePos,
                                           const QRectF &targetRect, const QRectF &thisRect, int maxTitles)
 {
     if (maxTitles >= 0 && list.length() >= maxTitles)
@@ -318,7 +318,7 @@ void StorageBackend::getTitlesInCoordsInt(QList<GeoTitle> &list, QFile &titles, 
             if (!targetRect.contains(c))
                 continue;
             titles.seek(title_pos);
-            list += GeoTitle(Title(titles.readLine(), dumpLanguage), c);
+            list += GeoTitle(Title(titles.readLine(), language), c);
             if (maxTitles >= 0 && list.length() >= maxTitles)
                 return;
         }
@@ -327,7 +327,7 @@ void StorageBackend::getTitlesInCoordsInt(QList<GeoTitle> &list, QFile &titles, 
 }
 
 
-const QByteArray StorageBackend::getMathImage(const QByteArray &hexHash) const
+const QByteArray LocalArchive::getMathImage(const QByteArray &hexHash) const
 {
     if (hexHash.length() != 16)
         return QByteArray();
@@ -345,15 +345,15 @@ const QByteArray StorageBackend::getMathImage(const QByteArray &hexHash) const
 }
 
 
-const Title StorageBackend::getTitleAtOffset(quint32 offset)
+const Title LocalArchive::getTitleAtOffset(quint32 offset)
 {
     QFile titles(titleFile);
     titles.open(QIODevice::ReadOnly);
     titles.seek(offset);
-    return Title(titles.readLine(), dumpLanguage);
+    return Title(titles.readLine(), language);
 }
 
-const QHash<QChar,QChar> *StorageBackend::normalizationMap()
+const QHash<QChar,QChar> *LocalArchive::normalizationMap()
 {
     static QHash<QChar,QChar> nm;
     if (nm.empty()) {
@@ -468,7 +468,7 @@ const QHash<QChar,QChar> *StorageBackend::normalizationMap()
     return &nm;
 }
 
-const QString StorageBackend::normalize(const QString &str)
+const QString LocalArchive::normalize(const QString &str)
 {
     QString normStr = str;
     const QHash<QChar,QChar> *nm = normalizationMap();

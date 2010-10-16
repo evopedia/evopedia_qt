@@ -52,7 +52,7 @@
 #include "evopediaapplication.h"
 #include "map.h"
 #include "utils.h"
-#include "storagebackend.h"
+#include "localarchive.h"
 
 inline uint qHash(const QPoint& p)
 {
@@ -308,7 +308,9 @@ ArticleOverlay::ArticleOverlay(SlippyMap *parent)
     connect(parent, SIGNAL(tileRendered(QPainter*,QPoint,QRect)), SLOT(tileRendered(QPainter*,QPoint,QRect)));
     connect(parent, SIGNAL(mouseClicked(QPoint,QPoint)), SLOT(mouseClicked(QPoint,QPoint)));
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
-    connect(evopedia->archivemanager, SIGNAL(backendsChanged(const QList<StorageBackend*>)), SLOT(backendsChanged(const QList<StorageBackend*>)));
+    connect(evopedia->getArchiveManager(),
+            SIGNAL(defaultLocalArchivesChanged(QList<LocalArchive*>)),
+            SLOT(backendsChanged(const QList<LocalArchive*>)));
 }
 
 ArticleOverlay::GeoTitleList ArticleOverlay::getTitles(const QRectF &rect, int maxTitles)
@@ -318,7 +320,7 @@ ArticleOverlay::GeoTitleList ArticleOverlay::getTitles(const QRectF &rect, int m
     list.complete = false;
 
     /* TODO2 fair division between languages? */
-    foreach (StorageBackend *b, evopedia->archivemanager->getBackends()) {
+    foreach (LocalArchive *b, evopedia->getArchiveManager()->getDefaultLocalArchives()) {
         list.list += b->getTitlesInCoords(rect, maxTitles - list.list.length());
         if (list.list.length() >= maxTitles)
             return list;
@@ -442,7 +444,7 @@ void ArticleOverlay::showNearTitleList(const QList<Title> &list)
     }
 }
 
-void ArticleOverlay::backendsChanged(const QList<StorageBackend *>)
+void ArticleOverlay::backendsChanged(const QList<LocalArchive *>)
 {
     titles.clear();
     slippyMap->invalidate();

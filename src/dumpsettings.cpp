@@ -14,30 +14,30 @@ DumpSettings::DumpSettings(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->addButton, SIGNAL(clicked()), SLOT(addButtonClicked()));
-    connect(ui->refreshButton, SIGNAL(clicked()), SLOT(refreshButtonClicked()));
-
     evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
 
-    ui->treeView->setModel(evopedia->archivemanager->model());
-    ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->addButton, SIGNAL(clicked()), SLOT(addButtonClicked()));
+    connect(ui->refreshButton, SIGNAL(clicked()), evopedia->getArchiveManager(), SLOT(updateRemoteArchives()));
 
-    // TODO fix this font metrics issue, remove hardcoded stuff
-    ui->treeView->setColumnWidth(0, 200);//fm.width("lang/2010-07-07");
-    ui->treeView->setColumnWidth(1, 120);//fm.width(""));
-    ui->treeView->setColumnWidth(2, 100);//fm.width(""));
-    ui->treeView->setColumnWidth(3, 100);//fm.width(""));
+    //ui->treeView->setModel(evopedia->archivemanager->model());
+    //ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(evopedia->getArchiveManager(),
+            SIGNAL(archivesChanged(QList<Archive*>)),
+            ui->archiveList,
+            SLOT(updateArchives(QList<Archive*>)));
+    connect(evopedia->getArchiveManager(),
+            SIGNAL(archivesExchanged(DownloadableArchive*,PartialArchive*)),
+            ui->archiveList,
+            SLOT(exchangeArchives(DownloadableArchive*,PartialArchive*)));
+    ui->archiveList->updateArchives(evopedia->getArchiveManager()->getArchives().values());
+
     show();
 }
 
 DumpSettings::~DumpSettings()
 {
     delete ui;
-}
-
-void DumpSettings::refreshButtonClicked()
-{
-    evopedia->archivemanager->updateRemoteArchives();
 }
 
 void DumpSettings::addButtonClicked()
@@ -47,12 +47,20 @@ void DumpSettings::addButtonClicked()
 
     if (dialog.exec()) {
         QString dir = dialog.selectedFiles().first();
-        QString ret; // return error message, if any
-        if (!evopedia->archivemanager->addArchive(dir, ret)) {
+        LocalArchive *archive = new LocalArchive(dir);
+        if (archive->isReadable()) {
+            if (evopedia->getArchiveManager()->addArchive(archive))
+                return; /* ownership transferred */
+            else
+                QMessageBox::critical(NULL, tr("Error"),
+                                      tr("Archive '%1 %2' already installed.")
+                                      .arg(archive->getLanguage()).arg(archive->getDate()));
+        } else {
             QMessageBox::critical(NULL, tr("Error"),
-                                  tr("Directory '%1'' does not contain a valid evopedia dump:\n '%2'")
-                                  .arg(dir).arg(ret));
+                                  tr("Directory '%1' does not contain a valid evopedia archive:\n '%2'")
+                                  .arg(dir).arg(archive->getErrorMessage()));
         }
+        delete archive;
     }
 }
 

@@ -22,13 +22,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
-    foreach (StorageBackend *b, evopedia->archivemanager->getBackends())
+    foreach (LocalArchive *b, evopedia->getArchiveManager()->getDefaultLocalArchives())
        ui->languageChooser->addItem(b->getLanguage());
     ui->listView->setModel(titleListModel);
 
-    connect(evopedia->archivemanager,
-            SIGNAL(backendsChanged(const QList<StorageBackend*>)),
-            SLOT(backendsChanged(const QList<StorageBackend*>)));
+    connect(evopedia->getArchiveManager(),
+            SIGNAL(defaultLocalArchivesChanged(QList<LocalArchive*>)),
+            SLOT(backendsChanged(const QList<LocalArchive*>)));
     connect(evopedia->findChild<EvopediaWebServer *>("evopediaWebserver"),
             SIGNAL(mapViewRequested(qreal, qreal, uint)),
             SLOT(mapViewRequested(qreal,qreal,uint)));
@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     else ui->actionAuto->setChecked(true);
 
     QString defaultLanguage = settings.value("default language", "").toString();
-    if (evopedia->archivemanager->hasLanguage(defaultLanguage)) {
+    if (evopedia->getArchiveManager()->hasLanguage(defaultLanguage)) {
         for (int i = 0; i < ui->languageChooser->count(); i ++) {
             if (ui->languageChooser->itemText(i) == defaultLanguage) {
                 ui->languageChooser->setCurrentIndex(i);
@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
     dumpSettings->setAttribute(Qt::WA_Maemo5StackedWindow);
 #endif
 
-    if (evopedia->archivemanager->getBackends().length() == 0) {
+    if (evopedia->getArchiveManager()->getDefaultLocalArchives().isEmpty()) {
         /* TODO change this */
         QMessageBox msgBox(QMessageBox::NoIcon, tr("No Dumps Configured"),
                            tr("To be able to use evopedia you have to "
@@ -142,11 +142,11 @@ void MainWindow::on_languageChooser_currentIndexChanged(const QString &text)
     refreshSearchResults();
 }
 
-void MainWindow::backendsChanged(const QList<StorageBackend *> backends)
+void MainWindow::backendsChanged(const QList<LocalArchive *> backends)
 {
     ui->languageChooser->blockSignals(true);
     ui->languageChooser->clear();
-    foreach (StorageBackend *b, backends)
+    foreach (LocalArchive *b, backends)
        ui->languageChooser->addItem(b->getLanguage());
     ui->languageChooser->blockSignals(false);
     refreshSearchResults();
@@ -161,7 +161,7 @@ void MainWindow::mapViewRequested(qreal lat, qreal lon, uint zoom)
 void MainWindow::refreshSearchResults()
 {
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
-    StorageBackend *backend = evopedia->archivemanager->getBackend(ui->languageChooser->currentText());
+    LocalArchive *backend = evopedia->getArchiveManager()->getLocalArchive(ui->languageChooser->currentText());
     TitleIterator it;
     if (backend != 0)
         it = backend->getTitlesWithPrefix(ui->searchField->text());

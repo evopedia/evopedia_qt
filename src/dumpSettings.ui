@@ -15,9 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="3">
-     <widget class="TreeView" name="treeView"/>
-    </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="addButton">
       <property name="text">
@@ -45,6 +42,9 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="0" colspan="3">
+     <widget class="ArchiveList" name="archiveList"/>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -53,7 +53,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>32</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
@@ -61,9 +61,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TreeView</class>
-   <extends>QTreeView</extends>
-   <header>treeview.h</header>
+   <class>ArchiveList</class>
+   <extends>QTreeWidget</extends>
+   <header>archivelist.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

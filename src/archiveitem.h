@@ -8,20 +8,28 @@
 #include "torrentfrontend.h"
 
 class QMenu;
-class StorageBackend;
+class LocalArchive;
 
 namespace ItemState {
-    enum {Local, LocalTorrent, DownloadingTorrent, RemoteTorrent};
+    enum {Local, LocalTorrent, DownloadingTorrent, DownloadableArchive};
 }
 
-class ArchiveItem : public QStandardItem {
+/*
+
+ Actions in UI:
+ start/stop torrent, update information in torrent, remove partial download (?)
+
+
+ */
+
+class ArchiveListItem : public QStandardItem {
   friend class ArchiveManager;
 
 protected:
-    ArchiveItem(QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url);
-    ArchiveItem(QString archiveDir);
-    ~ArchiveItem();
-    StorageBackend* storageBackend();
+    ArchiveListItem(QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url);
+    ArchiveListItem(QString archiveDir);
+    ~ArchiveListItem();
+    LocalArchive* storageBackend();
     StorageFrontend* m_storagefrontend;
     TorrentFrontend* m_torrentfrontend;
     QString language();
@@ -44,5 +52,7 @@ public:
 private:
     int m_itemState; // describes what kind of item we have, see namespace ItemState
 };
+
+
 
 #endif // ARCHIVEITEM_H

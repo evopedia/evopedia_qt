@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QList>
 
-#include "storagebackend.h"
+#include "localarchive.h"
 
 class Evopedia;
 
@@ -21,7 +21,6 @@ public:
 
 private slots:
     void addButtonClicked();
-    void refreshButtonClicked();
 
 private:
     Ui::DumpSettings *ui;

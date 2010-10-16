@@ -138,11 +138,11 @@ void EvopediaWebServer::outputStatic(QTcpSocket *socket, const QStringList &path
 
 void EvopediaWebServer::redirectRandom(QTcpSocket *socket, const QStringList &pathParts)
 {
-    StorageBackend *backend = 0;
+    LocalArchive *backend = 0;
     if (pathParts.length() >= 2) {
-        backend = evopedia->archivemanager->getBackend(pathParts[1]);
+        backend = evopedia->getArchiveManager()->getLocalArchive(pathParts[1]);
     } else {
-        backend = evopedia->archivemanager->getRandomBackend();
+        backend = evopedia->getArchiveManager()->getRandomLocalArchive();
     }
     if (backend == 0) {
         outputHeader(socket, "404");
@@ -161,7 +161,7 @@ void EvopediaWebServer::outputMathImage(QTcpSocket *socket, const QStringList &p
 {
     const QByteArray hexHash = QByteArray::fromHex(pathParts.last().left(32).toAscii());
     QByteArray data;
-    foreach (StorageBackend *backend, evopedia->archivemanager->getBackends()) {
+    foreach (LocalArchive *backend, evopedia->getArchiveManager()->getDefaultLocalArchives()) {
         data = backend->getMathImage(hexHash);
         if (!data.isNull())
             break;
@@ -179,9 +179,9 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
         outputHeader(socket, "404");
         return;
     }
-    StorageBackend *backend = 0;
+    LocalArchive *backend = 0;
     if (pathParts.length() >= 3)
-        backend = evopedia->archivemanager->getBackend(pathParts[1]);
+        backend = evopedia->getArchiveManager()->getLocalArchive(pathParts[1]);
     if (backend == 0) {
         if (pathParts[1].length() > 1 && evopedia->networkConnectionAllowed() && pathParts.length() >= 3) {
             /* TODO special characters in title */
@@ -189,7 +189,7 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
             outputRedirect(socket, redirectTo);
             return;
         }
-        foreach (StorageBackend *b, evopedia->archivemanager->getBackends()) {
+        foreach (LocalArchive *b, evopedia->getArchiveManager()->getDefaultLocalArchives()) {
             const Title t = b->getTitleFromPath(pathParts);
             if (t.getName().isEmpty())
                 continue;
@@ -274,7 +274,7 @@ QByteArray EvopediaWebServer::extractInterLanguageLinks(QByteArray &data)
         const QString language(rx.cap(4));
         QByteArray option(QString("<option value=\"/wiki/%1/%2\">%3</option>")
                           .arg(langID).arg(link).arg(language).toUtf8());
-        if (evopedia->archivemanager->hasLanguage(langID))
+        if (evopedia->getArchiveManager()->hasLanguage(langID))
             installedLanguages += option;
         else
             otherLanguages += option;

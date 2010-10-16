@@ -2,24 +2,24 @@
 #define STORAGEFRONTEND_H
 
 #include "abstractfrontend.h"
-#include "storagebackend.h"
+#include "localarchive.h"
 
 #include <QString>
 class QMenu;
-class ArchiveItem;
+class ArchiveListItem;
 
 class StorageFrontend : public AbstractFrontend {
     Q_OBJECT
-    friend class ArchiveItem;
+    friend class ArchiveListItem;
 
 protected:
-    StorageFrontend(ArchiveItem* item, QString archiveDir = QString());
+    StorageFrontend(ArchiveListItem* item, QString archiveDir = QString());
     ~StorageFrontend();
     QMenu* createContextMenu();
     void saveSettings();
     void unsaveSettings();
     bool validate(QString &ret);
-    StorageBackend* storageBackend();
+    LocalArchive* storageBackend();
     bool m_activated;
 public:
     QString language();
@@ -29,8 +29,8 @@ public:
     QString stateString();
     void setArchiveDirectory(QString archiveDir);
 private:
-    ArchiveItem* m_archiveitem;
-    StorageBackend *m_storageBackend;
+    ArchiveListItem* m_archiveitem;
+    LocalArchive *m_storageBackend;
     QString m_language;
     QString m_date;
     QString m_size;

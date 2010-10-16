@@ -46,7 +46,7 @@ bool StorageFrontend::validate(QString& ret) {
         delete m_storageBackend;
         m_storageBackend=NULL;
     }
-    StorageBackend *backend = new StorageBackend(m_archiveDir);
+    LocalArchive *backend = new LocalArchive(m_archiveDir);
     ret = backend->getErrorMessage();
     m_stateString = ret;
     if (!backend->isReadable()) {
@@ -88,7 +88,7 @@ void StorageFrontend::unsaveSettings() {
     settings.sync();
 }
 
-StorageBackend *StorageFrontend::storageBackend() {
+LocalArchive *StorageFrontend::storageBackend() {
     return m_storageBackend;
 }
 

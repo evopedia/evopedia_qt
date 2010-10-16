@@ -25,7 +25,7 @@ void TreeView::mouseReleaseEvent ( QMouseEvent * event ) {
             QStandardItem* standardItem = model->itemFromIndex(archiveItemIndex);
             if (standardItem->type() == QStandardItem::UserType + 1) {
                 // dangerous cast, everyone warned me of, still i'm using it! (js)
-                ArchiveItem* archiveItem = dynamic_cast<ArchiveItem*>(standardItem);
+                ArchiveListItem* archiveItem = dynamic_cast<ArchiveListItem*>(standardItem);
                 if (archiveItem) {
                    QMenu* m = archiveItem->createContextMenu();
                    m->exec(mapToGlobal(event->pos()));

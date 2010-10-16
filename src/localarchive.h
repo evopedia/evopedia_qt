@@ -12,11 +12,13 @@
 #include "titleiterator.h"
 #include "geotitle.h"
 
-class StorageBackend : public QObject
+#include "archive.h"
+
+class LocalArchive : public Archive
 {
     Q_OBJECT
 public:
-    StorageBackend(const QString &directory, QObject *parent=0);
+    LocalArchive(const QString &directory, QObject *parent=0);
     
     TitleIterator getTitlesWithPrefix(const QString &prefix);
     QList<GeoTitle> getTitlesInCoords(const QRectF &rect, int maxTitles=-1, bool *complete=0);
@@ -29,8 +31,6 @@ public:
     const QByteArray getMathImage(const QByteArray &hexHash) const;
     const Title getRandomTitle();
 
-    const QString &getLanguage() const { return dumpLanguage; }
-    const QString &getDate() const { return dumpDate; }
     int getNumArticles() const { return dumpNumArticles.toInt(); }
     bool isReadable() const { return readable; }
 
@@ -39,10 +39,6 @@ public:
     const QString &getDirectory() const { return directory; }
     
     static const QString normalize(const QString &str);
-
-    /* newer backends are "less" */
-    bool operator<(const StorageBackend &other) const { return getDate() > other.getDate(); }
-
 private:
     void initializeCoords(QSettings &metadata);
     bool findMathImage(const QByteArray &hexHash, quint32 &pos, quint32 &length) const;
@@ -63,8 +59,6 @@ private:
     QString mathDataFile;
     QStringList coordinateFiles;
     
-    QString dumpLanguage;
-    QString dumpDate;
     QString dumpOrigURL;
     QString dumpVersion;
     QString dumpNumArticles;

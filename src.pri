@@ -2,7 +2,7 @@ QT += core gui network
 INCLUDEPATH += src
 
 SOURCES +=  src/mainwindow.cpp \
-	src/storagebackend.cpp \
+        src/localarchive.cpp \
 	src/title.cpp \
 	src/titleiterator.cpp \
 	src/titlelistmodel.cpp \
@@ -10,19 +10,18 @@ SOURCES +=  src/mainwindow.cpp \
 	src/bzreader.cpp \
 	src/evopediawebserver.cpp \
 	src/utils.cpp \
-	src/map.cpp \
+        src/archive.cpp \
+        src/downloadablearchive.cpp \
+        src/partialarchive.cpp \
+        src/map.cpp \
 	src/flickable.cpp \
 	src/dumpsettings.cpp \
 	src/mapwindow.cpp \
 	src/flickablemap.cpp \
 	src/evopediaapplication.cpp \
 	src/archivemanager.cpp \
-	src/archiveitem.cpp \
-	src/treeview.cpp \
-	src/abstractfrontend.cpp \
-	src/storagefrontend.cpp \
-	src/torrentfrontend.cpp \
-	src/torrent/bencodeparser.cpp \
+        src/archivelist.cpp \
+        src/torrent/bencodeparser.cpp \
 	src/torrent/connectionmanager.cpp \
 	src/torrent/filemanager.cpp \
 	src/torrent/metainfo.cpp \
@@ -31,9 +30,15 @@ SOURCES +=  src/mainwindow.cpp \
 	src/torrent/torrentclient.cpp \
 	src/torrent/torrentserver.cpp \
 	src/torrent/trackerclient.cpp
+#	src/archiveitem.cpp \
+#	src/treeview.cpp \
+#	src/abstractfrontend.cpp \
+#        src/storagefrontend.cpp \
+#	src/torrentfrontend.cpp \
+#        src/archivelistmodel.cpp \
 
 HEADERS += src/mainwindow.h \
-	src/storagebackend.h \
+        src/localarchive.h \
 	src/title.h \
 	src/titlelistmodel.h \
 	src/titleiterator.h \
@@ -41,7 +46,10 @@ HEADERS += src/mainwindow.h \
 	src/bzreader.h \
 	src/evopediawebserver.h \
 	src/utils.h \
-	src/map.h \
+        src/archive.h \
+        src/downloadablearchive.h \
+        src/partialarchive.h \
+        src/map.h \
 	src/geotitle.h \
 	src/flickable.h \
 	src/dumpsettings.h \
@@ -50,11 +58,7 @@ HEADERS += src/mainwindow.h \
 	src/evopediaapplication.h \
 	src/defines.h \
 	src/archivemanager.h \
-	src/archiveitem.h \
-	src/treeview.h \
-	src/abstractfrontend.h \
-	src/storagefrontend.h \
-	src/torrentfrontend.h \
+        src/archivelist.h \
 	src/torrent/bencodeparser.h \
 	src/torrent/connectionmanager.h \
 	src/torrent/filemanager.h \
@@ -64,6 +68,12 @@ HEADERS += src/mainwindow.h \
 	src/torrent/torrentclient.h \
 	src/torrent/torrentserver.h \
 	src/torrent/trackerclient.h
+#	src/archiveitem.h \
+#	src/treeview.h \
+#	src/abstractfrontend.h \
+#	src/storagefrontend.h \
+ #       src/archivelistmodel.h \
+ #       src/torrentfrontend.h \
 
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts
 
