@@ -21,6 +21,7 @@ SOURCES +=  src/mainwindow.cpp \
 	src/evopediaapplication.cpp \
 	src/archivemanager.cpp \
         src/archivelist.cpp \
+        src/tilefetcher.cpp \
         src/torrent/bencodeparser.cpp \
 	src/torrent/connectionmanager.cpp \
 	src/torrent/filemanager.cpp \
@@ -59,6 +60,7 @@ HEADERS += src/mainwindow.h \
 	src/defines.h \
 	src/archivemanager.h \
         src/archivelist.h \
+        src/tilefetcher.h \
 	src/torrent/bencodeparser.h \
 	src/torrent/connectionmanager.h \
 	src/torrent/filemanager.h \

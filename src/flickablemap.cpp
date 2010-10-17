@@ -3,6 +3,9 @@
 FlickableMap::FlickableMap(QWidget *parent) :
     QWidget(parent), articleOverlay(0)
 {
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground);
+
     map = new SlippyMap(this);
     connect(map, SIGNAL(updated(QRect)), SLOT(updateMap(QRect)));
 
@@ -14,20 +17,13 @@ FlickableMap::FlickableMap(QWidget *parent) :
 
 void FlickableMap::setPosition(qreal lat, qreal lng, int zoom)
 {
-    map->latitude = lat;
-    map->longitude = lng;
-    if (zoom > 0) {
-        map->zoom = qBound(2, zoom, 18);
-    }
-    map->invalidate();
+    map->setPosition(lat, lng, qBound(2, zoom, 18));
     externalScrollUpdate();
 }
 
 void FlickableMap::getPosition(qreal &lat, qreal &lng, int &zoom)
 {
-    lat = map->latitude;
-    lng = map->longitude;
-    zoom = map->zoom;
+    map->getPosition(lat, lng, zoom);
 }
 
 void FlickableMap::updateMap(const QRect &r)
@@ -38,9 +34,7 @@ void FlickableMap::updateMap(const QRect &r)
 void FlickableMap::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
-    map->width = width();
-    map->height = height();
-    map->invalidate();
+    map->resize(width(), height());
     externalScrollUpdate();
 }
 
@@ -113,14 +107,12 @@ void FlickableMap::keyPressEvent(QKeyEvent *event)
 
 void FlickableMap::zoomIn()
 {
-    map->zoom  = qBound(2, map->zoom + 1, 18);
-    map->invalidate();
+    map->setZoom(qBound(0, map->getZoom() + 1, 18));
 }
 
 void FlickableMap::zoomOut()
 {
-    map->zoom  = qBound(2, map->zoom - 1, 18);
-    map->invalidate();
+    map->setZoom(qBound(0, map->getZoom() - 1, 18));
 }
 
 void FlickableMap::overlaysEnable(bool value)
@@ -141,12 +133,11 @@ void FlickableMap::mouseReleaseEvent(QMouseEvent *event)
 void FlickableMap::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event);
-    map->visible = true;
-    map->invalidate();
+    map->show();
 }
 
 void FlickableMap::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event);
-    map->visible = false;
+    map->hide();
 }

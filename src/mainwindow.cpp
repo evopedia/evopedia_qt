@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QSettings settings("Evopedia", "GUI");
     int networkUse = settings.value("network use", 0).toInt();
+    /* TODO why is that commented out? */
     //evopedia->setNetworkUse(networkUse);
     if (networkUse < 0) ui->actionDeny->setChecked(true);
     else if (networkUse > 0) ui->actionAllow->setChecked(true);
@@ -115,7 +116,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     qreal lat, lng;
     int zoom;
     mapWindow->getPosition(lat, lng, zoom);
-    settings.setValue("map pos", QPointF(lng, lat));
+    settings.setValue("map pos", QPointF(lat, lng));
     settings.setValue("map zoom", zoom);
 
     event->accept();

@@ -41,14 +41,6 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#ifdef Q_WS_MAEMO_5
-#define MAPTILES_LOCATION "/home/user/MyDocs/.maps"
-#else
-#define MAPTILES_LOCATION (QDir::homePath() + "/.cache/maps")
-#endif
-/* TODO symbian */
-
-
 #include "evopediaapplication.h"
 #include "map.h"
 #include "utils.h"
@@ -68,48 +60,14 @@ inline uint qHash(const ArticleOverlay::ZoomTile &key)
 // tile size in pixels
 const int tdim = 256;
 
-QPointF tileForCoordinate(qreal lat, qreal lng, int zoom)
-{
-    qreal zn = static_cast<qreal>(1 << zoom);
-    qreal tx = (lng + 180.0) / 360.0;
-    qreal ty = (1.0 - log(tan(lat * M_PI / 180.0) +
-                          1.0 / cos(lat * M_PI / 180.0)) / M_PI) / 2.0;
-    return QPointF(tx * zn, ty * zn);
-}
-
-qreal longitudeFromTile(qreal tx, int zoom)
-{
-    qreal zn = static_cast<qreal>(1 << zoom);
-    qreal lat = tx / zn * 360.0 - 180.0;
-    return lat;
-}
-
-qreal latitudeFromTile(qreal ty, int zoom)
-{
-    qreal zn = static_cast<qreal>(1 << zoom);
-    qreal n = M_PI - 2 * M_PI * ty / zn;
-    qreal lng = 180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n)));
-    return lng;
-}
-
-QRectF coordinatesFromTile(const QPoint &tile, int zoom)
-{
-    QPointF bottomLeft(longitudeFromTile(tile.x(), zoom),
-                    latitudeFromTile(tile.y(), zoom));
-    QPointF topRight(longitudeFromTile(tile.x() + 1, zoom),
-                    latitudeFromTile(tile.y() + 1, zoom));
-
-    return QRectF(bottomLeft, topRight);
-}
-
 
 SlippyMap::SlippyMap(QObject *parent)
-    : QObject(parent)
-    , width(400)
-    , height(300)
-    , zoom(15)
-    , latitude(59.9138204)
-    , longitude(10.7387413) {
+    : QObject(parent),
+    width(400),
+    height(300),
+    zoom(15),
+    m_centerPos(16384, 10900)
+{
     m_emptyTile = QPixmap(tdim, tdim);
     m_emptyTile.fill(Qt::lightGray);
 
@@ -119,17 +77,23 @@ SlippyMap::SlippyMap(QObject *parent)
                              (QDesktopServices::CacheLocation));
     m_manager.setCache(cache);
     */
-    connect(&m_manager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(handleNetworkData(QNetworkReply*)));
+
+    tileFetcher = new TileFetcher();
+    tileFetcher->start(QThread::LowPriority);
+    tileFetcher->moveToThread(tileFetcher);
+    connect(tileFetcher, SIGNAL(tileLoaded(int,QPoint,QImage)), SLOT(tileLoaded(int,QPoint,QImage)));
+    connect(this, SIGNAL(tileNeeded(int,QPoint)), tileFetcher, SLOT(fetchTile(int,QPoint)));
 }
 
-void SlippyMap::invalidate() {
+void SlippyMap::invalidate()
+{
     if (width <= 0 || height <= 0 || !visible)
         return;
 
-    QPointF ct = tileForCoordinate(latitude, longitude, zoom);
-    qreal tx = ct.x();
-    qreal ty = ct.y();
+    boundPosition();
+
+    qreal tx = m_centerPos.x();
+    qreal ty = m_centerPos.y();
 
     // top-left corner of the center tile
     int xp = width / 2 - (tx - floor(tx)) * tdim;
@@ -138,17 +102,15 @@ void SlippyMap::invalidate() {
     // first tile vertical and horizontal
     int xa = (xp + tdim - 1) / tdim;
     int ya = (yp + tdim - 1) / tdim;
-    int xs = static_cast<int>(tx) - xa;
-    int ys = static_cast<int>(ty) - ya;
+    int xs = static_cast<int>(floor(tx)) - xa;
+    int ys = static_cast<int>(floor(ty)) - ya;
 
-    // offset for top-left tile
-    m_offset = QPoint(xp - xa * tdim, yp - ya * tdim);
+    m_topLeftOffset = QPoint(xp - xa * tdim, yp - ya * tdim);
 
     // last tile vertical and horizontal
     int xe = static_cast<int>(tx) + (width - xp - 1) / tdim;
     int ye = static_cast<int>(ty) + (height - yp - 1) / tdim;
 
-    // build a rect
     m_tilesRect = QRect(xs, ys, xe - xs + 1, ye - ys + 1);
 
     fetchTiles();
@@ -158,12 +120,14 @@ void SlippyMap::invalidate() {
     emit updated(QRect(0, 0, width, height));
 }
 
-void SlippyMap::render(QPainter *p, const QRect &rect) {
+void SlippyMap::render(QPainter *p, const QRect &rect)
+{
     for (int x = 0; x <= m_tilesRect.width(); ++x) {
         for (int y = 0; y <= m_tilesRect.height(); ++y) {
             QPoint tp(x + m_tilesRect.left(), y + m_tilesRect.top());
             QRect box = tileRect(tp);
             if (rect.intersects(box)) {
+                tp.setX(tp.x() & ((1 << zoom) - 1));
                 if (m_tilePixmaps.contains(tp) && !m_tilePixmaps[tp].isNull())
                     p->drawPixmap(box, m_tilePixmaps.value(tp));
                 else
@@ -177,124 +141,173 @@ void SlippyMap::render(QPainter *p, const QRect &rect) {
         for (int y = 0; y <= m_tilesRect.height(); ++y) {
             QPoint tp(x + m_tilesRect.left(), y + m_tilesRect.top());
             QRect box = tileRect(tp);
-            if (iconRect.intersects(box))
+            if (iconRect.intersects(box)) {
+                tp.setX(tp.x() & ((1 << zoom) - 1));
                 emit tileRendered(p, tp, box);
+            }
         }
     }
 }
 
-void SlippyMap::pan(const QPoint &delta) {
-    QPointF dx = QPointF(delta) / qreal(tdim);
-    QPointF center = tileForCoordinate(latitude, longitude, zoom) - dx;
-    latitude = latitudeFromTile(center.y(), zoom);
-    longitude = longitudeFromTile(center.x(), zoom);
+void SlippyMap::pan(const QPoint &delta)
+{
+    m_centerPos -= QPointF(delta) / qreal(tdim);
     invalidate();
 }
 
-QPoint SlippyMap::scrollOffset() const {
-    return m_tilesRect.topLeft() * tdim - m_offset;
+QPoint SlippyMap::scrollOffset() const
+{
+    return (m_centerPos * tdim).toPoint();
 }
 
-void SlippyMap::setScrollOffset(const QPoint &offset) {
+void SlippyMap::setScrollOffset(const QPoint &offset)
+{
     pan(-(offset - scrollOffset()));
 }
 
-void SlippyMap::mouseClicked(const QPoint &pos) {
+void SlippyMap::mouseClicked(const QPoint &pos)
+{
     QPointF posf(pos + scrollOffset());
     QPointF tile = posf / tdim;
     emit mouseClicked(QPoint(floor(tile.x()), floor(tile.y())), pos);
 }
 
 
-void SlippyMap::handleNetworkData(QNetworkReply *reply) {
-    QImage img;
-    QPoint tp = reply->request().attribute(QNetworkRequest::User).toPoint();
-    QUrl url = reply->url();
-    if (!reply->error())
-        if (!img.load(reply, 0))
-            img = QImage();
-    reply->deleteLater();
-    m_tilePixmaps[tp] = QPixmap::fromImage(img);
-    if (img.isNull())
-        m_tilePixmaps[tp] = m_emptyTile;
-    emit updated(tileRect(tp));
+void SlippyMap::tileLoaded(int z, QPoint offset, QImage image)
+{
+    if (z != this->zoom)
+        return;
 
-    if (!img.isNull()) {
-        /* TODO1 on maemo only if MyDocs is mounted! */
-        QString path = QString("%1/%2/%3/%4")
-                       .arg(MAPTILES_LOCATION)
-                       .arg("OpenStreetMap I")
-                       .arg(zoom)
-                       .arg(tp.x());
-        QDir().mkpath(path);
-        img.save(QString("%1/%2.png")
-                 .arg(path).arg(tp.y()));
-    }
+    m_tilePixmaps[offset] = QPixmap::fromImage(image);
+    /* XXX enough? pixmap could be visible multiple times (zoom 1) */
+    emit updated(tileRect(offset));
 
     // purge unused spaces
-    QRect bound = m_tilesRect.adjusted(-2, -2, 2, 2);
+    /* TODO better: have some fixed size cache and remove the tiles
+     * that were used least recently (also store tiles of different
+     * zoom levels) */
+    QRect bound = m_tilesRect.adjusted(-3, -3, 3, 3);
     foreach(QPoint tp, m_tilePixmaps.keys())
         if (!bound.contains(tp))
             m_tilePixmaps.remove(tp);
-
-    m_url = QUrl();
-    fetchTiles();
 }
 
-void SlippyMap::fetchTiles() {
-    QPoint grab(-1, -1);
-    for (int x = 0; x <= m_tilesRect.width(); ++x)
-        for (int y = 0; y <= m_tilesRect.height(); ++y) {
-        QPoint tp = m_tilesRect.topLeft() + QPoint(x, y);
-        if (!m_tilePixmaps.contains(tp)) {
-            QPixmap img(QString("%1/%2/%3/%4/%5.png")
-                        .arg(MAPTILES_LOCATION)
-                        .arg("OpenStreetMap I")
-                        .arg(zoom)
-                        .arg(tp.x())
-                        .arg(tp.y()));
-            m_tilePixmaps[tp] = img;
-            if (!img.isNull()) {
-                emit updated(tileRect(tp));
+void SlippyMap::fetchTiles()
+{
+    /* TODO "refresh" m_tilePixmaps once we get online (i.e. remove all the null tiles) */
+    for (int x = m_tilesRect.left(); x <= m_tilesRect.right(); ++x) {
+        for (int y = m_tilesRect.top(); y <= m_tilesRect.bottom(); ++y) {
+            if (y >= 0 && y < (1 << zoom)) {
+                QPoint tp = QPoint(x & ((1 << zoom) - 1), y);
+                if (!m_tilePixmaps.contains(tp)) {
+                    m_tilePixmaps[tp] = QPixmap();
+                    emit tileNeeded(zoom, tp);
+                }
             }
         }
-
-        if (m_tilePixmaps[tp].isNull())
-            grab = tp;
     }
-    if (!m_url.isEmpty()) return;
+}
 
-    if (grab == QPoint(-1, -1)) {
-        m_url = QUrl();
-        return;
+void SlippyMap::boundPosition()
+{
+    if ((1 << zoom) * tdim < height) {
+        m_centerPos.setY((1 << zoom) / 2.0);
+    } else {
+        qreal y = qBound<qreal>(height / 2.0, m_centerPos.y() * tdim, (1 << zoom) * tdim - height / 2);
+        m_centerPos.setY(y / tdim);
     }
-
-    QString path = "http://tile.openstreetmap.org/%1/%2/%3.png";
-    m_url = QUrl(path.arg(zoom).arg(grab.x()).arg(grab.y()));
-
-    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
-    if (!evopedia->networkConnectionAllowed() /* TODO && !m_manager.cache()->metaData(m_url).isValid()*/) {
-        m_url = QUrl();
-        return;
-    }
-
-    QNetworkRequest request;
-    request.setUrl(m_url);
-    request.setRawHeader("User-Agent", "Nokia (Qt) Graphics Dojo 1.0");
-    request.setAttribute(QNetworkRequest::User, QVariant(grab));
-    m_manager.get(request);
 }
 
 QRect SlippyMap::tileRect(const QPoint &tp) {
     QPoint t = tp - m_tilesRect.topLeft();
-    int x = t.x() * tdim + m_offset.x();
-    int y = t.y() * tdim + m_offset.y();
+    int x = t.x() * tdim + m_topLeftOffset.x();
+    int y = t.y() * tdim + m_topLeftOffset.y();
     return QRect(x, y, tdim, tdim);
 }
 
-QPoint SlippyMap::coordinateToPixels(const QPointF &c) const
+QPoint SlippyMap::titleCoordinateToPixels(const QPointF &c) const
 {
-    return ((tileForCoordinate(c.y(), c.x(), zoom) - m_tilesRect.topLeft()) * tdim + m_offset).toPoint();
+    return ((project(c, zoom) - m_centerPos) * tdim).toPoint() + QPoint(width / 2, height / 2);
+}
+
+void SlippyMap::setZoom(int z)
+{
+    if (z > this->zoom)
+        m_centerPos *= 1 << (z - this->zoom);
+    else
+        m_centerPos /= 1 << (this->zoom - z);
+    this->zoom = z;
+
+    m_tilePixmaps.clear();
+
+    invalidate();
+}
+
+void SlippyMap::getPosition(qreal &lat, qreal &lng, int &zoom)
+{
+    QPointF c(unproject(m_centerPos, this->zoom));
+    lat = c.y();
+    lng = c.x();
+    zoom = this->zoom;
+}
+
+void SlippyMap::setPosition(qreal lat, qreal lng, int zoom)
+{
+    m_centerPos = project(QPointF(lng, lat), zoom);
+    this->zoom = zoom;
+
+    invalidate();
+}
+
+QPointF SlippyMap::unproject(const QPointF &xy, int zoom)
+{
+    qreal x = xy.x();
+    qreal y = xy.y();
+    if (zoom > 0) {
+        x /= qreal(1 << zoom);
+        y /= qreal(1 << zoom);
+    }
+
+    while (x < 0.0) x += 1.0;
+    while (x > 1.0) x -= 1.0;
+    if (y < 0.0) y = 0;
+    if (y > 1.0) y = 1.0;
+
+    qreal n = M_PI - 2 * M_PI * y;
+    return QPointF(x * 360.0 - 180.0,
+                   180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n))));
+}
+
+QRectF SlippyMap::unprojectTileRect(const QPoint &tile, int zoom)
+{
+    QPointF bottomLeft = unproject(tile, zoom);
+    QPointF topRight = unproject(tile + QPoint(1, 1), zoom);
+    return QRectF(bottomLeft, topRight);
+}
+
+QPointF SlippyMap::project(QPointF lnglat, int zoom)
+{
+    qreal lng = lnglat.x();
+    qreal lat = lnglat.y();
+
+    qreal x;
+    qreal y;
+    if (lat <= -90.0) {
+        x = .5;
+        y = 0;
+    } else if (lat >= 90.0) {
+        x = .5;
+        y = 1.0;
+    } else {
+        x = (lng + 180.0) / 360.0;
+        y = (1.0 - log(tan(lat * M_PI / 180.0) +
+                          1.0 / cos(lat * M_PI / 180.0)) / M_PI) / 2.0;
+
+        while (x < 0) x += 1.0;
+        while (x > 1.0) x -= 1.0;
+    }
+
+    return QPointF(x * (1 << zoom), y * (1 << zoom));
 }
 
 ArticleOverlay::ArticleOverlay(SlippyMap *parent)
@@ -331,13 +344,17 @@ ArticleOverlay::GeoTitleList ArticleOverlay::getTitles(const QRectF &rect, int m
 
 void ArticleOverlay::invalidate(const QRect &tilesRect)
 {
-    for (int x = 0; x <= tilesRect.width(); ++x) {
-        for (int y = 0; y <= tilesRect.height(); ++y) {
-            QPoint tile(tilesRect.left() + x, tilesRect.top() + y);
-            ZoomTile zt(tile, slippyMap->zoom);
-            if (titles.contains(zt))
-                continue;
-            titles[zt] = getTitles(coordinatesFromTile(tile, slippyMap->zoom), 20);
+    int zoom = slippyMap->getZoom();
+    for (int x = tilesRect.left(); x <= tilesRect.right(); ++x) {
+        for (int y = tilesRect.top(); y <= tilesRect.bottom(); ++y) {
+            if (y >= 0 && y < (1 << zoom)) {
+                QPoint tp = QPoint(x & ((1 << zoom) - 1), y);
+                ZoomTile zt(tp, zoom);
+                if (titles.contains(zt))
+                    continue;
+                /* TODO does this work if the tile is near to -180 degrees? */
+                titles[zt] = getTitles(SlippyMap::unprojectTileRect(tp, zoom), 20);
+            }
         }
     }
     /* TODO0 keep hash small by removing members that have not been used recently */
@@ -345,11 +362,13 @@ void ArticleOverlay::invalidate(const QRect &tilesRect)
 
 bool ArticleOverlay::isComplete()
 {
+    int zoom = slippyMap->getZoom();
+
     const QRect tilesRect(slippyMap->getTilesRect());
     for (int x = 0; x <= tilesRect.width(); ++x) {
         for (int y = 0; y <= tilesRect.height(); ++y) {
             QPoint tile(tilesRect.left() + x, tilesRect.top() + y);
-            ZoomTile zt(tile, slippyMap->zoom);
+            ZoomTile zt(tile, zoom);
             if (titles.contains(zt) && !titles[zt].complete)
                 return false;
         }
@@ -361,12 +380,12 @@ bool ArticleOverlay::isComplete()
 void ArticleOverlay::tileRendered(QPainter *p, const QPoint &tile, const QRect drawBox)
 {
     Q_UNUSED(drawBox);
-    ZoomTile ztile(tile, slippyMap->zoom);
+    ZoomTile ztile(tile, slippyMap->getZoom());
     if (!enabled || !titles.contains(ztile))
         return;
 
     foreach (GeoTitle t, titles[ztile].list) {
-        QPoint pos = slippyMap->coordinateToPixels(t.getCoordinate());
+        QPoint pos = slippyMap->titleCoordinateToPixels(t.getCoordinate());
         QSize halfSize(wikipediaIcon.size() / 2);
         pos -= QPoint(halfSize.width(), halfSize.height());
         p->drawPixmap(pos, wikipediaIcon);
@@ -377,13 +396,17 @@ void ArticleOverlay::mouseClicked(const QPoint &tile, const QPoint &pixelPos)
 {
     typedef QPair<GeoTitle,float> GeoTitleDistance;
 
+    /* TODO this does not always work */
+
+    int zoom = slippyMap->getZoom();
+
     QList<GeoTitleDistance> titleDistances;
     for (int x = -1; x <= 1; x ++) {
         for (int y = -1; y <= 1; y ++) {
-            ZoomTile zt(tile + QPoint(x, y), slippyMap->zoom);
+            ZoomTile zt(tile + QPoint(x, y), zoom);
             if (!titles.contains(zt)) continue;
             foreach (GeoTitle t, titles[zt].list) {
-                QPoint pos = slippyMap->coordinateToPixels(t.getCoordinate());
+                QPoint pos = slippyMap->titleCoordinateToPixels(t.getCoordinate());
                 QPoint delta = pos - pixelPos;
                 float distSq = delta.x() * delta.x() + delta.y() * delta.y();
                 if (distSq > 25 * 25) continue;

@@ -6,4 +6,12 @@
 #define EVOPEDIA_DUMP_SITE "http://dumpathome.evopedia.info/dumps/finished"
 #define EVOPEDIA_BUG_SITE "https://bugs.maemo.org/enter_bug.cgi?product=evopedia"
 
+#ifdef Q_WS_MAEMO_5
+#define MAPTILES_LOCATION "/home/user/MyDocs/.maps"
+#else
+#define MAPTILES_LOCATION (QDir::homePath() + "/.cache/maps")
+#endif
+/* TODO symbian */
+
+
 #endif // DEFINES_H
