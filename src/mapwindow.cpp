@@ -102,6 +102,8 @@ void MapWindow::on_actionUse_GPS_toggled(bool value)
         posSource->stopUpdates();
     ui->actionFollow_GPS->setEnabled(value);
     ui->actionGo_to_GPS_Position->setEnabled(value);
+#else
+    Q_UNUSED(value);
 #endif
 }
 

@@ -16,9 +16,10 @@ public:
     QUrl getArticleUrl(const Title &t) const;
     void setNetworkUse(int use);
     bool networkConnectionAllowed();
-    ArchiveManager *archivemanager;
+    ArchiveManager *getArchiveManager() const { return archiveManager; }
 private:
-    EvopediaWebServer *webServer;    
+    ArchiveManager *archiveManager;
+    EvopediaWebServer *webServer;
     int networkUse;
 };
 

@@ -1,9 +1,10 @@
 /*
+=============================================================
+IS THIS LIST STILL CURRENT?
 ===============================================================
   todo
 ===============================================================
- - make removal of local evopedias possible
- - fix dump parser
+ - make removal of local evopedias possible (really?)
 
 ===============================================================
  how to find torrents
@@ -80,57 +81,80 @@ General:
 
 #include <QList>
 #include <QHash>
-#include <QStandardItemModel>
-#include <QStandardItem>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QMessageBox>
 #include <QObject>
+#include <QDir>
+#include <QSettings>
 
-#include "storagebackend.h"
-#include "archiveitem.h"
+#include "localarchive.h"
+#include "partialarchive.h"
+#include "downloadablearchive.h"
 
-#define EVOPEDIA_URL "http://dumpathome.evopedia.info/dumps/finished"
+#include "defines.h"
 
-class QStandardItemModel;
 
-/*! manages different wikipedia dumps (called Archive)
+/*! manages different wikipedia archives (also called "dumps" in the past)
 ** - this class should be instantiated only once
 ** - manages torrent downloads of archives
 ** - sets the default archives for each language
 **   one may have installed several 'de' archives, but only
 **   one can be used at a time.
 ** - manages archives, adds(downloads or removes them)
-** - implements a QAbstractItemModel to visualize what is going on
 */
 class ArchiveManager : public QObject {
 Q_OBJECT
+
+    QHash<ArchiveID, Archive *> archives;
+    /*! subset of archives */
+    QHash<QString, LocalArchive *> defaultLocalArchives;
+
+    QNetworkAccessManager netManager;
+
+    void restoreLocalAndPartialArchives(QSettings &settings);
+    bool addArchiveInternal(Archive *a);
+    bool addArchiveAndStoreInSettings(Archive *a);
+
+private slots:
+    void networkFinished(QNetworkReply *reply);
+    void updateDefaultLocalArchives(const QList<Archive *> &archives);
+
+
 public:
     explicit ArchiveManager(QObject* parent);
 
-    // functions to handle archives (invalid backends)
-    bool setDefaultArchive(int identifier);
-    ArchiveItem* addArchive(QString language, QString date, QString archiveDir, QString torrent, QUrl url, QString& ret);
-    ArchiveItem* addArchive(QString dir, QString& ret);
-    void updateRemoteArchives();
+    const QDir getArchivesBaseDir() const {
+        return QDir("/tmp/");
+//        return QDir("/home/user/MyDocs/wikipedia/");
+    }
 
-    // functions to handle backends (valid archives)
-    StorageBackend *getBackend(const QString language, const QString date=QString()) const;
-    StorageBackend *getRandomBackend() const;
-    const QList<StorageBackend *> getBackends() const;
+    /*! takes ownership of the object if it is added */
+    bool addArchive(Archive *archive);
+
+    LocalArchive *getLocalArchive(const QString language, const QString date=QString()) const;
+    LocalArchive *getRandomLocalArchive() const;
+    const QHash<QString, LocalArchive *> getDefaultLocalArchives() const;
     bool hasLanguage(const QString language) const;
-    QStandardItemModel* model();
-signals:
-    void backendsChanged(const QList<StorageBackend *> backends);
 
-private slots:
-        void networkFinished(QNetworkReply *reply);
-        void updateBackends();
-private:
-    QStandardItemModel* m_model;
-    QNetworkAccessManager netManager;
-    ArchiveItem* addArchive(ArchiveItem* item);
+    const QHash<ArchiveID, Archive *> &getArchives() const { return archives; }
+
+    /*! used for type transitions of one archive */
+    void exchangeArchives(DownloadableArchive *from, PartialArchive *to);
+    void exchangeArchives(PartialArchive *from, LocalArchive *to);
+
+signals:
+    /* these two are not emitted if archivesExchanged is emitted */
+    void defaultLocalArchivesChanged(const QList<LocalArchive *> &archives);
+    void archivesChanged(const QList<Archive *> &archives);
+
+    void archivesExchanged(DownloadableArchive *from, PartialArchive *to);
+    void archivesExchanged(PartialArchive *from, LocalArchive *to);
+
+public slots:
+    void updateRemoteArchives();
+    void setDownloadsPaused(bool value);
 };
 
 #endif

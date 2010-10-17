@@ -1,12 +1,12 @@
 #include <QNetworkInterface>
 #include "evopedia.h"
 #include "utils.h"
-#include "storagebackend.h"
+#include "localarchive.h"
 
 Evopedia::Evopedia(QObject *parent)
     : QObject(parent), networkUse(0)
 {
-    archivemanager = new ArchiveManager(this);
+    archiveManager = new ArchiveManager(this);
     webServer = new EvopediaWebServer(this);
     webServer->setObjectName("evopediaWebserver");
 }

@@ -15,7 +15,7 @@
 #include "torrent/torrentclient.h"
 #include "torrent/ratecontroller.h"
 
-TorrentFrontend::TorrentFrontend(ArchiveItem* item, QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url) {
+TorrentFrontend::TorrentFrontend(ArchiveListItem* item, QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url) {
     m_archiveitem = item;
     m_torrentclient = NULL;
     m_language = language;
@@ -139,7 +139,7 @@ void TorrentFrontend::startTorrentDownload() {
     qDebug() << m_workingDir;
 
     QFile f(m_workingDir + "/" + m_torrent);
-    if (f.exists()) {
+    if (!m_torrent.isEmpty() && f.exists()) {
         startDownloadViaTorrent();
     } else {
         QNetworkAccessManager* manager = new QNetworkAccessManager(this);

@@ -6,13 +6,13 @@
 #include "torrent/torrentclient.h"
 
 class QMenu;
-class ArchiveItem;
+class ArchiveListItem;
 class QNetworkReply;
 
 class TorrentFrontend : public AbstractFrontend {
     Q_OBJECT
 public:
-    TorrentFrontend(ArchiveItem* item, QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url);
+    TorrentFrontend(ArchiveListItem* item, QString language, QString date, QString size, QString workingDir, QString archiveDir, QString torrent, QUrl url);
     QMenu* createContextMenu();
     void saveSettings();
     void unsaveSettings();
@@ -25,7 +25,7 @@ public:
     QUrl url();
     QString stateString();
 private:
-    ArchiveItem* m_archiveitem;
+    ArchiveListItem* m_archiveitem;
     TorrentClient* m_torrentclient;
     QString m_size;
     QString m_language;

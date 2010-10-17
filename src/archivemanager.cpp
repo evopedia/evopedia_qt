@@ -1,4 +1,5 @@
 #include "archivemanager.h"
+
 #include <QSettings>
 #include <QString>
 #include <QStringList>
@@ -9,15 +10,13 @@
 #include <QModelIndex>
 
 #include "utils.h"
+#include "downloadablearchive.h"
+#include "partialarchive.h"
 
-ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent) {
-    // QTreeView properties of dumpSettings
-    m_model = new QStandardItemModel(this);
-    m_model->setColumnCount(4);
-    m_model->setHeaderData(0, Qt::Horizontal, QString("lang/date"));
-    m_model->setHeaderData(1, Qt::Horizontal, QString(""));
-    m_model->setHeaderData(2, Qt::Horizontal, QString(""));
-    m_model->setHeaderData(3, Qt::Horizontal, QString("status"));
+ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent)
+{
+    connect(&netManager, SIGNAL(finished(QNetworkReply*)), SLOT(networkFinished(QNetworkReply*)));
+    connect(this, SIGNAL(archivesChanged(QList<Archive*>)), SLOT(updateDefaultLocalArchives(QList<Archive*>)));
 
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
     if (settings.contains("evopedia/data_directory")) {
@@ -27,145 +26,164 @@ ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent) {
         settings.setValue("dump_UNKNOWN/data_directory", data_dir);
         settings.sync();
     }
-    connect(&netManager, SIGNAL(finished(QNetworkReply*)),
-            SLOT(networkFinished(QNetworkReply*)));
 
-    // restore evopedia archives (local evopedia installations)
+    restoreLocalAndPartialArchives(settings);
+
+    emit archivesChanged(archives.values());
+}
+
+void ArchiveManager::restoreLocalAndPartialArchives(QSettings &settings)
+{
     foreach (QString group, settings.childGroups()) {
         if (!group.startsWith("dump_"))
             continue;
-        QString data_dir(settings.value(group + "/data_directory").toString());
-        QString ret;
-        ArchiveItem* archiveItem = addArchive(data_dir, ret);
-        if (archiveItem==NULL) {
-            //TODO find a nice way how to handle this
+
+        settings.beginGroup(group);
+
+        if (settings.value("complete", true).toBool()) {
+            LocalArchive *archive = LocalArchive::restoreArchive(settings, this);
+            if (archive) {
+                if (!addArchiveInternal(archive))
+                    delete archive;
+            }
+
+            //TODO error handling
+            //TODO add another archive type CorruptedArchive? Just ignore it?
+            /*
             QMessageBox::critical ( NULL, "session restore: previously used evopedia archives",
                                 QString("'%1' could not be opened because: '%2'. Are you still in USB-mass storage mode or have the files moved?")
                                 .arg(data_dir)
                                 .arg(ret));
+              */
+        } else {
+            PartialArchive *archive = PartialArchive::restoreArchive(settings, this);
+            if (archive) {
+                if (!addArchiveInternal(archive))
+                    delete archive;
+            }
         }
-        if (archiveItem) {
-            //FIXME please check this code, is that correct? (js)
-            if (group.indexOf('_', 5) < 0) {
-                 // old format, convert
-                 settings.remove(group);
-                 settings.setValue(QString("dump_%1_%2/data_directory")
-                    .arg(archiveItem->language(), archiveItem->date()),
-                 archiveItem->dir());
-                 settings.sync();
-             }
-         }
-    // FIXME: restore torrent archives
+        settings.endGroup();
     }
-    emit updateBackends();
 }
 
-/*! updates the list of remote downloads, torrents for example */
-void ArchiveManager::updateRemoteArchives() {
-    netManager.get(QNetworkRequest(QUrl(EVOPEDIA_URL)));
+void ArchiveManager::updateRemoteArchives()
+{
+    netManager.get(QNetworkRequest(QUrl(EVOPEDIA_DUMP_SITE)));
 }
 
-/*! updates the list of remote downloads, torrents for example */
+void ArchiveManager::setDownloadsPaused(bool value)
+{
+    foreach (Archive *a, archives) {
+        PartialArchive *pa = qobject_cast<PartialArchive *>(a);
+        if (pa)
+            pa->setExternallyPaused(value);
+    }
+}
+
 void ArchiveManager::networkFinished(QNetworkReply *reply)
 {
     if (reply->error() != QNetworkReply::NoError) {
-        QMessageBox::critical ( NULL, "network error",
+        QMessageBox::critical(0, "network error",
                                 QString("Can not access the network to find evopedia torrents because: '%1'")
                                 .arg(reply->errorString()));
         return;
     }
     //FIXME if the network does not work we need a timeout handler for error messages
+    //FIXME is it possible that we get the data only in partial chunks?
     QString data = QString::fromUtf8(reply->readAll().constData());
 
-    // wikipedia_de_2010-07-27.torrent
-    QRegExp rx("wikipedia_.._....-..-..\\.torrent");
-    rx.setMinimal(true);
-
-    // let's remove all old RemoteTorrent(s) first
-    QVector<ArchiveItem*> c;
-    for(int i=0; i < m_model->rowCount(); ++i) {
-        QStandardItem* langItem = m_model->item(i,0);
-        for(int y=0; y < langItem->rowCount();) {
-            QStandardItem* sItem = langItem->child(y,0);
-            // 1. type check
-            if (sItem->type() == QStandardItem::UserType + 1) {
-                // 2. type cast
-                ArchiveItem* item = static_cast<ArchiveItem*>(sItem);
-                // 3. delete all ItemState::RemoteTorrent objects
-                if (item->itemState() == ItemState::RemoteTorrent)
-                    m_model->removeRow(item->row(), item->parent()->index());
-                ++y;
-            }
+    /* remove all downloadable archives */
+    QHash<ArchiveID, Archive *>::iterator i;
+    for (i = archives.begin(); i != archives.end(); i ++) {
+        DownloadableArchive *a = qobject_cast<DownloadableArchive *>(i.value());
+        if (a) {
+            i = archives.erase(i);
+            // TODO a->deleteLater();
         }
     }
 
-    int pos = 0;
-    // now we parse the html page to generate new RemoteTorrent(s)
-    while((pos = rx.indexIn(data, pos)) != -1) {
-        // FIXME use ret and display the message
-        // FIXME the use of EVOPEDIA_URL to construct the torrent link is problematic
-        //       rewrite this to use a regexp to find the whole url as:
-        //       http://evopedia.info/dumps/wikipedia_de_2010-07-27.torrent
-        QString ret; // return argument
-        QString torrent_link = data.mid(pos, rx.matchedLength());
-        QUrl url(EVOPEDIA_URL + torrent_link);
-        QString language = torrent_link.mid(10,2);
-        QString date = torrent_link.mid(13,10);
-        QString torrent = "";
-        QString dir("/tmp");
-        /*
-        wget "http://dumpathome.evopedia.info/dumps/finished" -O dumps;
-        cat dumps | grep 'wikipedia_.._....-..-...torrent' | grep META | grep -o 'http://.*torrent [0-9]*'
+    /* parse the list and add (new) downloadable archives again */
 
-        http://evopedia.info/dumps/wikipedia_de_2010-07-27.torrent; 2842735141
-        http://evopedia.info/dumps/wikipedia_el_2010-08-15.torrent; 156453782
-        http://evopedia.info/dumps/wikipedia_en_2010-06-22.torrent; 11297506467
-        http://evopedia.info/dumps/wikipedia_fr_2010-08-02.torrent; 2953095765
-        http://evopedia.info/dumps/wikipedia_it_2010-09-02.torrent; 2363497456
-        http://evopedia.info/dumps/wikipedia_sl_2010-08-12.torrent; 216360675
-        */
+    QRegExp rx("<!-- METAINFO ([^>]*/wikipedia_([a-z_-]*)_([0-9-]*)\\.torrent) ([0-9]*) -->");
+    rx.setMinimal(true);
 
-        //FIXME only add a 'remote archive' if it is not there already
-        //addArchive(language, date, dir, torrent, url, ret);
-        pos += rx.matchedLength();
+    for (int pos = 0; (pos = rx.indexIn(data, pos)) != -1; pos += rx.matchedLength()) {
+        QUrl url(rx.cap(1));
+        QString language(rx.cap(2));
+        QString date(rx.cap(3));
+        QString size(rx.cap(4));
+
+        if (archives.contains(ArchiveID(language, date)))
+            continue;
+
+        archives[ArchiveID(language, date)] =
+                new DownloadableArchive(language, date, url, size, this);
     }
-    QString ret; // return argument
-    addArchive("de", "2010-07-27", "", "wikipedia_de_2010-07-27.torrent", QUrl("http://evopedia.info/dumps/wikipedia_de_2010-07-27.torrent"), ret);
-    addArchive("sl", "2010-08-12", "", "wikipedia_sl_2010-08-12.torrent", QUrl("http://evopedia.info/dumps/wikipedia_sl_2010-08-12.torrent"), ret);
-    addArchive("small", "2010-08-14", "", "wikipedia_small_2010-08-14.torrent", QUrl("http://evopedia.info/dumps/wikipedia_small_2010-08-14.torrent"), ret);
+
+    emit archivesChanged(archives.values());
 }
 
-/*
- - lang
- - date
- - dir (where to store, where to find)
- - url (example: http://evopedia.info/dumps/)
- - torrent (example: wikipedia_de_2010-07-27.torrent)
- - status indicator: active download or download candidate
- - return string (storageBackend)
-*/
+bool ArchiveManager::addArchiveInternal(Archive *archive)
+{
+    ArchiveID id(archive->getID());
 
-/*! used for local archives, manual downloads*/
-ArchiveItem* ArchiveManager::addArchive(QString dir, QString& ret) {
-    ArchiveItem* item = new ArchiveItem(dir);
-    if (!item->validate(ret)) {
-        delete item;
-        return NULL;
+    if (!archives.contains(id)) {
+        archives[id] = archive;
+        archive->setParent(this);
+        return true;
     }
-    return addArchive(item);
+
+    /* only add archive if it is really "more local" than the present one */
+
+    /* TODO this will not "refresh" information on the same
+     * downloadable archive. Is that bad? */
+    if (qobject_cast<DownloadableArchive *>(archive))
+        return false;
+
+    Archive *other(archives[id]);
+
+    if (qobject_cast<LocalArchive *>(other))
+        return false;
+
+    if (qobject_cast<PartialArchive *>(archive) &&
+            qobject_cast<PartialArchive *>(other))
+        return false;
+
+    if (qobject_cast<LocalArchive *>(archive) &&
+            qobject_cast<LocalArchive *>(other))
+        return false;
+
+    archives[id]->deleteLater();
+    /* note that it is not removed from the settings,
+     * since the LocalArchive will overwrite it */
+
+    archives[id] = archive;
+    archive->setParent(this);
+
+    return true;
 }
 
-/*! used for torrent based local archives which either have the *.torrent still around or not */
-ArchiveItem* ArchiveManager::addArchive(QString language, QString date, QString archiveDir, QString torrent, QUrl url, QString& ret) {
-    QString workingDir, size;
-    //FIXME handle size parameter
-    ArchiveItem* item = new ArchiveItem(language, date, size, workingDir, archiveDir, torrent, url);
-    item->setData(true, Qt::UserRole + 1);
-    item->validate(ret);
-    return addArchive(item);
+
+bool ArchiveManager::addArchiveAndStoreInSettings(Archive *a)
+{
+    if (addArchiveInternal(a)) {
+        QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
+        a->saveToSettings(settings);
+        return true;
+    } else {
+        return false;
+    }
 }
 
-ArchiveItem* ArchiveManager::addArchive(ArchiveItem* item) {
+bool ArchiveManager::addArchive(Archive* archive)
+{
+    if (addArchiveAndStoreInSettings(archive)) {
+        emit archivesChanged(archives.values());
+        return true;
+    } else {
+       return false;
+    }
+#if 0
     connect(item->m_storagefrontend, SIGNAL(updateBackends()), SLOT(updateBackends()));
 
     // 1. find the language group
@@ -214,70 +232,72 @@ ArchiveItem* ArchiveManager::addArchive(ArchiveItem* item) {
 
     emit updateBackends();
     return item;
+#endif
 }
 
-QStandardItemModel* ArchiveManager::model() {
-    return m_model;
-}
-
-/*! whenever a valid archive is added or setDefaultArchive(..) is used this function must be called
-**  also before an archive is removed while that archive has enabled=false set */
-void ArchiveManager::updateBackends()
+void ArchiveManager::exchangeArchives(DownloadableArchive *from, PartialArchive *to)
 {
-    //FIXME rowsAboutToBeRemoved singal should be linked here as well
-    const QList<StorageBackend *>backends = getBackends();
-    emit backendsChanged(backends);
+    if (!from || !to || from->getID() != to->getID() || !archives.contains(from->getID()))
+        return;
+
+    addArchiveAndStoreInSettings(to);
+
+    emit archivesExchanged(from, to);
 }
 
-/*! retunrs a list of backends by parsing the archives structure:
-** - validate() == true
-** - activated() == true
-*/
-const QList<StorageBackend *> ArchiveManager::getBackends() const
+void ArchiveManager::exchangeArchives(PartialArchive *from, LocalArchive *to)
 {
-    QList<StorageBackend *>backends;
-    for(int i=0; i < m_model->rowCount(); ++i) {
-        QStandardItem* langItem = m_model->item(i,0);
-        for(int y=0; y < langItem->rowCount(); ++y) {
-            QStandardItem* sItem = langItem->child(y,0);
-            // 1. type check
-            if (sItem->type() == QStandardItem::UserType + 1) {
-                // 2. type cast
-                ArchiveItem* item = static_cast<ArchiveItem*>(sItem);
-                // 3. add the backend
-                QString r;
-                if (item->validate(r) && item->activated()) {
-                    if (item->storageBackend())
-                        backends += item->storageBackend();
-                }
-            }
-        }
+    if (!from || !to || from->getID() != to->getID() || !archives.contains(from->getID()))
+        return;
+
+    addArchiveAndStoreInSettings(to);
+
+    emit archivesExchanged(from, to);
+}
+
+
+void ArchiveManager::updateDefaultLocalArchives(const QList<Archive *> &archives)
+{
+    /* TODO, default archive should be adjustable */
+    defaultLocalArchives.empty();
+
+    foreach (Archive *a, archives) {
+        LocalArchive *la = qobject_cast<LocalArchive *>(a);
+        if (!la) continue;
+        QString lang = la->getLanguage();
+        if (defaultLocalArchives.contains(lang) &&
+                !(*la < *defaultLocalArchives[lang]))
+            continue;
+        defaultLocalArchives[lang] = la;
     }
-    return backends;
+    /* TODO check if there really was a change */
+    emit defaultLocalArchivesChanged(defaultLocalArchives.values());
 }
 
-StorageBackend *ArchiveManager::getBackend(const QString language, const QString /*date*/) const
+const QHash<QString, LocalArchive *> ArchiveManager::getDefaultLocalArchives() const
 {
-    //FIXME the data object seems to be unused, why?!
-    //qDebug() << language << date;
-    QList<StorageBackend *> backends = getBackends();
-    if (backends.size()) {
-        foreach(StorageBackend* b, backends) {
-            if (b->getLanguage() == language /*&& b->getDate() == date*/)
-                return b;
-        }
+    return defaultLocalArchives;
+}
+
+LocalArchive *ArchiveManager::getLocalArchive(const QString language, const QString date) const
+{
+    if (date.isEmpty()) {
+        if (defaultLocalArchives.contains(language))
+            return defaultLocalArchives[language];
+    } else if (archives.contains(ArchiveID(language, date))) {
+        return qobject_cast<LocalArchive *>(archives[ArchiveID(language, date)]);
     }
     return 0;
 }
 
-StorageBackend *ArchiveManager::getRandomBackend() const
+LocalArchive *ArchiveManager::getRandomLocalArchive() const
 {
-    QList<StorageBackend *> backends =  getBackends();
+    QList<LocalArchive *> archives = defaultLocalArchives.values();
     quint32 numArticles = 0;
-    foreach (StorageBackend *b, backends)
+    foreach (LocalArchive *b, archives)
         numArticles += b->getNumArticles();
     quint32 articleId = randomNumber(numArticles);
-    foreach (StorageBackend *b, backends) {
+    foreach (LocalArchive *b, archives) {
         quint32 bArticles = b->getNumArticles();
         if (bArticles > articleId) {
             return b;
@@ -290,12 +310,5 @@ StorageBackend *ArchiveManager::getRandomBackend() const
 }
 
 bool ArchiveManager::hasLanguage(const QString language) const {
-    QList<StorageBackend *> backends =  getBackends();
-    if (backends.size()) {
-        foreach(StorageBackend* b, backends) {
-            if (b->getLanguage() == language)
-                return true;
-        }
-    }
-    return false;
+    return defaultLocalArchives.contains(language);
 }
