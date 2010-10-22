@@ -3,13 +3,16 @@
 #include <QMessageBox>
 #include <QDir>
 
+#include "evopediaapplication.h"
+#include "archivemanager.h"
+#include "localarchive.h"
 #include "torrent/torrentclient.h"
 #include "torrent/ratecontroller.h"
 
 PartialArchive::PartialArchive(const QString &language, const QString &date,
-                               const QUrl &url, const QString &size,
+                               const QString &size,
                                const QString &torrentFile, const QString &dir, QObject *parent) :
-    Archive(parent), url(url), size(size), torrentFile(torrentFile), dir(dir),
+    Archive(parent), size(size), torrentFile(torrentFile), dir(dir),
     uploadRate(0), downloadRate(0), torrentClient(0)
 {
     this->language = language;
@@ -28,7 +31,7 @@ PartialArchive *PartialArchive::restoreArchive(QSettings &settings, QObject *par
     if (!QDir(dir).exists(torrent_file)) return 0;
 
     return new PartialArchive(groupParts[1], groupParts[2],
-                              settings.value("torrent_url").toString(), settings.value("download_size", "0").toString(),
+                              settings.value("download_size", "0").toString(),
                               torrent_file, dir, parent);
 }
 
@@ -37,7 +40,6 @@ void PartialArchive::saveToSettings(QSettings &settings) const
     settings.beginGroup(QString("dump_%1_%2").arg(language, date));
     settings.setValue("complete", false);
     settings.setValue("data_directory", dir);
-    settings.setValue("torrent_url", url.toString());
     settings.setValue("download_size", size);
     settings.setValue("torrent_file", torrentFile);
     settings.endGroup();
@@ -163,13 +165,7 @@ void PartialArchive::updateState(TorrentClient::State s)
 
     qDebug() << __PRETTY_FUNCTION__ << torrentClient->stateString();
     if (s == TorrentClient::Endgame || s == TorrentClient::Seeding) {
-        //FIXME this should be done differently: use the contents of the torrent (the direcotry) and not the torrent
-        /*
-        m_archiveDir = m_workingDir + "/" + m_torrent.left(m_torrent.length()-8);
-        qDebug() << "download done, now using this as a local archive " << m_archiveDir;
-        m_archiveitem->setItemState(ItemState::LocalTorrent);
-        */
-        /* TODO call another exchangeArchives on the ArchiveManager */
+        changeToLocalArchive();
     }
 }
 
@@ -206,4 +202,34 @@ void PartialArchive::torrentError(TorrentClient::Error)
 {
     //FIXME handle this
     qDebug() << __PRETTY_FUNCTION__ << torrentClient->errorString();
+}
+
+void PartialArchive::changeToLocalArchive()
+{
+    qDebug() << "download done, now using this as a local archive " << dir;
+    QString localArchiveDir;
+    if (QDir(dir).exists("metadata.txt")) {
+        localArchiveDir = dir;
+    } else {
+        QStringList subdirs = QDir(dir).entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+        if (subdirs.isEmpty()) {
+            localArchiveDir = dir; /* will fail */
+        } else {
+            /* there should only be one */
+            localArchiveDir = dir + "/" + subdirs[0];
+        }
+    }
+
+    LocalArchive *a = new LocalArchive(localArchiveDir);
+    if (!a->isReadable()) {
+        QString err(a->getErrorMessage());
+        QMessageBox::critical(0, "Error", QString("Archive downloaded completely but it "
+                                                  "is not valid and cannot be used (%1).").arg(err));
+        delete a;
+    } else {
+        ArchiveManager *am((static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager());
+        am->exchangeArchives(this, a);
+        /* TODO this is destroyed after that call. What happens to the torrent client? */
+    }
+
 }

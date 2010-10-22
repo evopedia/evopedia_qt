@@ -37,6 +37,7 @@ signals:
 public slots:
     void updateArchives(const QList<Archive *> &archives);
     void exchangeArchives(DownloadableArchive *from, PartialArchive *to);
+    void exchangeArchives(PartialArchive *from, LocalArchive *to);
 
 };
 

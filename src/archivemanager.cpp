@@ -34,6 +34,7 @@ ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent)
 
 void ArchiveManager::restoreLocalAndPartialArchives(QSettings &settings)
 {
+    /* TODO restart downloads */
     foreach (QString group, settings.childGroups()) {
         if (!group.startsWith("dump_"))
             continue;
@@ -243,6 +244,8 @@ void ArchiveManager::exchangeArchives(DownloadableArchive *from, PartialArchive 
     addArchiveAndStoreInSettings(to);
 
     emit archivesExchanged(from, to);
+
+    from->deleteLater();
 }
 
 void ArchiveManager::exchangeArchives(PartialArchive *from, LocalArchive *to)
@@ -253,6 +256,9 @@ void ArchiveManager::exchangeArchives(PartialArchive *from, LocalArchive *to)
     addArchiveAndStoreInSettings(to);
 
     emit archivesExchanged(from, to);
+    updateDefaultLocalArchives(archives.values());
+
+    from->deleteLater();
 }
 
 

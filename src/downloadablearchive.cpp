@@ -53,7 +53,7 @@ void DownloadableArchive::torrentDownloadFinished(QNetworkReply* reply) {
     f.close();
 
     ArchiveManager *am((static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager());
-    PartialArchive *a = new PartialArchive(language, date, url, size,
+    PartialArchive *a = new PartialArchive(language, date, size,
                                            torrentFile, downloadDirectory);
     am->exchangeArchives(this, a);
 

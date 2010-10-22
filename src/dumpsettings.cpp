@@ -27,6 +27,10 @@ DumpSettings::DumpSettings(QWidget *parent) :
             SIGNAL(archivesExchanged(DownloadableArchive*,PartialArchive*)),
             ui->archiveList,
             SLOT(exchangeArchives(DownloadableArchive*,PartialArchive*)));
+    connect(evopedia->getArchiveManager(),
+            SIGNAL(archivesExchanged(PartialArchive*,LocalArchive*)),
+            ui->archiveList,
+            SLOT(exchangeArchives(PartialArchive*,LocalArchive*)));
     ui->archiveList->updateArchives(evopedia->getArchiveManager()->getArchives().values());
 
     /* TODO show some message explaining how to use this. mention menu. only for the first time? */
@@ -57,6 +61,17 @@ void DumpSettings::on_actionManually_add_archive_triggered()
                                       tr("Archive '%1 %2' already installed.")
                                       .arg(archive->getLanguage()).arg(archive->getDate()));
         } else {
+            QStringList torrents = QDir(dir).entryList(QStringList() << "wikipedia_*_*-*-*.torrent");
+            if (!torrents.isEmpty()) {
+                QString torrent = torrents[0];
+                QStringList parts = torrent.split('_');
+                QString lang = parts[1];
+                QString date = parts[2].mid(0, 10);
+
+                /* TODO perhaps ask before doing that? */
+                PartialArchive *pa = new PartialArchive(lang, date, "unknown",
+                                                        dir + "/" + torrent, dir);
+            }
             QMessageBox::critical(NULL, tr("Error"),
                                   tr("Directory '%1' does not contain a valid evopedia archive:\n '%2'")
                                   .arg(dir).arg(archive->getErrorMessage()));

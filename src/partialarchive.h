@@ -2,7 +2,6 @@
 #define PARTIALARCHIVE_H
 
 #include <QSettings>
-#include <QUrl>
 
 #include "archive.h"
 #include "torrent/torrentclient.h"
@@ -12,7 +11,6 @@ class PartialArchive : public Archive
 {
     Q_OBJECT
 
-    QUrl url;
     QString size;
     QString torrentFile;
     QString dir;
@@ -22,9 +20,11 @@ class PartialArchive : public Archive
 
     TorrentClient* torrentClient;
 
+    void changeToLocalArchive();
+
 public:
     PartialArchive(const QString &language, const QString &date,
-                                 const QUrl &url, const QString &size,
+                                 const QString &size,
                                  const QString &torrentFile, const QString &dir,
                                  QObject *parent = 0);
     static PartialArchive *restoreArchive(QSettings &settings, QObject *parent = 0);

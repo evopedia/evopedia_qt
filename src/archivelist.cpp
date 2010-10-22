@@ -44,6 +44,24 @@ void ArchiveList::exchangeArchives(DownloadableArchive *from, PartialArchive *to
     }
 }
 
+void ArchiveList::exchangeArchives(PartialArchive *from, LocalArchive *to)
+{
+    for (int i = 0; i < topLevelItemCount(); i ++) {
+        QTreeWidgetItem *parent = topLevelItem(i);
+        if (parent->text(0) == from->getLanguage()) {
+            for (int j = 0; j < parent->childCount(); j ++) {
+                QTreeWidgetItem *item = parent->child(j);
+                if (item->text(0) == from->getDate()) {
+                    /* TODO clear item */
+                    fillLocalArchiveItem(to, item);
+                    item->setExpanded(false);
+                    return;
+                }
+            }
+        }
+    }
+}
+
 void ArchiveList::updateArchives(const QList<Archive *> &archivesOrig)
 {
     QSet<QString> expandedLanguages;
@@ -147,7 +165,15 @@ void ArchiveList::fillPartialArchiveItem(PartialArchive *a, QTreeWidgetItem *ite
 
 void ArchiveList::fillLocalArchiveItem(LocalArchive *a, QTreeWidgetItem *item)
 {
+    removeItemWidget(item, 2);
+    removeItemWidget(item, 3);
+
+    if (item->childCount() > 0) {
+        delete item->takeChild(0);
+    }
+
     item->setText(1, QString(tr("%n article(s)", "", a->getNumArticles())));
+    item->setText(2, "");
     /* should always be in use */
     item->setText(3, a->isReadable() ? tr("in use") : tr("error"));
 }
