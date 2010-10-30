@@ -10,7 +10,7 @@ QPair<qreal, qreal> parseCoordinatesInArticle(QByteArray &text, bool *error=0, i
 int parseCoordinatesZoom(const QString &zoomstr);
 inline Qt::LayoutDirection getLayoutDirection(const QString &language)
 {
-    /* TODO are these all RTL languages of Wikipedia? */
+    /* TODO1 are these all RTL languages of Wikipedia? */
     if (language == "ar" || language == "he" || language == "yi" || language == "ur") {
         return Qt::RightToLeft;
     } else {

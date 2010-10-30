@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 
 #include <QDesktopServices>
-#include <QFileDialog>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QAbstractButton>
@@ -40,8 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QSettings settings("Evopedia", "GUI");
     int networkUse = settings.value("network use", 0).toInt();
-    /* TODO why is that commented out? */
-    //evopedia->setNetworkUse(networkUse);
+    evopedia->setNetworkUse(networkUse);
     if (networkUse < 0) ui->actionDeny->setChecked(true);
     else if (networkUse > 0) ui->actionAllow->setChecked(true);
     else ui->actionAuto->setChecked(true);
@@ -82,20 +80,27 @@ MainWindow::MainWindow(QWidget *parent) :
     dumpSettings->setAttribute(Qt::WA_Maemo5StackedWindow);
 #endif
 
-    if (evopedia->getArchiveManager()->getDefaultLocalArchives().isEmpty()) {
-        /* TODO change this */
-        QMessageBox msgBox(QMessageBox::NoIcon, tr("No Dumps Configured"),
-                           tr("To be able to use evopedia you have to "
-                                   "download and install a Wikipedia dump. "
-                                   "Download at least one dump file from the "
-                                   "<a href=\"%1\">website</a> and extract "
-                                   "this archive to a folder on your device. "
-                                   "After that, select this folder using "
-                                   "the menu option \"Configure Dumps\".")
-                           .arg(EVOPEDIA_DUMP_SITE),
-                           QMessageBox::Ok,
-                           this);
-        msgBox.exec();
+    ArchiveManager *archiveManager = evopedia->getArchiveManager();
+
+    if (archiveManager->getDefaultLocalArchives().isEmpty()) {
+        QMessageBox::StandardButton answer = QMessageBox::question(this,
+                              tr("No Archives Configured"),
+                              tr("To be able to use evopedia you have to "
+                                      "download a Wikipedia archive. "
+                                      "This can be done from within evopedia "
+                                      "via the menu option \"Archives\". "
+                                      "The archives can be pretty big and are "
+                                      "saved in %1, so make sure you have enough "
+                                      "space there.<br />"
+                                      "Do you want to download an archive now?")
+                              .arg(archiveManager->getArchivesBaseDir().absolutePath()),
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::Yes);
+        if (answer == QMessageBox::Yes) {
+            /* TODO0 automaticall download "small"? */
+            dumpSettings->show();
+            archiveManager->updateRemoteArchives();
+        }
     }
 }
 
@@ -116,7 +121,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     qreal lat, lng;
     int zoom;
     mapWindow->getPosition(lat, lng, zoom);
-    settings.setValue("map pos", QPointF(lat, lng));
+    settings.setValue("map pos", QPointF(lng, lat));
     settings.setValue("map zoom", zoom);
 
     event->accept();
@@ -188,6 +193,13 @@ void MainWindow::showMapWindow()
 void MainWindow::on_actionConfigure_Dumps_triggered()
 {
     dumpSettings->show();
+
+    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
+    if (evopedia->getArchiveManager()->getArchives().size() == 0) {
+        QMessageBox::information(dumpSettings, tr("Archive Download"),
+                                 tr("Use the menu to retrieve the list of available archives."));
+        return;
+    }
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -208,9 +220,9 @@ void MainWindow::on_actionAbout_triggered()
                              "articles.</small></p>"
                              "<p>Authors<br/>"
                              "<small>"
-                             "Code: Christian Reitwiessner<br/>"
+                             "Code: Christian Reitwiessner, Joachim Schiele<br/>"
                              "Icon: Joachim Schiele<br/>"
-                             "Translations: mossroy (French)"
+                             "Translations: mossroy (French)" /* TODO0 */
                              "</small></p>").arg(version));
     msgBox.setIconPixmap(QPixmap(":/web/evopedia-64x64.png"));
     QPushButton *websiteButton = msgBox.addButton(tr("Visit Website"), QMessageBox::AcceptRole);

@@ -76,7 +76,7 @@
   </widget>
   <action name="actionConfigure_Dumps">
    <property name="text">
-    <string>Configure Dumps</string>
+    <string>Archives</string>
    </property>
   </action>
   <action name="actionMap">

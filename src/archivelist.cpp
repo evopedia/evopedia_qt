@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QProgressBar>
+#include <QMessageBox>
 
 ArchiveList::ArchiveList(QWidget *parent) :
     QTreeWidget(parent)
@@ -12,12 +13,12 @@ ArchiveList::ArchiveList(QWidget *parent) :
 
     connect(this, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(itemClickedHandler(QTreeWidgetItem*, int)));
 
-    // TODO fix this font metrics issue, remove hardcoded stuff
-    // TODO perhaps resizeColumnToContents() is of use
-    setColumnWidth(0, 150);//fm.width("lang/2010-07-07");
-    setColumnWidth(1, 140);//fm.width(""));
-    setColumnWidth(2, 200);//fm.width(""));
-    setColumnWidth(3, 100);//fm.width(""));
+    // TODO1 fix this font metrics issue, remove hardcoded stuff
+    // TODO1 perhaps resizeColumnToContents() is of use
+    setColumnWidth(0, 180);//fm.width("lang/2010-07-07");
+    setColumnWidth(1, 190);//fm.width(""));
+    setColumnWidth(2, 120);//fm.width(""));
+    setColumnWidth(3, 120);//fm.width(""));    
 
     downloadPausedMapper = new QSignalMapper(this);
     downloadStartedMapper = new QSignalMapper(this);
@@ -34,7 +35,6 @@ void ArchiveList::exchangeArchives(DownloadableArchive *from, PartialArchive *to
             for (int j = 0; j < parent->childCount(); j ++) {
                 QTreeWidgetItem *item = parent->child(j);
                 if (item->text(0) == from->getDate()) {
-                    /* TODO clear item */
                     fillPartialArchiveItem(to, item);
                     item->setExpanded(true);
                     return;
@@ -52,7 +52,6 @@ void ArchiveList::exchangeArchives(PartialArchive *from, LocalArchive *to)
             for (int j = 0; j < parent->childCount(); j ++) {
                 QTreeWidgetItem *item = parent->child(j);
                 if (item->text(0) == from->getDate()) {
-                    /* TODO clear item */
                     fillLocalArchiveItem(to, item);
                     item->setExpanded(false);
                     return;
@@ -65,6 +64,7 @@ void ArchiveList::exchangeArchives(PartialArchive *from, LocalArchive *to)
 void ArchiveList::updateArchives(const QList<Archive *> &archivesOrig)
 {
     QSet<QString> expandedLanguages;
+    QSet<QString> knownLanguages;
     QSet<ArchiveID> expandedItems;
 
     for (int i = 0; i < topLevelItemCount(); i ++) {
@@ -72,6 +72,7 @@ void ArchiveList::updateArchives(const QList<Archive *> &archivesOrig)
         const QString &lang = langItem->text(0);
         if (langItem->isExpanded())
             expandedLanguages += lang;
+        knownLanguages += lang;
         for (int j = 0; j < langItem->childCount(); j ++) {
             QTreeWidgetItem *dateItem = langItem->child(j);
             if (dateItem->isExpanded())
@@ -79,10 +80,11 @@ void ArchiveList::updateArchives(const QList<Archive *> &archivesOrig)
         }
     }
 
+    clear();
+
     QList<Archive *> archives(archivesOrig);
     qSort(archives.begin(), archives.end(), Archive::comparePointers);
 
-    clear();
     QTreeWidgetItem *topItem(0);
     QString lastLanguage;
 
@@ -99,12 +101,15 @@ void ArchiveList::updateArchives(const QList<Archive *> &archivesOrig)
         if (expandedItems.contains(a->getID()))
             item->setExpanded(true);
 
-        /* TODO better using real polymorphism? But we need to keep UI and non-UI apart */
         if (qobject_cast<DownloadableArchive *>(a)) {
             fillDownloadableArchiveItem(static_cast<DownloadableArchive *>(a), item);
         } else if (qobject_cast<PartialArchive *>(a)) {
+            if (!knownLanguages.contains(a->getLanguage()))
+                topItem->setExpanded(true);
             fillPartialArchiveItem(static_cast<PartialArchive *>(a), item);
         } else if (qobject_cast<LocalArchive *>(a)) {
+            if (!knownLanguages.contains(a->getLanguage()))
+                topItem->setExpanded(true);
             fillLocalArchiveItem(static_cast<LocalArchive *>(a), item);
         }
     }
@@ -120,7 +125,7 @@ void ArchiveList::fillDownloadableArchiveItem(DownloadableArchive *a, QTreeWidge
     connect(button, SIGNAL(clicked()), a, SLOT(startDownload()));
     item->setSizeHint(3, button->sizeHint());
     setItemWidget(item, 3, button);
-    /* TODO use icons */
+    /* TODO1 use icons */
 }
 
 
@@ -131,7 +136,7 @@ void ArchiveList::fillPartialArchiveItem(PartialArchive *a, QTreeWidgetItem *ite
     item->setSizeHint(3, button->sizeHint());
     setItemWidget(item, 3, button);
 
-    item->setText(1, QString("%1 MB").arg(a->getSizeMB()));
+    item->setText(1, a->getSizeMB());
 
     downloadPausedMapper->setMapping(a, button);
     downloadStartedMapper->setMapping(a, button);
@@ -189,12 +194,12 @@ void ArchiveList::downloadPausedHandler(QWidget *widget)
 {
     QPushButton *button = static_cast<QPushButton *>(widget);
     button->setText(tr("Continue"));
-    /* TODO use icons */
+    /* TODO1 use icons */
 }
 
 void ArchiveList::downloadStartedHandler(QWidget *widget)
 {
     QPushButton *button = static_cast<QPushButton *>(widget);
     button->setText(tr("Pause"));
-    /* TODO use icons */
+    /* TODO1 use icons */
 }

@@ -15,7 +15,7 @@
 
 ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent)
 {
-    connect(&netManager, SIGNAL(finished(QNetworkReply*)), SLOT(networkFinished(QNetworkReply*)));
+    connect(&netManager, SIGNAL(finished(QNetworkReply*)), SLOT(handleNetworkFinished(QNetworkReply*)));
     connect(this, SIGNAL(archivesChanged(QList<Archive*>)), SLOT(updateDefaultLocalArchives(QList<Archive*>)));
 
     QSettings settings(QDir::homePath() + "/.evopediarc", QSettings::IniFormat);
@@ -34,7 +34,6 @@ ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent)
 
 void ArchiveManager::restoreLocalAndPartialArchives(QSettings &settings)
 {
-    /* TODO restart downloads */
     foreach (QString group, settings.childGroups()) {
         if (!group.startsWith("dump_"))
             continue;
@@ -48,8 +47,8 @@ void ArchiveManager::restoreLocalAndPartialArchives(QSettings &settings)
                     delete archive;
             }
 
-            //TODO error handling
-            //TODO add another archive type CorruptedArchive? Just ignore it?
+            //TODO1 error handling
+            //TODO1 add another archive type CorruptedArchive? Just ignore it?
             /*
             QMessageBox::critical ( NULL, "session restore: previously used evopedia archives",
                                 QString("'%1' could not be opened because: '%2'. Are you still in USB-mass storage mode or have the files moved?")
@@ -72,26 +71,21 @@ void ArchiveManager::updateRemoteArchives()
     netManager.get(QNetworkRequest(QUrl(EVOPEDIA_DUMP_SITE)));
 }
 
-void ArchiveManager::setDownloadsPaused(bool value)
+void ArchiveManager::handleNetworkFinished(QNetworkReply *reply)
 {
-    foreach (Archive *a, archives) {
-        PartialArchive *pa = qobject_cast<PartialArchive *>(a);
-        if (pa)
-            pa->setExternallyPaused(value);
-    }
-}
-
-void ArchiveManager::networkFinished(QNetworkReply *reply)
-{
+    /* TODO1 default timeout is rather long, we could use our own timer for that */
     if (reply->error() != QNetworkReply::NoError) {
-        QMessageBox::critical(0, "network error",
-                                QString("Can not access the network to find evopedia torrents because: '%1'")
+        QMessageBox::critical(0, "Network Error",
+                                tr("Can not access the network to find downloadable wikipedia archives because: %1")
                                 .arg(reply->errorString()));
+        reply->deleteLater();
         return;
     }
-    //FIXME if the network does not work we need a timeout handler for error messages
-    //FIXME is it possible that we get the data only in partial chunks?
+    //FIXME1 if the network does not work we need a timeout handler for error messages
+    //FIXME1 is it possible that we get the data only in partial chunks?
     QString data = QString::fromUtf8(reply->readAll().constData());
+
+    reply->deleteLater();
 
     /* remove all downloadable archives */
     QHash<ArchiveID, Archive *>::iterator i;
@@ -99,7 +93,7 @@ void ArchiveManager::networkFinished(QNetworkReply *reply)
         DownloadableArchive *a = qobject_cast<DownloadableArchive *>(i.value());
         if (a) {
             i = archives.erase(i);
-            // TODO a->deleteLater();
+            // TODO0 a->deleteLater();
         }
     }
 
@@ -136,7 +130,7 @@ bool ArchiveManager::addArchiveInternal(Archive *archive)
 
     /* only add archive if it is really "more local" than the present one */
 
-    /* TODO this will not "refresh" information on the same
+    /* TODO0 this will not "refresh" information on the same
      * downloadable archive. Is that bad? */
     if (qobject_cast<DownloadableArchive *>(archive))
         return false;
@@ -264,7 +258,7 @@ void ArchiveManager::exchangeArchives(PartialArchive *from, LocalArchive *to)
 
 void ArchiveManager::updateDefaultLocalArchives(const QList<Archive *> &archives)
 {
-    /* TODO, default archive should be adjustable */
+    /* TODO1, default archive should be adjustable */
     defaultLocalArchives.empty();
 
     foreach (Archive *a, archives) {
@@ -276,7 +270,7 @@ void ArchiveManager::updateDefaultLocalArchives(const QList<Archive *> &archives
             continue;
         defaultLocalArchives[lang] = la;
     }
-    /* TODO check if there really was a change */
+    /* TODO0 check if there really was a change */
     emit defaultLocalArchivesChanged(defaultLocalArchives.values());
 }
 

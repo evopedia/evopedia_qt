@@ -17,7 +17,6 @@ DumpSettings::DumpSettings(QWidget *parent) :
     evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
 
     connect(ui->actionRefresh_archive_list, SIGNAL(triggered()), evopedia->getArchiveManager(), SLOT(updateRemoteArchives()));
-    connect(ui->actionPause_all_downloads, SIGNAL(toggled(bool)), evopedia->getArchiveManager(), SLOT(setDownloadsPaused(bool)));
 
     connect(evopedia->getArchiveManager(),
             SIGNAL(archivesChanged(QList<Archive*>)),
@@ -32,10 +31,6 @@ DumpSettings::DumpSettings(QWidget *parent) :
             ui->archiveList,
             SLOT(exchangeArchives(PartialArchive*,LocalArchive*)));
     ui->archiveList->updateArchives(evopedia->getArchiveManager()->getArchives().values());
-
-    /* TODO show some message explaining how to use this. mention menu. only for the first time? */
-
-    show();
 }
 
 DumpSettings::~DumpSettings()
@@ -45,22 +40,22 @@ DumpSettings::~DumpSettings()
 
 void DumpSettings::on_actionManually_add_archive_triggered()
 {
-    /* TODO creates a rather complicated dialog. */
-
-    QFileDialog dialog(this, tr("Open Dump Directory"), QString());
-    dialog.setFileMode(QFileDialog::DirectoryOnly);
-
-    if (dialog.exec()) {
-        QString dir = dialog.selectedFiles().first();
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Dump Directory"),
+                                                    QString(), QFileDialog::ShowDirsOnly);
+    if (!dir.isEmpty()) {
         LocalArchive *archive = new LocalArchive(dir);
         if (archive->isReadable()) {
-            if (evopedia->getArchiveManager()->addArchive(archive))
+            if (evopedia->getArchiveManager()->addArchive(archive)) {
                 return; /* ownership transferred */
-            else
+            } else {
                 QMessageBox::critical(NULL, tr("Error"),
                                       tr("Archive '%1 %2' already installed.")
                                       .arg(archive->getLanguage()).arg(archive->getDate()));
+                delete archive;
+            }
         } else {
+            delete archive;
+
             QStringList torrents = QDir(dir).entryList(QStringList() << "wikipedia_*_*-*-*.torrent");
             if (!torrents.isEmpty()) {
                 QString torrent = torrents[0];
@@ -68,15 +63,21 @@ void DumpSettings::on_actionManually_add_archive_triggered()
                 QString lang = parts[1];
                 QString date = parts[2].mid(0, 10);
 
-                /* TODO perhaps ask before doing that? */
-                PartialArchive *pa = new PartialArchive(lang, date, "unknown",
-                                                        dir + "/" + torrent, dir);
+                PartialArchive *pa = new PartialArchive(lang, date, QString(),
+                                                        torrent, dir);
+                if (evopedia->getArchiveManager()->addArchive(pa)) {
+                    return; /* ownership transferred */
+                } else {
+                    delete pa;
+                    QMessageBox::critical(NULL, tr("Error"),
+                                          tr("Archive '%1 %2' already installed.")
+                                          .arg(lang, date));
+                }
             }
             QMessageBox::critical(NULL, tr("Error"),
-                                  tr("Directory '%1' does not contain a valid evopedia archive:\n '%2'")
+                                  tr("Directory '%1' does not contain a valid evopedia archive:\n%2")
                                   .arg(dir).arg(archive->getErrorMessage()));
         }
-        delete archive;
     }
 }
 

@@ -15,7 +15,7 @@
 #include "flickable.h"
 #include "tilefetcher.h"
 
-/* TODO try if loading from disk cache directly in GUI thread is more efficient */
+/* TODO1 try if loading from disk cache directly in GUI thread is more efficient */
 
 class SlippyMap: public QObject
 {

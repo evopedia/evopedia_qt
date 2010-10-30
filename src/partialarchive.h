@@ -36,7 +36,7 @@ public:
     bool isDownloading() const;
     QString getSizeMB() const;
 
-    /*! torrent based chunk validation */
+    /* TODO1 torrent based chunk validation */
     bool validate(QString &ret);
 
 signals:
@@ -52,7 +52,6 @@ public slots:
 
     void startDownload();
     void pauseDownload();
-    void cancelDownload();
     void togglePauseDownload();
 
     void updateState(TorrentClient::State s);

@@ -33,15 +33,8 @@
     <property name="title">
      <string>Menu</string>
     </property>
-    <widget class="QMenu" name="menuDownloads">
-     <property name="title">
-      <string>Downloads</string>
-     </property>
-     <addaction name="actionPause_all_downloads"/>
-    </widget>
     <addaction name="actionManually_add_archive"/>
     <addaction name="actionRefresh_archive_list"/>
-    <addaction name="menuDownloads"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>

@@ -24,25 +24,12 @@ void TileFetcher::fetchTile(int zoom, QPoint offset)
     Q_ASSERT(0 <= offset.x() && offset.x() < (1 << zoom));
     Q_ASSERT(0 <= offset.y() && offset.y() < (1 << zoom));
 
-    /* fetch from local cache */
-    QImage img(QString("%1/%2/%3/%4/%5.png")
-                        .arg(MAPTILES_LOCATION)
-                        .arg("OpenStreetMap I")
-                        .arg(zoom)
-                        .arg(offset.x())
-                        .arg(offset.y()), "PNG");
-    if (!img.isNull()) {
-        emit tileLoaded(zoom, offset, img);
-        return;
-    }
-
-    /* fetch from server */
     QString path = "http://tile.openstreetmap.org/%1/%2/%3.png";
     QUrl url(path.arg(zoom).arg(offset.x()).arg(offset.y()));
 
-    /* TODO not thread safe! */
+    /* TODO0 not thread safe! */
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
-    if (!evopedia->networkConnectionAllowed() /* TODO && !m_manager.cache()->metaData(m_url).isValid()*/)
+    if (!evopedia->networkConnectionAllowed() /* TODO1 && !m_manager.cache()->metaData(m_url).isValid()*/)
         return;
 
     QNetworkRequest request;

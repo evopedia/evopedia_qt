@@ -11,7 +11,7 @@
 #else
 #define MAPTILES_LOCATION (QDir::homePath() + "/.cache/maps")
 #endif
-/* TODO symbian */
+/* TODO0 symbian */
 
 
 #endif // DEFINES_H

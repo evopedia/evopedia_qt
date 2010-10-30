@@ -31,12 +31,6 @@ SOURCES +=  src/mainwindow.cpp \
 	src/torrent/torrentclient.cpp \
 	src/torrent/torrentserver.cpp \
 	src/torrent/trackerclient.cpp
-#	src/archiveitem.cpp \
-#	src/treeview.cpp \
-#	src/abstractfrontend.cpp \
-#        src/storagefrontend.cpp \
-#	src/torrentfrontend.cpp \
-#        src/archivelistmodel.cpp \
 
 HEADERS += src/mainwindow.h \
         src/localarchive.h \
@@ -70,12 +64,6 @@ HEADERS += src/mainwindow.h \
 	src/torrent/torrentclient.h \
 	src/torrent/torrentserver.h \
 	src/torrent/trackerclient.h
-#	src/archiveitem.h \
-#	src/treeview.h \
-#	src/abstractfrontend.h \
-#	src/storagefrontend.h \
- #       src/archivelistmodel.h \
- #       src/torrentfrontend.h \
 
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts
 

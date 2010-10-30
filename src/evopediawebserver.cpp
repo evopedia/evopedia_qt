@@ -84,7 +84,7 @@ void EvopediaWebServer::outputIndexPage(QTcpSocket *socket)
 
 void EvopediaWebServer::outputHeader(QTcpSocket *socket, const QString responseCode, const QString contentType)
 {
-    /* TODO 404 should not have "Ok" */
+    /* TODO2 404 should not have "Ok" */
     QString text = QString("HTTP/1.0 %1 Ok\r\n"
             "Content-Type: %2\r\n\r\n").arg(responseCode).arg(contentType);
     socket->write(text.toAscii());

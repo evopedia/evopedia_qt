@@ -56,14 +56,12 @@ void PartialArchive::togglePauseDownload()
     }
 }
 
-void PartialArchive::setExternallyPaused(bool value)
-{
-    /* TODO save current paused state and set to paused */
-}
-
 QString PartialArchive::getSizeMB() const
 {
-    return size.left(size.length() - 6);
+    if (size.isEmpty())
+        return size;
+    else
+        return size.left(size.length() - 6) + tr(" MB");
 }
 
 bool PartialArchive::validate(QString &ret)
@@ -81,11 +79,14 @@ bool PartialArchive::validate(QString &ret)
 
 void PartialArchive::startDownload()
 {
-    // FIXME parse METADATA from the dumps webpage must match 'lang' and 'date' with the contents of the torrent
+    /* TODO1 automatically stop downloading depending on battery state */
+    /* TODO1 automatically stop downloading depending on free space on filesystem */
+    // FIXME1 parse METADATA from the dumps webpage must match 'lang' and 'date' with the contents of the torrent
     if (!torrentClient)
         torrentClient = new TorrentClient(this);
 
     // setting a rate is important: not doing so will result in no seeds reported & silent fails
+    /* TODO0 set a reasonable rate for each device */
     int rate = 1000*1000*10; // 10mb/s
     RateController::instance()->setUploadLimit(rate);
     RateController::instance()->setDownloadLimit(rate);
@@ -115,8 +116,6 @@ void PartialArchive::startDownload()
      }
 
      torrentClient->setDestinationFolder(dir);
-     QByteArray resumeState;// = settings.value("resumeState").toByteArray();
-     torrentClient->setDumpedState(resumeState);
 
      torrentClient->start();
 }
@@ -129,14 +128,6 @@ bool PartialArchive::isDownloading() const
 void PartialArchive::pauseDownload()
 {
     torrentClient->setPaused(true);
-}
-
-void PartialArchive::cancelDownload()
-{
-    qDebug() << __PRETTY_FUNCTION__;
-    //client->disconnect();
-    //connect(client, SIGNAL(stopped()), this, SLOT(torrentStopped()));
-    //client->stop();
 }
 
 void PartialArchive::updateState(TorrentClient::State s)
@@ -161,12 +152,9 @@ void PartialArchive::updateState(TorrentClient::State s)
         emit downloadPaused();
     else
         emit downloadStarted();
-    /* TODO correct? */
 
-    qDebug() << __PRETTY_FUNCTION__ << torrentClient->stateString();
-    if (s == TorrentClient::Endgame || s == TorrentClient::Seeding) {
+    if (s == TorrentClient::Seeding)
         changeToLocalArchive();
-    }
 }
 
 void PartialArchive::updatePeerInfo()
@@ -194,19 +182,18 @@ void PartialArchive::updateUploadRate(int rate)
 void PartialArchive::torrentStopped()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    //FIXME handle this
+    //FIXME0 handle this
     //m_torrentclient->deleteLater();
 }
 
 void PartialArchive::torrentError(TorrentClient::Error)
 {
-    //FIXME handle this
+    //FIXME0 handle this
     qDebug() << __PRETTY_FUNCTION__ << torrentClient->errorString();
 }
 
 void PartialArchive::changeToLocalArchive()
 {
-    qDebug() << "download done, now using this as a local archive " << dir;
     QString localArchiveDir;
     if (QDir(dir).exists("metadata.txt")) {
         localArchiveDir = dir;
@@ -223,13 +210,13 @@ void PartialArchive::changeToLocalArchive()
     LocalArchive *a = new LocalArchive(localArchiveDir);
     if (!a->isReadable()) {
         QString err(a->getErrorMessage());
-        QMessageBox::critical(0, "Error", QString("Archive downloaded completely but it "
+        QMessageBox::critical(0, "Error", tr("Archive downloaded completely but it "
                                                   "is not valid and cannot be used (%1).").arg(err));
         delete a;
     } else {
         ArchiveManager *am((static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager());
         am->exchangeArchives(this, a);
-        /* TODO this is destroyed after that call. What happens to the torrent client? */
+        /* TODO0 "this" is destroyed after that call. What happens to the torrent client? */
     }
 
 }

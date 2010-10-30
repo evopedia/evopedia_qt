@@ -127,7 +127,8 @@ void SlippyMap::render(QPainter *p, const QRect &rect)
             QPoint tp(x + m_tilesRect.left(), y + m_tilesRect.top());
             QRect box = tileRect(tp);
             if (rect.intersects(box)) {
-                tp.setX(tp.x() & ((1 << zoom) - 1));
+                // do not wrap around
+                // tp.setX(tp.x() & ((1 << zoom) - 1));
                 if (m_tilePixmaps.contains(tp) && !m_tilePixmaps[tp].isNull())
                     p->drawPixmap(box, m_tilePixmaps.value(tp));
                 else
@@ -179,11 +180,10 @@ void SlippyMap::tileLoaded(int z, QPoint offset, QImage image)
         return;
 
     m_tilePixmaps[offset] = QPixmap::fromImage(image);
-    /* XXX enough? pixmap could be visible multiple times (zoom 1) */
     emit updated(tileRect(offset));
 
     // purge unused spaces
-    /* TODO better: have some fixed size cache and remove the tiles
+    /* TODO1 better: have some fixed size cache and remove the tiles
      * that were used least recently (also store tiles of different
      * zoom levels) */
     QRect bound = m_tilesRect.adjusted(-3, -3, 3, 3);
@@ -194,14 +194,20 @@ void SlippyMap::tileLoaded(int z, QPoint offset, QImage image)
 
 void SlippyMap::fetchTiles()
 {
-    /* TODO "refresh" m_tilePixmaps once we get online (i.e. remove all the null tiles) */
+    /* TODO1 "refresh" m_tilePixmaps once we get online (i.e. remove all the null tiles) */
     for (int x = m_tilesRect.left(); x <= m_tilesRect.right(); ++x) {
         for (int y = m_tilesRect.top(); y <= m_tilesRect.bottom(); ++y) {
-            if (y >= 0 && y < (1 << zoom)) {
+            if (y >= 0 && y < (1 << zoom) && x >= 0 && x < (1 << zoom)) {
                 QPoint tp = QPoint(x & ((1 << zoom) - 1), y);
                 if (!m_tilePixmaps.contains(tp)) {
-                    m_tilePixmaps[tp] = QPixmap();
-                    emit tileNeeded(zoom, tp);
+                    QPixmap pixmap(QString("%1/%2/%3/%4/%5.png")
+                                        .arg(MAPTILES_LOCATION, "OpenStreetMap I")
+                                        .arg(zoom)
+                                        .arg(tp.x())
+                                        .arg(tp.y()), "PNG");
+                    m_tilePixmaps[tp] = pixmap;
+                    if (pixmap.isNull())
+                        emit tileNeeded(zoom, tp);
                 }
             }
         }
@@ -215,6 +221,12 @@ void SlippyMap::boundPosition()
     } else {
         qreal y = qBound<qreal>(height / 2.0, m_centerPos.y() * tdim, (1 << zoom) * tdim - height / 2);
         m_centerPos.setY(y / tdim);
+    }
+    if ((1 << zoom) * tdim < width) {
+        m_centerPos.setX((1 << zoom) / 2.0);
+    } else {
+        qreal x = qBound<qreal>(width / 2.0, m_centerPos.x() * tdim, (1 << zoom) * tdim - width / 2);
+        m_centerPos.setX(x / tdim);
     }
 }
 
@@ -307,7 +319,7 @@ QPointF SlippyMap::project(QPointF lnglat, int zoom)
         while (x > 1.0) x -= 1.0;
     }
 
-    return QPointF(x * (1 << zoom), y * (1 << zoom));
+    return QPointF(x * qreal(1 << zoom), y * qreal(1 << zoom));
 }
 
 ArticleOverlay::ArticleOverlay(SlippyMap *parent)
@@ -347,12 +359,11 @@ void ArticleOverlay::invalidate(const QRect &tilesRect)
     int zoom = slippyMap->getZoom();
     for (int x = tilesRect.left(); x <= tilesRect.right(); ++x) {
         for (int y = tilesRect.top(); y <= tilesRect.bottom(); ++y) {
-            if (y >= 0 && y < (1 << zoom)) {
-                QPoint tp = QPoint(x & ((1 << zoom) - 1), y);
+            if (y >= 0 && y < (1 << zoom) && x >= 0 && x < (1 << zoom)) {
+                QPoint tp = QPoint(x, y); //QPoint(x & ((1 << zoom) - 1), y);
                 ZoomTile zt(tp, zoom);
                 if (titles.contains(zt))
                     continue;
-                /* TODO does this work if the tile is near to -180 degrees? */
                 titles[zt] = getTitles(SlippyMap::unprojectTileRect(tp, zoom), 20);
             }
         }
@@ -396,7 +407,7 @@ void ArticleOverlay::mouseClicked(const QPoint &tile, const QPoint &pixelPos)
 {
     typedef QPair<GeoTitle,float> GeoTitleDistance;
 
-    /* TODO this does not always work */
+    /* TODO0 this does not always work */
 
     int zoom = slippyMap->getZoom();
 
