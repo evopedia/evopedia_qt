@@ -181,15 +181,15 @@ void PartialArchive::updateUploadRate(int rate)
 
 void PartialArchive::torrentStopped()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    //FIXME0 handle this
+    //qDebug() << __PRETTY_FUNCTION__;
+    //TODO1 when is this called?
     //m_torrentclient->deleteLater();
 }
 
 void PartialArchive::torrentError(TorrentClient::Error)
 {
-    //FIXME0 handle this
-    qDebug() << __PRETTY_FUNCTION__ << torrentClient->errorString();
+    QMessageBox::critical(0, tr("Torrent Error"), torrentClient->errorString(),
+                          QMessageBox::Ok);
 }
 
 void PartialArchive::changeToLocalArchive()
@@ -216,7 +216,5 @@ void PartialArchive::changeToLocalArchive()
     } else {
         ArchiveManager *am((static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager());
         am->exchangeArchives(this, a);
-        /* TODO0 "this" is destroyed after that call. What happens to the torrent client? */
     }
-
 }

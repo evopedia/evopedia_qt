@@ -13,5 +13,4 @@
 #endif
 /* TODO0 symbian */
 
-
 #endif // DEFINES_H

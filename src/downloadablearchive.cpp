@@ -1,5 +1,7 @@
 #include "downloadablearchive.h"
 
+#include <QFileDialog>
+
 #include "evopediaapplication.h"
 
 DownloadableArchive::DownloadableArchive(const QString &language, const QString &date,
@@ -10,25 +12,42 @@ DownloadableArchive::DownloadableArchive(const QString &language, const QString 
     this->date = date;
 }
 
-bool DownloadableArchive::startDownload()
+QString DownloadableArchive::askAndCreateDownloadDirectory()
 {
     ArchiveManager *am((static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager());
-    const QDir baseDir(am->getArchivesBaseDir());
+    const QDir d;
+    QString baseDir = am->getArchivesBaseDir();
 
-    /* TODO2 sanity check for language and date? */
-    downloadDirectory = baseDir.absolutePath() + "/" + QString("wikipedia_%1").arg(language);
-    torrentFile = QString("wikipedia_%1_%2.torrent").arg(language, date);
+    if (baseDir.isEmpty()) {
+        baseDir = QFileDialog::getExistingDirectory(0, tr("Select Base Download Directory For Archives"),
+                                                        QString(), QFileDialog::ShowDirsOnly);
+        if (baseDir.isEmpty())
+            return QString();
+        else
+            am->setArchivesBaseDir(baseDir);
+    }
+
+    QString downloadDirectory = QDir(baseDir).absolutePath() + "/" + QString("wikipedia_%1").arg(language);
 
     if (!QDir(downloadDirectory).exists()) {
         if (!QDir().mkpath(downloadDirectory)) {
             QMessageBox::critical(0, tr("Error Downloading Torrent"),
                                   tr("Unable to create directory %1.")
                                   .arg(downloadDirectory));
-            return false;
+            return QString();
         }
     }
 
-    QFile f(downloadDirectory + "/" + torrentFile);
+    return downloadDirectory;
+}
+
+bool DownloadableArchive::startDownload()
+{
+    downloadDirectory = askAndCreateDownloadDirectory();
+
+    /* TODO2 sanity check for language and date? */
+    torrentFile = QString("wikipedia_%1_%2.torrent").arg(language, date);
+
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     QObject::connect(manager, SIGNAL(finished(QNetworkReply* )),
                      this, SLOT(torrentDownloadFinished(QNetworkReply* )));

@@ -89,15 +89,13 @@ MainWindow::MainWindow(QWidget *parent) :
                                       "download a Wikipedia archive. "
                                       "This can be done from within evopedia "
                                       "via the menu option \"Archives\". "
-                                      "The archives can be pretty big and are "
-                                      "saved in %1, so make sure you have enough "
-                                      "space there.<br />"
-                                      "Do you want to download an archive now?")
-                              .arg(archiveManager->getArchivesBaseDir().absolutePath()),
+                                      "If you only want to try out evopedia, "
+                                      "you can use the language \"small\", which "
+                                      "is a small version of the English Wikipedia.<br />"
+                                      "Do you want to download an archive now?"),
                               QMessageBox::Yes | QMessageBox::No,
                               QMessageBox::Yes);
         if (answer == QMessageBox::Yes) {
-            /* TODO0 automaticall download "small"? */
             dumpSettings->show();
             archiveManager->updateRemoteArchives();
         }
@@ -222,11 +220,11 @@ void MainWindow::on_actionAbout_triggered()
                              "<small>"
                              "Code: Christian Reitwiessner, Joachim Schiele<br/>"
                              "Icon: Joachim Schiele<br/>"
-                             "Translations: mossroy (French)" /* TODO0 */
+                             "Translations: mossroy (French), Santiago Crespo (Spanish)"
                              "</small></p>").arg(version));
     msgBox.setIconPixmap(QPixmap(":/web/evopedia-64x64.png"));
     QPushButton *websiteButton = msgBox.addButton(tr("Visit Website"), QMessageBox::AcceptRole);
-    QPushButton *downloadButton = msgBox.addButton(tr("Download Dumps"), QMessageBox::AcceptRole);
+    QPushButton *translateButton = msgBox.addButton(tr("Translate"), QMessageBox::AcceptRole);
     QPushButton *bugButton = msgBox.addButton(tr("Report Bug"), QMessageBox::AcceptRole);
     msgBox.setStandardButtons(QMessageBox::Close);
 
@@ -236,8 +234,12 @@ void MainWindow::on_actionAbout_triggered()
 
     if (clickedButton == websiteButton) {
         QDesktopServices::openUrl(QUrl(EVOPEDIA_WEBSITE));
-    } else if (clickedButton == downloadButton) {
-        QDesktopServices::openUrl(QUrl(EVOPEDIA_DUMP_SITE));
+    } else if (clickedButton == translateButton) {
+        QMessageBox::information(this, tr("Translate Evopedia"),
+                                 tr("To translate Evopedia to your language, download the translation file "
+                                    "from the website (<a href=\"http://evopedia.info\">evopedia.info</a>) "
+                                    "and send it back to devs@evopedia.info."),
+                                 QMessageBox::Ok);
     } else if (clickedButton == bugButton) {
         QDesktopServices::openUrl(QUrl(EVOPEDIA_BUG_SITE));
     }

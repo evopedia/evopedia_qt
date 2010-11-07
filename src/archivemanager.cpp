@@ -15,6 +15,9 @@
 
 ArchiveManager::ArchiveManager(QObject* parent) : QObject(parent)
 {
+    QSettings appSettings("Evopedia", "GUI");
+    archivesBaseDir = appSettings.value("download_dir", "").toString();
+
     connect(&netManager, SIGNAL(finished(QNetworkReply*)), SLOT(handleNetworkFinished(QNetworkReply*)));
     connect(this, SIGNAL(archivesChanged(QList<Archive*>)), SLOT(updateDefaultLocalArchives(QList<Archive*>)));
 
@@ -66,6 +69,13 @@ void ArchiveManager::restoreLocalAndPartialArchives(QSettings &settings)
     }
 }
 
+void ArchiveManager::setArchivesBaseDir(QString dir)
+{
+    QSettings appSettings("Evopedia", "GUI");
+    appSettings.setValue("download_dir", dir);
+    appSettings.sync();
+}
+
 void ArchiveManager::updateRemoteArchives()
 {
     netManager.get(QNetworkRequest(QUrl(EVOPEDIA_DUMP_SITE)));
@@ -93,7 +103,8 @@ void ArchiveManager::handleNetworkFinished(QNetworkReply *reply)
         DownloadableArchive *a = qobject_cast<DownloadableArchive *>(i.value());
         if (a) {
             i = archives.erase(i);
-            // TODO0 a->deleteLater();
+            /* TODO0 test */
+            a->deleteLater();
         }
     }
 
@@ -122,35 +133,32 @@ bool ArchiveManager::addArchiveInternal(Archive *archive)
 {
     ArchiveID id(archive->getID());
 
-    if (!archives.contains(id)) {
-        archives[id] = archive;
-        archive->setParent(this);
-        return true;
+    if (archives.contains(id)) {
+        /* only add archive if it is really "more local" than the present one */
+
+        Archive *current(archives[id]);
+
+        int curNum = 2;
+        if (qobject_cast<LocalArchive *>(current)) {
+            curNum = 0;
+        } else if (qobject_cast<PartialArchive *>(current)) {
+            curNum = 1;
+        }
+
+        int newNum = 2;
+        if (qobject_cast<LocalArchive *>(archive)) {
+            newNum = 0;
+        } else if (qobject_cast<PartialArchive *>(archive)) {
+            newNum = 1;
+        }
+
+        if (newNum >= curNum && curNum < 2)
+            return false;
+
+        current->deleteLater();
+        /* note that it is not removed from the settings file,
+         * since the LocalArchive will overwrite it */
     }
-
-    /* only add archive if it is really "more local" than the present one */
-
-    /* TODO0 this will not "refresh" information on the same
-     * downloadable archive. Is that bad? */
-    if (qobject_cast<DownloadableArchive *>(archive))
-        return false;
-
-    Archive *other(archives[id]);
-
-    if (qobject_cast<LocalArchive *>(other))
-        return false;
-
-    if (qobject_cast<PartialArchive *>(archive) &&
-            qobject_cast<PartialArchive *>(other))
-        return false;
-
-    if (qobject_cast<LocalArchive *>(archive) &&
-            qobject_cast<LocalArchive *>(other))
-        return false;
-
-    archives[id]->deleteLater();
-    /* note that it is not removed from the settings,
-     * since the LocalArchive will overwrite it */
 
     archives[id] = archive;
     archive->setParent(this);

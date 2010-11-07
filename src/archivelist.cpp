@@ -90,9 +90,10 @@ void ArchiveList::updateArchives(const QList<Archive *> &archivesOrig)
 
     foreach (Archive *a, archives) {
         if (lastLanguage != a->getLanguage()) {
-            topItem = new QTreeWidgetItem(this, QStringList() << a->getLanguage());
+            lastLanguage = a->getLanguage();
+            topItem = new QTreeWidgetItem(this, QStringList() << lastLanguage);
             addTopLevelItem(topItem);
-            if (expandedLanguages.contains(a->getLanguage()))
+            if (expandedLanguages.contains(lastLanguage))
                 topItem->setExpanded(true);
         }
         QTreeWidgetItem *item = new QTreeWidgetItem(topItem);
@@ -119,9 +120,9 @@ void ArchiveList::fillDownloadableArchiveItem(DownloadableArchive *a, QTreeWidge
 {
     QString size = a->getSize();
     QString sizeMB = size.left(size.length() - 6);
-    item->setText(1, QString("%1 MB").arg(sizeMB));
+    item->setText(1, tr("%1 MB").arg(sizeMB));
 
-    QPushButton *button = new QPushButton("Start download");
+    QPushButton *button = new QPushButton(tr("Start download"));
     connect(button, SIGNAL(clicked()), a, SLOT(startDownload()));
     item->setSizeHint(3, button->sizeHint());
     setItemWidget(item, 3, button);
@@ -180,6 +181,7 @@ void ArchiveList::fillLocalArchiveItem(LocalArchive *a, QTreeWidgetItem *item)
     item->setText(1, QString(tr("%n article(s)", "", a->getNumArticles())));
     item->setText(2, "");
     /* should always be in use */
+    /* TODO0 third option: not default for language */
     item->setText(3, a->isReadable() ? tr("in use") : tr("error"));
 }
 

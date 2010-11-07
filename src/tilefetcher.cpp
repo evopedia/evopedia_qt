@@ -27,7 +27,7 @@ void TileFetcher::fetchTile(int zoom, QPoint offset)
     QString path = "http://tile.openstreetmap.org/%1/%2/%3.png";
     QUrl url(path.arg(zoom).arg(offset.x()).arg(offset.y()));
 
-    /* TODO0 not thread safe! */
+    /* TODO1 thread safe? */
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
     if (!evopedia->networkConnectionAllowed() /* TODO1 && !m_manager.cache()->metaData(m_url).isValid()*/)
         return;

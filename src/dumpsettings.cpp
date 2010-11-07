@@ -81,3 +81,10 @@ void DumpSettings::on_actionManually_add_archive_triggered()
     }
 }
 
+void DumpSettings::on_actionChange_Default_Archive_Dir_triggered()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Change Default Download Directory"),
+                                                            evopedia->getArchiveManager()->getArchivesBaseDir(), QFileDialog::ShowDirsOnly);
+    if (!dir.isEmpty())
+        evopedia->getArchiveManager()->setArchivesBaseDir(dir);
+}

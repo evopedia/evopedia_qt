@@ -18,6 +18,8 @@ class DownloadableArchive : public Archive
     QString downloadDirectory;
     QString torrentFile;
 
+    QString askAndCreateDownloadDirectory();
+
 private slots:
     void torrentDownloadFinished(QNetworkReply* reply);
 

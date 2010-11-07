@@ -168,7 +168,8 @@ void SlippyMap::setScrollOffset(const QPoint &offset)
 
 void SlippyMap::mouseClicked(const QPoint &pos)
 {
-    QPointF posf(pos + scrollOffset());
+    QPointF halfSize = QPointF(width, height) / 2.0;
+    QPointF posf(pos + scrollOffset() - halfSize);
     QPointF tile = posf / tdim;
     emit mouseClicked(QPoint(floor(tile.x()), floor(tile.y())), pos);
 }
@@ -368,7 +369,7 @@ void ArticleOverlay::invalidate(const QRect &tilesRect)
             }
         }
     }
-    /* TODO0 keep hash small by removing members that have not been used recently */
+    /* TODO1 keep hash small by removing members that have not been used recently */
 }
 
 bool ArticleOverlay::isComplete()
@@ -406,8 +407,6 @@ void ArticleOverlay::tileRendered(QPainter *p, const QPoint &tile, const QRect d
 void ArticleOverlay::mouseClicked(const QPoint &tile, const QPoint &pixelPos)
 {
     typedef QPair<GeoTitle,float> GeoTitleDistance;
-
-    /* TODO0 this does not always work */
 
     int zoom = slippyMap->getZoom();
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DumpSettings</string>
+   <string>Evopedia Archives</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -35,6 +35,7 @@
     </property>
     <addaction name="actionManually_add_archive"/>
     <addaction name="actionRefresh_archive_list"/>
+    <addaction name="actionChange_Default_Archive_Dir"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -54,6 +55,11 @@
    </property>
    <property name="text">
     <string>Pause All Downloads</string>
+   </property>
+  </action>
+  <action name="actionChange_Default_Archive_Dir">
+   <property name="text">
+    <string>Change Default Archive Dir</string>
    </property>
   </action>
  </widget>

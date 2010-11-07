@@ -35,6 +35,8 @@ Q_OBJECT
 
     QNetworkAccessManager netManager;
 
+    QString archivesBaseDir;
+
     void restoreLocalAndPartialArchives(QSettings &settings);
     bool addArchiveInternal(Archive *a);
     bool addArchiveAndStoreInSettings(Archive *a);
@@ -47,11 +49,10 @@ private slots:
 public:
     explicit ArchiveManager(QObject* parent);
 
-    const QDir getArchivesBaseDir() const {
-        /* TODO0 make this configurable */
-        return QDir("/tmp/");
-//        return QDir("/home/user/MyDocs/wikipedia/");
+    const QString getArchivesBaseDir() const {
+        return archivesBaseDir;
     }
+    void setArchivesBaseDir(QString dir);
 
     /*! takes ownership of the object if it is added */
     bool addArchive(Archive *archive);
