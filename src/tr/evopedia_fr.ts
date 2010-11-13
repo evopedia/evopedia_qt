@@ -45,6 +45,10 @@
         <source>Start download</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ArchiveManager</name>
