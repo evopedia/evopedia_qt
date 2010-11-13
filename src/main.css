@@ -337,10 +337,10 @@ span.subpages {
 	color: green;
 	font-size: larger;
 }
-.error {
+/*.error {
 	color: red;
 	font-size: larger;
-}
+}*/
 .errorbox, .successbox {
 	font-size: larger;
 	border: 2px solid;
