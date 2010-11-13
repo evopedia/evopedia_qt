@@ -267,19 +267,22 @@ void ArchiveManager::exchangeArchives(PartialArchive *from, LocalArchive *to)
 void ArchiveManager::updateDefaultLocalArchives(const QList<Archive *> &archives)
 {
     /* TODO1, default archive should be adjustable */
-    defaultLocalArchives.empty();
+    QHash<QString, LocalArchive *> newDefaultLocalArchives;
 
     foreach (Archive *a, archives) {
         LocalArchive *la = qobject_cast<LocalArchive *>(a);
         if (!la) continue;
         QString lang = la->getLanguage();
-        if (defaultLocalArchives.contains(lang) &&
-                !(*la < *defaultLocalArchives[lang]))
+        if (newDefaultLocalArchives.contains(lang) &&
+                !(*la < *newDefaultLocalArchives[lang]))
             continue;
-        defaultLocalArchives[lang] = la;
+        newDefaultLocalArchives[lang] = la;
     }
-    /* TODO0 check if there really was a change */
-    emit defaultLocalArchivesChanged(defaultLocalArchives.values());
+
+    if (newDefaultLocalArchives != defaultLocalArchives) {
+        defaultLocalArchives = newDefaultLocalArchives;
+        emit defaultLocalArchivesChanged(defaultLocalArchives.values());
+    }
 }
 
 const QHash<QString, LocalArchive *> ArchiveManager::getDefaultLocalArchives() const

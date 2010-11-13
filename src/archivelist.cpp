@@ -5,6 +5,9 @@
 #include <QProgressBar>
 #include <QMessageBox>
 
+#include "archivemanager.h"
+#include "evopediaapplication.h"
+
 ArchiveList::ArchiveList(QWidget *parent) :
     QTreeWidget(parent)
 {
@@ -180,9 +183,16 @@ void ArchiveList::fillLocalArchiveItem(LocalArchive *a, QTreeWidgetItem *item)
 
     item->setText(1, QString(tr("%n article(s)", "", a->getNumArticles())));
     item->setText(2, "");
-    /* should always be in use */
-    /* TODO0 third option: not default for language */
-    item->setText(3, a->isReadable() ? tr("in use") : tr("error"));
+
+    QString statusText = tr("in use");
+    if (a->isReadable()) {
+        ArchiveManager *am = (static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager();
+        if (!am->isDefaultForLanguage(a))
+            statusText = tr("inactive");
+    } else {
+        statusText = tr("error");
+    }
+    item->setText(3, statusText);
 }
 
 

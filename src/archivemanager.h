@@ -61,6 +61,9 @@ public:
     LocalArchive *getRandomLocalArchive() const;
     const QHash<QString, LocalArchive *> getDefaultLocalArchives() const;
     bool hasLanguage(const QString language) const;
+    bool isDefaultForLanguage(const LocalArchive *archive) const {
+        return getLocalArchive(archive->getLanguage()) == archive;
+    }
 
     const QHash<ArchiveID, Archive *> &getArchives() const { return archives; }
 
