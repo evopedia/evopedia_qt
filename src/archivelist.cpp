@@ -20,8 +20,8 @@ ArchiveList::ArchiveList(QWidget *parent) :
     // TODO1 perhaps resizeColumnToContents() is of use
     setColumnWidth(0, 180);//fm.width("lang/2010-07-07");
     setColumnWidth(1, 190);//fm.width(""));
-    setColumnWidth(2, 120);//fm.width(""));
-    setColumnWidth(3, 120);//fm.width(""));    
+    setColumnWidth(2, 140);//fm.width(""));
+    setColumnWidth(3, 100);//fm.width(""));
 
     downloadPausedMapper = new QSignalMapper(this);
     downloadStartedMapper = new QSignalMapper(this);
