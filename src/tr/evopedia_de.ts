@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="de_DE">
+<TS version="2.0" language="de">
 <context>
     <name>ArchiveList</name>
     <message>
@@ -136,7 +136,7 @@
     </message>
     <message>
         <source>Change Default Archive Dir</source>
-        <translation>Voreinstellung für Archiv-Verzeichnis ändern</translation>
+        <translation>Archiv-Download-Verzeichnis ändern</translation>
     </message>
     <message>
         <source>Archive &apos;%1 %2&apos; already installed.</source>
@@ -150,7 +150,7 @@
     </message>
     <message>
         <source>Change Default Download Directory</source>
-        <translation>Voreinstellung für Download Verzeichnis ändern</translation>
+        <translation>Download Verzeichnis ändern</translation>
     </message>
 </context>
 <context>
