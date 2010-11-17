@@ -54,7 +54,7 @@ public:
     int getZoom() { return zoom; }
     void setZoom(int zoom);
     void getPosition(qreal &lat, qreal &lng, int &zoom);
-    void setPosition(qreal lat, qreal lng, int zoom);
+    void setPosition(qreal lat, qreal lng, int zoom=-1);
     void resize(int width, int height) {
         this->width = width;
         this->height = height;

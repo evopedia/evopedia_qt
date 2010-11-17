@@ -17,7 +17,7 @@ FlickableMap::FlickableMap(QWidget *parent) :
 
 void FlickableMap::setPosition(qreal lat, qreal lng, int zoom)
 {
-    map->setPosition(lat, lng, qBound(2, zoom, 18));
+    map->setPosition(lat, lng, zoom);
     externalScrollUpdate();
 }
 

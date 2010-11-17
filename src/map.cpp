@@ -266,8 +266,9 @@ void SlippyMap::getPosition(qreal &lat, qreal &lng, int &zoom)
 
 void SlippyMap::setPosition(qreal lat, qreal lng, int zoom)
 {
-    m_centerPos = project(QPointF(lng, lat), zoom);
-    this->zoom = zoom;
+    if (zoom > 0)
+        this->zoom = qBound(2, zoom, 18);
+    m_centerPos = project(QPointF(lng, lat), this->zoom);
 
     invalidate();
 }
