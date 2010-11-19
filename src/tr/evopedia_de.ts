@@ -48,7 +48,7 @@
     </message>
     <message>
         <source>inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>nicht aktiv</translation>
     </message>
 </context>
 <context>
