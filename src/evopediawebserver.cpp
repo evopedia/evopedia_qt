@@ -217,16 +217,18 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
         }
 
         QByteArray data = getResource(":/web/header.html");
+        data += QString("<a class=\"evopedianav\" title=\"" + tr("random article") + "\" "
+                        "href=\"/random\"><img src=\"/static/random.png\"></a>").toUtf8();
 
         bool ok(false);
         int zoom;
         QPair<qreal, qreal>coords = parseCoordinatesInArticle(articleData, &ok, &zoom);
         if (ok)
             data += QString("<a class=\"evopedianav\" "
-                            "href=\"#\" onclick=\"showMap(%1, %2, %3);\">"
+                            "href=\"#\" title=\"" + tr("show article on map") + "\" onclick=\"showMap(%1, %2, %3);\">"
                             "<img src=\"/static/maparticle.png\"></a>")
-                              .arg(coords.first).arg(coords.second).arg(zoom).toAscii();
-        data += QByteArray("<a class=\"evopedianav\" href=\"") +
+                              .arg(coords.first).arg(coords.second).arg(zoom).toUtf8();
+        data += QString("<a class=\"evopedianav\" title=\"" + tr("article at Wikipedia") + "\" href=\"").toUtf8() +
                 backend->getOrigUrl(t).toEncoded() +
                 QByteArray("\"><img src=\"/static/wikipedia.png\"></a>");
         data += extractInterLanguageLinks(articleData);
