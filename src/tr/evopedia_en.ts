@@ -177,6 +177,18 @@
         <source>Other Languages</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>random article</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>show article on map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>article at Wikipedia</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FileManager</name>

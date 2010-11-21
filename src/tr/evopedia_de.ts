@@ -218,6 +218,18 @@
         <source>Other Languages</source>
         <translation>Andere Sprachen</translation>
     </message>
+    <message>
+        <source>random article</source>
+        <translation>zufälliger Artikel</translation>
+    </message>
+    <message>
+        <source>show article on map</source>
+        <translation>Artikel auf Karte anzeigen</translation>
+    </message>
+    <message>
+        <source>article at Wikipedia</source>
+        <translation>Artikel bei Wikipedia</translation>
+    </message>
 </context>
 <context>
     <name>FileManager</name>
