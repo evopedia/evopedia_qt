@@ -101,12 +101,14 @@ void ArchiveManager::handleNetworkFinished(QNetworkReply *reply)
 
     /* remove all downloadable archives */
     QHash<ArchiveID, Archive *>::iterator i;
-    for (i = archives.begin(); i != archives.end(); i ++) {
+    for (i = archives.begin(); i != archives.end();) {
         DownloadableArchive *a = qobject_cast<DownloadableArchive *>(i.value());
         if (a) {
             i = archives.erase(i);
             /* TODO0 test */
             a->deleteLater();
+        } else {
+            ++ i;
         }
     }
 
