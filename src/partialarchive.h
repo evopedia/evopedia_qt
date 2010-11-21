@@ -22,6 +22,14 @@ class PartialArchive : public Archive
 
     void changeToLocalArchive();
 
+private slots:
+    void updateState(TorrentClient::State s);
+    void updatePeerInfo();
+    void updateDownloadRate(int rate);
+    void updateUploadRate(int rate);
+    void torrentStopped();
+    void torrentError(TorrentClient::Error);
+
 public:
     PartialArchive(const QString &language, const QString &date,
                                  const QString &size,
@@ -53,13 +61,6 @@ public slots:
     void startDownload();
     void pauseDownload();
     void togglePauseDownload();
-
-    void updateState(TorrentClient::State s);
-    void updatePeerInfo();
-    void updateDownloadRate(int rate);
-    void updateUploadRate(int rate);
-    void torrentStopped();
-    void torrentError(TorrentClient::Error);
 };
 
 #endif // PARTIALARCHIVE_H
