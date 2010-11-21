@@ -11,7 +11,7 @@ int parseCoordinatesZoom(const QString &zoomstr);
 inline Qt::LayoutDirection getLayoutDirection(const QString &language)
 {
     /* TODO1 are these all RTL languages of Wikipedia? */
-    if (language == "ar" || language == "he" || language == "yi" || language == "ur") {
+    if (language == "ar" || language == "he" || language == "yi" || language == "ur" || language == "ckb") {
         return Qt::RightToLeft;
     } else {
         return Qt::LeftToRight;
