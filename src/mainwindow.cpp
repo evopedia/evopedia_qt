@@ -227,6 +227,7 @@ void MainWindow::on_actionAbout_triggered()
     QPushButton *translateButton = msgBox.addButton(tr("Translate"), QMessageBox::AcceptRole);
     QPushButton *bugButton = msgBox.addButton(tr("Report Bug"), QMessageBox::AcceptRole);
     msgBox.setStandardButtons(QMessageBox::Close);
+    msgBox.setDefaultButton(QMessageBox::Close);
 
     msgBox.exec();
 
