@@ -108,11 +108,13 @@ void FlickableMap::keyPressEvent(QKeyEvent *event)
 void FlickableMap::zoomIn()
 {
     map->setZoom(qBound(0, map->getZoom() + 1, 18));
+    externalScrollUpdate();
 }
 
 void FlickableMap::zoomOut()
 {
     map->setZoom(qBound(0, map->getZoom() - 1, 18));
+    externalScrollUpdate();
 }
 
 void FlickableMap::overlaysEnable(bool value)
