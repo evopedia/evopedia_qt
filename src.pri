@@ -65,7 +65,7 @@ HEADERS += src/mainwindow.h \
 	src/torrent/torrentserver.h \
 	src/torrent/trackerclient.h
 
-TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts src/tr/evopedia_en.ts
+TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts src/tr/evopedia_en.ts src/tr/evopedia_nl.ts
 
 FORMS += src/mainwindow.ui \
     src/dumpSettings.ui \
