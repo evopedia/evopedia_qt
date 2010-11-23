@@ -95,7 +95,7 @@ bool LocalArchive::checkExistenceOfDumpfiles()
 {
     QDir dir(directory);
     if (!dir.exists()) {
-        errorMessage = tr("Dump directory does not exist.");
+        errorMessage = tr("Archive directory does not exist.");
         return false;
     }
     if (!QFile(directory + QString("/metadata.txt")).exists()) {

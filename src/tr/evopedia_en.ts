@@ -127,6 +127,10 @@
         <source>Change Default Download Directory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Evopedia</name>
@@ -164,10 +168,6 @@
     </message>
     <message>
         <source>Deny</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Download Dumps</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -235,10 +235,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Dump directory does not exist.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Metadata file does not exist.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -248,6 +244,10 @@
     </message>
     <message>
         <source>Valid local archive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Archive directory does not exist.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -338,6 +338,10 @@
     </message>
     <message>
         <source>No position info source available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Back</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

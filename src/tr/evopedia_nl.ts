@@ -131,32 +131,37 @@
         <translation>Wijzig Standaard Archiefmap</translation>
     </message>
     <message>
-        <location filename="../dumpsettings.cpp" line="43"/>
+        <location filename="../dumpsettings.cpp" line="18"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dumpsettings.cpp" line="49"/>
         <source>Open Dump Directory</source>
         <translation>Open de Dumpmap</translation>
     </message>
     <message>
-        <location filename="../dumpsettings.cpp" line="51"/>
-        <location filename="../dumpsettings.cpp" line="72"/>
-        <location filename="../dumpsettings.cpp" line="77"/>
+        <location filename="../dumpsettings.cpp" line="57"/>
+        <location filename="../dumpsettings.cpp" line="78"/>
+        <location filename="../dumpsettings.cpp" line="83"/>
         <source>Error</source>
         <translation>Fout</translation>
     </message>
     <message>
-        <location filename="../dumpsettings.cpp" line="52"/>
-        <location filename="../dumpsettings.cpp" line="73"/>
+        <location filename="../dumpsettings.cpp" line="58"/>
+        <location filename="../dumpsettings.cpp" line="79"/>
         <source>Archive &apos;%1 %2&apos; already installed.</source>
         <translation>Archief &apos;%1 %2&apos; is al geinstalleerd.</translation>
     </message>
     <message>
-        <location filename="../dumpsettings.cpp" line="78"/>
+        <location filename="../dumpsettings.cpp" line="84"/>
         <source>Directory &apos;%1&apos; does not contain a valid evopedia archive:
 %2</source>
         <translation>Map &apos;%1&apos; bevat geen juist evopedia archief:
 %2</translation>
     </message>
     <message>
-        <location filename="../dumpsettings.cpp" line="86"/>
+        <location filename="../dumpsettings.cpp" line="92"/>
         <source>Change Default Download Directory</source>
         <translation>Wijzig de Standaard Downloadmap</translation>
     </message>
@@ -209,9 +214,8 @@
         <translation>Niet toestaan</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="121"/>
         <source>Download Dumps</source>
-        <translation>Download Dumps</translation>
+        <translation type="obsolete">Download Dumps</translation>
     </message>
 </context>
 <context>
@@ -296,9 +300,13 @@
         <translation>Titelbestand niet leesbaar.</translation>
     </message>
     <message>
-        <location filename="../localarchive.cpp" line="98"/>
         <source>Dump directory does not exist.</source>
-        <translation>Dumpmap bestaat niet.</translation>
+        <translation type="obsolete">Dumpmap bestaat niet.</translation>
+    </message>
+    <message>
+        <location filename="../localarchive.cpp" line="98"/>
+        <source>Archive directory does not exist.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../localarchive.cpp" line="102"/>
@@ -417,12 +425,17 @@
         <translation>Volg GPS</translation>
     </message>
     <message>
-        <location filename="../mapwindow.cpp" line="95"/>
+        <location filename="../mapwindow.cpp" line="32"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mapwindow.cpp" line="101"/>
         <source>Error</source>
         <translation>Fout</translation>
     </message>
     <message>
-        <location filename="../mapwindow.cpp" line="95"/>
+        <location filename="../mapwindow.cpp" line="101"/>
         <source>No position info source available.</source>
         <translation>Geen positie informatie van de bron beschikbaar.</translation>
     </message>

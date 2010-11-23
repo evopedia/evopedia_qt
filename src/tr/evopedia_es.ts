@@ -140,6 +140,10 @@
         <source>Change Default Download Directory</source>
         <translation>Cambiar el directorio de descarga por defecto</translation>
     </message>
+    <message>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Evopedia</name>
@@ -181,7 +185,7 @@
     </message>
     <message>
         <source>Download Dumps</source>
-        <translation>Descargar Volcados</translation>
+        <translation type="obsolete">Descargar Volcados</translation>
     </message>
     <message>
         <source>Error</source>
@@ -265,7 +269,7 @@
     </message>
     <message>
         <source>Dump directory does not exist.</source>
-        <translation>El directorio del volcado no existe.</translation>
+        <translation type="obsolete">El directorio del volcado no existe.</translation>
     </message>
     <message>
         <source>Metadata file does not exist.</source>
@@ -278,6 +282,10 @@
     <message>
         <source>Valid local archive</source>
         <translation>Archivo local válido</translation>
+    </message>
+    <message>
+        <source>Archive directory does not exist.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -384,6 +392,10 @@
     <message>
         <source>No position info source available.</source>
         <translation>No hay información de la posición disponible.</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
