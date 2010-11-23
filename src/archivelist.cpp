@@ -92,7 +92,7 @@ void ArchiveList::updateArchives(const QList<Archive *> &archivesOrig)
     QString lastLanguage;
 
     foreach (Archive *a, archives) {
-        if (lastLanguage != a->getLanguage()) {
+        if (lastLanguage != a->getLanguage() || a->getLanguage().isEmpty()) {
             lastLanguage = a->getLanguage();
             topItem = new QTreeWidgetItem(this, QStringList() << lastLanguage);
             addTopLevelItem(topItem);
