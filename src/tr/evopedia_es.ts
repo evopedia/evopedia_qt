@@ -96,7 +96,7 @@
     </message>
     <message>
         <source>Open Dump Directory</source>
-        <translation>Abrir directorio con Volcado</translation>
+        <translation type="obsolete">Abrir directorio con Volcado</translation>
     </message>
     <message>
         <source>Error</source>
@@ -142,6 +142,10 @@
     </message>
     <message>
         <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Archive Directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

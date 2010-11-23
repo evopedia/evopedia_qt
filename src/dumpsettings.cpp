@@ -46,7 +46,7 @@ DumpSettings::~DumpSettings()
 
 void DumpSettings::on_actionManually_add_archive_triggered()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Dump Directory"),
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Archive Directory"),
                                                     QString(), QFileDialog::ShowDirsOnly);
     if (!dir.isEmpty()) {
         LocalArchive *archive = new LocalArchive(dir);

@@ -96,7 +96,7 @@
     </message>
     <message>
         <source>Open Dump Directory</source>
-        <translation>Ouvrir le répertoire du dump</translation>
+        <translation type="obsolete">Ouvrir le répertoire du dump</translation>
     </message>
     <message>
         <source>Error</source>
@@ -150,6 +150,10 @@
     </message>
     <message>
         <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Archive Directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

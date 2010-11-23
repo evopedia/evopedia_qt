@@ -107,10 +107,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open Dump Directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -129,6 +125,10 @@
     </message>
     <message>
         <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Archive Directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

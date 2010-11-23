@@ -136,9 +136,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dumpsettings.cpp" line="49"/>
         <source>Open Dump Directory</source>
-        <translation>Open de Dumpmap</translation>
+        <translation type="obsolete">Open de Dumpmap</translation>
+    </message>
+    <message>
+        <location filename="../dumpsettings.cpp" line="49"/>
+        <source>Open Archive Directory</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dumpsettings.cpp" line="57"/>
