@@ -14,6 +14,12 @@ DumpSettings::DumpSettings(QWidget *parent) :
 {
     ui->setupUi(this);
 
+#if defined(Q_OS_SYMBIAN)
+    QAction *closeAction = new QAction(tr("Back"), ui->menuMenu);
+    connect(closeAction, SIGNAL(triggered()), SLOT(close()));
+    ui->menuMenu->addAction(closeAction);
+#endif
+
     evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
 
     connect(ui->actionRefresh_archive_list, SIGNAL(triggered()), evopedia->getArchiveManager(), SLOT(updateRemoteArchives()));

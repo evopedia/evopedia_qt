@@ -28,6 +28,12 @@ MapWindow::MapWindow(QWidget *parent) :
     ui->actionFollow_GPS->setEnabled(false);
 #endif
 
+#if defined(Q_OS_SYMBIAN)
+    QAction *closeAction = new QAction(tr("Back"), ui->menuMenu);
+    connect(closeAction, SIGNAL(triggered()), SLOT(close()));
+    ui->menuMenu->addAction(closeAction);
+#endif
+
     connect(ui->actionShow_Articles, SIGNAL(toggled(bool)), ui->mapWidget, SLOT(overlaysEnable(bool)));
     connect(ui->actionZoom_In, SIGNAL(triggered()), ui->mapWidget, SLOT(zoomIn()));
     connect(ui->actionZoom_Out, SIGNAL(triggered()), ui->mapWidget, SLOT(zoomOut()));
