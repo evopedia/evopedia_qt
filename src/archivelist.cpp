@@ -115,6 +115,10 @@ void ArchiveList::updateArchives(const QList<Archive *> &archivesOrig)
             fillLocalArchiveItem(static_cast<LocalArchive *>(a), item);
         }
     }
+    resizeColumnToContents(0);
+    resizeColumnToContents(1);
+    resizeColumnToContents(2);
+    resizeColumnToContents(3);
 }
 
 void ArchiveList::fillDownloadableArchiveItem(DownloadableArchive *a, QTreeWidgetItem *item)
@@ -268,17 +272,18 @@ void ArchiveList::showDetails(QObject *o)
 void ArchiveList::setCompactLayout(bool value)
 {
     compactLayout = value;
+
+    /* these values are only hints, the columns will
+     * be resized in updateArchives */
+    setColumnWidth(0, 150);
+    setColumnWidth(1, 190);
     if (compactLayout) {
         setColumnCount(2);
         setHeaderLabels(QStringList() << tr("Language, Date") << "");
     } else {
         setColumnCount(4);
         setHeaderLabels(QStringList() << tr("Language, Date") << tr("Size") << "" << tr("Status"));
+        setColumnWidth(2, 140);//fm.width(""));
+        setColumnWidth(3, 100);//fm.width(""));
     }
-    // TODO1 fix this font metrics issue, remove hardcoded stuff
-    // TODO1 perhaps resizeColumnToContents() is of use
-    setColumnWidth(0, 180);//fm.width("lang/2010-07-07");
-    setColumnWidth(1, 190);//fm.width(""));
-    setColumnWidth(2, 140);//fm.width(""));
-    setColumnWidth(3, 100);//fm.width(""));
 }
