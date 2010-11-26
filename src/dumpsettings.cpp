@@ -94,3 +94,9 @@ void DumpSettings::on_actionChange_Default_Archive_Dir_triggered()
     if (!dir.isEmpty())
         evopedia->getArchiveManager()->setArchivesBaseDir(dir);
 }
+
+void DumpSettings::on_actionCompact_Layout_toggled(bool value)
+{
+    ui->archiveList->setCompactLayout(value);
+    ui->archiveList->updateArchives(evopedia->getArchiveManager()->getArchives().values());
+}

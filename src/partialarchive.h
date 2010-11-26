@@ -21,6 +21,7 @@ class PartialArchive : public Archive
     TorrentClient* torrentClient;
 
     void changeToLocalArchive();
+    static QString getStateText(TorrentClient::State s);
 
 private slots:
     void updateState(TorrentClient::State s);
@@ -43,6 +44,11 @@ public:
     void setExternallyPaused(bool value);
     bool isDownloading() const;
     QString getSizeMB() const;
+
+    QString getDownloadedSizeMB() const;
+    QPair<float, float>getRates() const;
+    QPair<int, int>getPeers() const;
+    QString getTorrentState() const;
 
     /* TODO1 torrent based chunk validation */
     bool validate(QString &ret);

@@ -18,6 +18,9 @@ class ArchiveList : public QTreeWidget
 
     QSignalMapper *downloadPausedMapper;
     QSignalMapper *downloadStartedMapper;
+    QSignalMapper *showDetailsMapper;
+
+    bool compactLayout;
 
     void fillLocalArchiveItem(LocalArchive *a, QTreeWidgetItem *item);
     void fillPartialArchiveItem(PartialArchive *a, QTreeWidgetItem *item);
@@ -29,6 +32,8 @@ private slots:
     void downloadPausedHandler(QWidget *button);
     void downloadStartedHandler(QWidget *button);
 
+    void showDetails(QObject *o);
+
 public:
     explicit ArchiveList(QWidget *parent = 0);
 
@@ -38,6 +43,8 @@ public slots:
     void updateArchives(const QList<Archive *> &archives);
     void exchangeArchives(DownloadableArchive *from, PartialArchive *to);
     void exchangeArchives(PartialArchive *from, LocalArchive *to);
+    /* view has to be updated manually afterwards */
+    void setCompactLayout(bool value);
 
 };
 

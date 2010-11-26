@@ -36,6 +36,7 @@
     <addaction name="actionManually_add_archive"/>
     <addaction name="actionRefresh_archive_list"/>
     <addaction name="actionChange_Default_Archive_Dir"/>
+    <addaction name="actionCompact_Layout"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -60,6 +61,14 @@
   <action name="actionChange_Default_Archive_Dir">
    <property name="text">
     <string>Change Default Archive Dir</string>
+   </property>
+  </action>
+  <action name="actionCompact_Layout">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Compact Layout</string>
    </property>
   </action>
  </widget>

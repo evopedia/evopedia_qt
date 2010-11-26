@@ -22,6 +22,7 @@ public:
 private slots:
     void on_actionManually_add_archive_triggered();
     void on_actionChange_Default_Archive_Dir_triggered();
+    void on_actionCompact_Layout_toggled(bool value);
 
 private:
     Ui::DumpSettings *ui;

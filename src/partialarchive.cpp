@@ -64,6 +64,35 @@ QString PartialArchive::getSizeMB() const
         return size.left(size.length() - 6) + tr(" MB");
 }
 
+QString PartialArchive::getDownloadedSizeMB() const
+{
+    if (torrentClient == 0)
+        return QString("");
+    else
+        return QString::number(torrentClient->downloadedBytes() / 1024 / 1024) + tr(" MB");
+}
+
+QPair<float, float>PartialArchive::getRates() const
+{
+    return QPair<float, float>(downloadRate, uploadRate);
+}
+
+QPair<int, int>PartialArchive::getPeers() const
+{
+    if (torrentClient == 0)
+        return QPair<int,int>(0, 0);
+    else
+        return QPair<int,int>(torrentClient->seedCount(), torrentClient->connectedPeerCount());
+}
+
+QString PartialArchive::getTorrentState() const
+{
+    if (torrentClient == 0)
+        return QString();
+    else
+        return getStateText(torrentClient->state());
+}
+
 bool PartialArchive::validate(QString &ret)
 {
     // if already done, we would find a file calles archivechecked.true
@@ -130,23 +159,26 @@ void PartialArchive::pauseDownload()
     torrentClient->setPaused(true);
 }
 
+QString PartialArchive::getStateText(TorrentClient::State s)
+{
+    switch (s) {
+    case TorrentClient::Idle: return tr("idle");
+    case TorrentClient::Paused: return tr("paused");
+    case TorrentClient::Stopping: return tr("stopping");
+    case TorrentClient::Preparing: return tr("preparing");
+    case TorrentClient::Searching: return tr("searching");
+    case TorrentClient::Connecting: return tr("connecting");
+    case TorrentClient::WarmingUp: return tr("warming up");
+    case TorrentClient::Downloading: return tr("downloading");
+    case TorrentClient::Endgame: return tr("endgame");
+    case TorrentClient::Seeding: return tr("seeding");
+    }
+    return tr("unknown");
+}
+
 void PartialArchive::updateState(TorrentClient::State s)
 {
-    QString statusText;
-    switch (s) {
-    case TorrentClient::Idle: statusText = tr("idle"); break;
-    case TorrentClient::Paused: statusText = tr("paused"); break;
-    case TorrentClient::Stopping: statusText = tr("stopping"); break;
-    case TorrentClient::Preparing: statusText = tr("preparing"); break;
-    case TorrentClient::Searching: statusText = tr("searching"); break;
-    case TorrentClient::Connecting: statusText = tr("connecting"); break;
-    case TorrentClient::WarmingUp: statusText = tr("warming up"); break;
-    case TorrentClient::Downloading: statusText = tr("downloading"); break;
-    case TorrentClient::Endgame: statusText = tr("endgame"); break;
-    case TorrentClient::Seeding: statusText = tr("seeding"); break;
-    }
-
-    emit statusTextUpdated(statusText);
+    emit statusTextUpdated(getStateText(s));
 
     if (s == TorrentClient::Paused)
         emit downloadPaused();
