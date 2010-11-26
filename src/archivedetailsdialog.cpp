@@ -26,7 +26,7 @@ ArchiveDetailsDialog::ArchiveDetailsDialog(PartialArchive *a, QWidget *parent) :
     ui->setupUi(this);
 
     fillBasicInfo(a,
-                  tr("%1 MB").arg(a->getSizeMB()),
+                  a->getSizeMB(),
                   QString());
 
     QLabel *value;
