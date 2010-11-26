@@ -7,12 +7,16 @@
 
 #include "archivemanager.h"
 #include "evopediaapplication.h"
+#include "archivedetailsdialog.h"
 
 ArchiveList::ArchiveList(QWidget *parent) :
     QTreeWidget(parent)
 {
+#if defined(Q_OS_SYMBIAN)
+    setCompactLayout(true);
+#else
     setCompactLayout(false);
-
+#endif
     connect(this, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(itemClickedHandler(QTreeWidgetItem*, int)));
 
     downloadPausedMapper = new QSignalMapper(this);
@@ -192,31 +196,35 @@ void ArchiveList::fillPartialArchiveItem(PartialArchive *a, QTreeWidgetItem *ite
     item->setSizeHint(pbarColumn, pbar->sizeHint());
     setItemWidget(item, pbarColumn, pbar);
     connect(a, SIGNAL(progressUpdated(int)), pbar, SLOT(setValue(int)));
+
+    a->emitStatusEvents();
 }
 
 void ArchiveList::fillLocalArchiveItem(LocalArchive *a, QTreeWidgetItem *item)
 {
-    removeItemWidget(item, 2);
-    removeItemWidget(item, 3);
-
     if (item->childCount() > 0) {
         delete item->takeChild(0);
     }
 
     item->setText(1, QString(tr("%n article(s)", "", a->getNumArticles())));
-    item->setText(2, "");
 
-    QString statusText = tr("in use");
-    if (a->isReadable()) {
-        ArchiveManager *am = (static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager();
-        if (!am->isDefaultForLanguage(a))
-            statusText = tr("inactive");
-    } else {
-        statusText = tr("error");
+    if (!compactLayout) {
+        removeItemWidget(item, 2);
+        removeItemWidget(item, 3);
+
+        item->setText(2, "");
+
+        QString statusText = tr("in use");
+        if (a->isReadable()) {
+            ArchiveManager *am = (static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager();
+            if (!am->isDefaultForLanguage(a))
+                statusText = tr("inactive");
+        } else {
+            statusText = tr("error");
+        }
+        item->setText(3, statusText);
     }
-    item->setText(3, statusText);
 }
-
 
 void ArchiveList::itemClickedHandler(QTreeWidgetItem *item, int column)
 {
@@ -239,47 +247,19 @@ void ArchiveList::downloadStartedHandler(QWidget *widget)
 
 void ArchiveList::showDetails(QObject *o)
 {
+    ArchiveDetailsDialog *d;
+
     DownloadableArchive *da = qobject_cast<DownloadableArchive *>(o);
     if (da != 0) {
-        QString size = da->getSize();
-        QString sizeMB = size.left(size.length() - 6);
-        QString text = QString("<b>%1:</b> %2<br/>"
-                           "<b>%3:</b> %4<br/>"
-                           "<b>%5:</b> %6<br/>"
-                           "<b>%7</b>").arg(tr("Language"), da->getLanguage(),
-                                            tr("Date"), da->getDate(),
-                                            tr("Size"), QString("%1 MB").arg(sizeMB),
-                                            tr("Start downloading?"));
-
-        int ret = QMessageBox::question(this, tr("Archive Details"), text,
-                              QMessageBox::Yes, QMessageBox::No);
-        if (ret == QMessageBox::Yes)
+        d = new ArchiveDetailsDialog(da, this);
+        if (d->exec() == QDialog::Accepted)
             da->startDownload();
         return;
     }
     PartialArchive *pa = qobject_cast<PartialArchive *>(o);
     if (pa != 0) {
-        QPair<float, float>rates(pa->getRates());
-        QPair<int, int>peers(pa->getPeers());
-
-        QString text = QString("<b>%1:</b> %2<br/>"
-                               "<b>%3:</b> %4<br/>"
-                               "<b>%5:</b> %6<br/>")
-                        .arg(tr("Language"), pa->getLanguage(),
-                             tr("Date"), pa->getDate(),
-                             tr("Size"), pa->getSizeMB()) +
-                        QString("<b>%1:</b> %2<br/>"
-                                "<b>%3:</b> %4<br/>"
-                                "%5 %6")
-                        .arg(tr("State"), pa->getTorrentState(),
-                             tr("Downloaded"), pa->getDownloadedSizeMB(),
-                             tr("%1/%2 kB/s down/up")
-                                            .arg(rates.first, 0, 'f', 2)
-                                            .arg(rates.second, 0, 'f', 2),
-                             tr("%n seed(s), ", "", peers.first) + tr("%n peer(s)", "", peers.second));
-
-        QMessageBox::information(this, tr("Archive Details"), text,
-                                 QMessageBox::Ok);
+        d = new ArchiveDetailsDialog(pa, this);
+        d->exec();
         return;
     }
 

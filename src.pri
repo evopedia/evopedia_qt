@@ -30,7 +30,8 @@ SOURCES +=  src/mainwindow.cpp \
 	src/torrent/ratecontroller.cpp \
 	src/torrent/torrentclient.cpp \
 	src/torrent/torrentserver.cpp \
-	src/torrent/trackerclient.cpp
+	src/torrent/trackerclient.cpp \
+        src/archivedetailsdialog.cpp
 
 HEADERS += src/mainwindow.h \
         src/localarchive.h \
@@ -63,13 +64,15 @@ HEADERS += src/mainwindow.h \
 	src/torrent/ratecontroller.h \
 	src/torrent/torrentclient.h \
 	src/torrent/torrentserver.h \
-	src/torrent/trackerclient.h
+	src/torrent/trackerclient.h \
+        src/archivedetailsdialog.h
 
 TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts src/tr/evopedia_en.ts src/tr/evopedia_nl.ts
 
 FORMS += src/mainwindow.ui \
     src/dumpSettings.ui \
-    src/mapwindow.ui
+    src/mapwindow.ui \
+    src/archivedetailsdialog.ui
 
 CONFIG += warn_on
 maemo5 {

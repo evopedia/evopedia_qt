@@ -64,33 +64,12 @@ QString PartialArchive::getSizeMB() const
         return size.left(size.length() - 6) + tr(" MB");
 }
 
-QString PartialArchive::getDownloadedSizeMB() const
+void PartialArchive::emitStatusEvents()
 {
-    if (torrentClient == 0)
-        return QString("");
-    else
-        return QString::number(torrentClient->downloadedBytes() / 1024 / 1024) + tr(" MB");
-}
-
-QPair<float, float>PartialArchive::getRates() const
-{
-    return QPair<float, float>(downloadRate, uploadRate);
-}
-
-QPair<int, int>PartialArchive::getPeers() const
-{
-    if (torrentClient == 0)
-        return QPair<int,int>(0, 0);
-    else
-        return QPair<int,int>(torrentClient->seedCount(), torrentClient->connectedPeerCount());
-}
-
-QString PartialArchive::getTorrentState() const
-{
-    if (torrentClient == 0)
-        return QString();
-    else
-        return getStateText(torrentClient->state());
+    updatePeerInfo();
+    updateDownloadRate(downloadRate);
+    emit progressUpdated(torrentClient != 0 ? torrentClient->progress() : -1);
+    emit statusTextUpdated(torrentClient != 0 ? getStateText(torrentClient->state()) : "");
 }
 
 bool PartialArchive::validate(QString &ret)
@@ -110,7 +89,7 @@ void PartialArchive::startDownload()
 {
     /* TODO1 automatically stop downloading depending on battery state */
     /* TODO1 automatically stop downloading depending on free space on filesystem */
-    // FIXME1 parse METADATA from the dumps webpage must match 'lang' and 'date' with the contents of the torrent
+    // FIXME1 parse METADATA from the dumps webpage must match 'lang' and 'date' with the contents of the rerent
     if (!torrentClient)
         torrentClient = new TorrentClient(this);
 
@@ -156,7 +135,8 @@ bool PartialArchive::isDownloading() const
 
 void PartialArchive::pauseDownload()
 {
-    torrentClient->setPaused(true);
+    if (torrentClient != 0)
+        torrentClient->setPaused(true);
 }
 
 QString PartialArchive::getStateText(TorrentClient::State s)
@@ -191,7 +171,10 @@ void PartialArchive::updateState(TorrentClient::State s)
 
 void PartialArchive::updatePeerInfo()
 {
-    emit peerInfoUpdated(tr("%n seed(s), ", "", torrentClient->seedCount()) +
+    if (torrentClient == 0)
+        emit peerInfoUpdated("");
+    else
+        emit peerInfoUpdated(tr("%n seed(s), ", "", torrentClient->seedCount()) +
                          tr("%n peer(s)", "", torrentClient->connectedPeerCount()));
 }
 
@@ -220,7 +203,8 @@ void PartialArchive::torrentStopped()
 
 void PartialArchive::torrentError(TorrentClient::Error)
 {
-    QMessageBox::critical(0, tr("Torrent Error"), torrentClient->errorString(),
+    if (torrentClient != 0)
+        QMessageBox::critical(0, tr("Torrent Error"), torrentClient->errorString(),
                           QMessageBox::Ok);
 }
 

@@ -45,10 +45,7 @@ public:
     bool isDownloading() const;
     QString getSizeMB() const;
 
-    QString getDownloadedSizeMB() const;
-    QPair<float, float>getRates() const;
-    QPair<int, int>getPeers() const;
-    QString getTorrentState() const;
+    void emitStatusEvents();
 
     /* TODO1 torrent based chunk validation */
     bool validate(QString &ret);
