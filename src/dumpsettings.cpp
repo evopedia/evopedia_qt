@@ -18,6 +18,7 @@ DumpSettings::DumpSettings(QWidget *parent) :
     QAction *closeAction = new QAction(tr("Back"), ui->menuMenu);
     connect(closeAction, SIGNAL(triggered()), SLOT(close()));
     ui->menuMenu->addAction(closeAction);
+    ui->actionCompact_Layout->setChecked(true);
 #endif
 
     evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
