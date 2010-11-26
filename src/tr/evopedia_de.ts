@@ -2,6 +2,45 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="de">
 <context>
+    <name>ArchiveDetailsDialog</name>
+    <message>
+        <source>Archive Details</source>
+        <translation>Archivdetails</translation>
+    </message>
+    <message>
+        <source>Language, Date:</source>
+        <translation>Sprache, Datum:</translation>
+    </message>
+    <message>
+        <source>Size:</source>
+        <translation>Größe:</translation>
+    </message>
+    <message>
+        <source>State:</source>
+        <translation>Status:</translation>
+    </message>
+    <message>
+        <source>%1 MB</source>
+        <translation>%1 MB</translation>
+    </message>
+    <message>
+        <source>not downloaded</source>
+        <translation>nicht heruntergeladen</translation>
+    </message>
+    <message>
+        <source>Download Now</source>
+        <translation>Jetzt herunterladen</translation>
+    </message>
+    <message>
+        <source>Peers:</source>
+        <translation>Peers:</translation>
+    </message>
+    <message>
+        <source>Speed:</source>
+        <translation>Geschwidigkeit:</translation>
+    </message>
+</context>
+<context>
     <name>ArchiveList</name>
     <message>
         <source>Language, Date</source>
@@ -49,6 +88,10 @@
     <message>
         <source>inactive</source>
         <translation>nicht aktiv</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Details</translation>
     </message>
 </context>
 <context>
@@ -154,11 +197,15 @@
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
     <message>
         <source>Open Archive Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivverzeichnis öffnen</translation>
+    </message>
+    <message>
+        <source>Compact Layout</source>
+        <translation>Kompaktes Layout</translation>
     </message>
 </context>
 <context>
@@ -301,7 +348,7 @@
     </message>
     <message>
         <source>Archive directory does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivverzeichnis existiert nicht.</translation>
     </message>
 </context>
 <context>
@@ -415,7 +462,7 @@
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
 </context>
 <context>
@@ -497,6 +544,10 @@
     <message>
         <source>Torrent Error</source>
         <translation>Torrent-Fehler</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>unbekannt</translation>
     </message>
 </context>
 <context>

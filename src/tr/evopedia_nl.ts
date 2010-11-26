@@ -2,46 +2,102 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="nl">
 <context>
+    <name>ArchiveDetailsDialog</name>
+    <message>
+        <location filename="../archivedetailsdialog.ui" line="6"/>
+        <source>Archive Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../archivedetailsdialog.ui" line="15"/>
+        <source>Language, Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../archivedetailsdialog.ui" line="25"/>
+        <source>Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../archivedetailsdialog.ui" line="35"/>
+        <source>State:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../archivedetailsdialog.cpp" line="16"/>
+        <location filename="../archivedetailsdialog.cpp" line="29"/>
+        <source>%1 MB</source>
+        <translation type="unfinished">%1 MB</translation>
+    </message>
+    <message>
+        <location filename="../archivedetailsdialog.cpp" line="17"/>
+        <source>not downloaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../archivedetailsdialog.cpp" line="19"/>
+        <source>Download Now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../archivedetailsdialog.cpp" line="37"/>
+        <source>Peers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../archivedetailsdialog.cpp" line="41"/>
+        <source>Speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ArchiveList</name>
     <message>
-        <location filename="../archivelist.cpp" line="15"/>
+        <location filename="../archivelist.cpp" line="273"/>
+        <location filename="../archivelist.cpp" line="276"/>
         <source>Language, Date</source>
         <translation>Taal, Datum</translation>
     </message>
     <message>
-        <location filename="../archivelist.cpp" line="15"/>
+        <location filename="../archivelist.cpp" line="276"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../archivelist.cpp" line="15"/>
+        <location filename="../archivelist.cpp" line="276"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../archivelist.cpp" line="126"/>
+        <location filename="../archivelist.cpp" line="132"/>
         <source>%1 MB</source>
         <translation>%1 MB</translation>
     </message>
     <message>
-        <location filename="../archivelist.cpp" line="128"/>
+        <location filename="../archivelist.cpp" line="125"/>
+        <location filename="../archivelist.cpp" line="164"/>
+        <source>Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../archivelist.cpp" line="133"/>
         <source>Start download</source>
         <translation>Start download</translation>
     </message>
     <message>
-        <location filename="../archivelist.cpp" line="139"/>
-        <location filename="../archivelist.cpp" line="215"/>
+        <location filename="../archivelist.cpp" line="149"/>
+        <location filename="../archivelist.cpp" line="244"/>
         <source>Pause</source>
         <translation>Pauze</translation>
     </message>
     <message>
-        <location filename="../archivelist.cpp" line="139"/>
-        <location filename="../archivelist.cpp" line="208"/>
+        <location filename="../archivelist.cpp" line="149"/>
+        <location filename="../archivelist.cpp" line="237"/>
         <source>Continue</source>
         <translation>Doorgaan</translation>
     </message>
     <message numerus="yes">
-        <location filename="../archivelist.cpp" line="184"/>
+        <location filename="../archivelist.cpp" line="209"/>
         <source>%n article(s)</source>
         <translation>
             <numerusform>%n artikel</numerusform>
@@ -49,17 +105,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../archivelist.cpp" line="187"/>
+        <location filename="../archivelist.cpp" line="217"/>
         <source>in use</source>
         <translation>in gebruik</translation>
     </message>
     <message>
-        <location filename="../archivelist.cpp" line="191"/>
+        <location filename="../archivelist.cpp" line="221"/>
         <source>inactive</source>
         <translation>inactief</translation>
     </message>
     <message>
-        <location filename="../archivelist.cpp" line="193"/>
+        <location filename="../archivelist.cpp" line="223"/>
         <source>error</source>
         <translation>fout</translation>
     </message>
@@ -111,24 +167,29 @@
         <translation>Menu</translation>
     </message>
     <message>
-        <location filename="../dumpSettings.ui" line="44"/>
+        <location filename="../dumpSettings.ui" line="45"/>
         <source>Manually Add Archive</source>
         <translation>Archief Handmatig Toevoegen</translation>
     </message>
     <message>
-        <location filename="../dumpSettings.ui" line="49"/>
+        <location filename="../dumpSettings.ui" line="50"/>
         <source>Refresh Archive List</source>
         <translation>Archieflijst Verversen</translation>
     </message>
     <message>
-        <location filename="../dumpSettings.ui" line="57"/>
+        <location filename="../dumpSettings.ui" line="58"/>
         <source>Pause All Downloads</source>
         <translation>Pauseer Alle Downloads</translation>
     </message>
     <message>
-        <location filename="../dumpSettings.ui" line="62"/>
+        <location filename="../dumpSettings.ui" line="63"/>
         <source>Change Default Archive Dir</source>
         <translation>Wijzig Standaard Archiefmap</translation>
+    </message>
+    <message>
+        <location filename="../dumpSettings.ui" line="71"/>
+        <source>Compact Layout</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dumpsettings.cpp" line="18"/>
@@ -452,67 +513,72 @@
         <translation>MB</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="111"/>
+        <location filename="../partialarchive.cpp" line="119"/>
         <source>Error</source>
         <translation>Fout</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="112"/>
+        <location filename="../partialarchive.cpp" line="120"/>
         <source>The torrent file %1/%2 cannot not be opened/resumed.</source>
         <translation>Het torrent bestand %1/%2 kan niet worden geopend/voortgezet.</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="137"/>
+        <location filename="../partialarchive.cpp" line="145"/>
         <source>idle</source>
         <translation>niks te doen</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="138"/>
+        <location filename="../partialarchive.cpp" line="146"/>
         <source>paused</source>
         <translation>gepauzeerd</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="139"/>
+        <location filename="../partialarchive.cpp" line="147"/>
         <source>stopping</source>
         <translation>stoppen</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="140"/>
+        <location filename="../partialarchive.cpp" line="148"/>
         <source>preparing</source>
         <translation>voorbereiden</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="141"/>
+        <location filename="../partialarchive.cpp" line="149"/>
         <source>searching</source>
         <translation>zoeken</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="142"/>
+        <location filename="../partialarchive.cpp" line="150"/>
         <source>connecting</source>
         <translation>verbinden</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="143"/>
+        <location filename="../partialarchive.cpp" line="151"/>
         <source>warming up</source>
         <translation>opwarmen</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="144"/>
+        <location filename="../partialarchive.cpp" line="152"/>
         <source>downloading</source>
         <translation>downloaden</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="145"/>
+        <location filename="../partialarchive.cpp" line="153"/>
         <source>endgame</source>
         <translation>endgame</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="146"/>
+        <location filename="../partialarchive.cpp" line="154"/>
         <source>seeding</source>
         <translation>seeding</translation>
     </message>
+    <message>
+        <location filename="../partialarchive.cpp" line="156"/>
+        <source>unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message numerus="yes">
-        <location filename="../partialarchive.cpp" line="162"/>
+        <location filename="../partialarchive.cpp" line="177"/>
         <source>%n seed(s), </source>
         <translation>
             <numerusform>%n seed</numerusform>
@@ -520,7 +586,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../partialarchive.cpp" line="163"/>
+        <location filename="../partialarchive.cpp" line="178"/>
         <source>%n peer(s)</source>
         <translation>
             <numerusform>%n peer</numerusform>
@@ -528,18 +594,18 @@
         </translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="169"/>
-        <location filename="../partialarchive.cpp" line="177"/>
+        <location filename="../partialarchive.cpp" line="184"/>
+        <location filename="../partialarchive.cpp" line="192"/>
         <source>%1/%2 kB/s down/up</source>
         <translation>%1/%2 kb/s down/up</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="191"/>
+        <location filename="../partialarchive.cpp" line="207"/>
         <source>Torrent Error</source>
         <translation>Torrent Fout</translation>
     </message>
     <message>
-        <location filename="../partialarchive.cpp" line="213"/>
+        <location filename="../partialarchive.cpp" line="229"/>
         <source>Archive downloaded completely but it is not valid and cannot be used (%1).</source>
         <translation>Archief volledig gedownload maar het is onjuist en kan niet worden gebruikt (%1).</translation>
     </message>

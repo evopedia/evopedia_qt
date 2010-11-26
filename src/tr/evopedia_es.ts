@@ -2,6 +2,45 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="es">
 <context>
+    <name>ArchiveDetailsDialog</name>
+    <message>
+        <source>Archive Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Language, Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>State:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 MB</source>
+        <translation type="unfinished">%1 MB</translation>
+    </message>
+    <message>
+        <source>not downloaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download Now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ArchiveList</name>
     <message>
         <source>Language, Date</source>
@@ -49,6 +88,10 @@
     <message>
         <source>inactive</source>
         <translation>inactivo</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -146,6 +189,10 @@
     </message>
     <message>
         <source>Open Archive Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compact Layout</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -481,6 +528,10 @@
     <message>
         <source>Torrent Error</source>
         <translation>Error del torrent</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

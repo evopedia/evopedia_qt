@@ -2,6 +2,45 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="fr">
 <context>
+    <name>ArchiveDetailsDialog</name>
+    <message>
+        <source>Archive Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Language, Date:</source>
+        <translation>Langue, Date:</translation>
+    </message>
+    <message>
+        <source>Size:</source>
+        <translation type="unfinished">Taille:</translation>
+    </message>
+    <message>
+        <source>State:</source>
+        <translation>Statut:</translation>
+    </message>
+    <message>
+        <source>%1 MB</source>
+        <translation>%1 Mo</translation>
+    </message>
+    <message>
+        <source>not downloaded</source>
+        <translation>pas téléchargée</translation>
+    </message>
+    <message>
+        <source>Download Now</source>
+        <translation type="unfinished">Télécharge maintenant</translation>
+    </message>
+    <message>
+        <source>Peers:</source>
+        <translation>Clients:</translation>
+    </message>
+    <message>
+        <source>Speed:</source>
+        <translation type="unfinished">Vitesse:</translation>
+    </message>
+</context>
+<context>
     <name>ArchiveList</name>
     <message>
         <source>Language, Date</source>
@@ -49,6 +88,10 @@
     <message>
         <source>inactive</source>
         <translation>inactif</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Détails</translation>
     </message>
 </context>
 <context>
@@ -150,11 +193,15 @@
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Précédent</translation>
     </message>
     <message>
         <source>Open Archive Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir le répertoire des archives</translation>
+    </message>
+    <message>
+        <source>Compact Layout</source>
+        <translation type="unfinished">Présentation compacte</translation>
     </message>
 </context>
 <context>
@@ -228,7 +275,7 @@
     </message>
     <message>
         <source>show article on map</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">montre article </translation>
     </message>
     <message>
         <source>article at Wikipedia</source>
@@ -297,7 +344,7 @@
     </message>
     <message>
         <source>Archive directory does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le répertoire des archives n&apos;existe pas.</translation>
     </message>
 </context>
 <context>
@@ -403,7 +450,7 @@
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Précédent</translation>
     </message>
 </context>
 <context>
@@ -485,6 +532,10 @@
     <message>
         <source>Torrent Error</source>
         <translation>Erreur de torrent</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>inconnue</translation>
     </message>
 </context>
 <context>
