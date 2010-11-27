@@ -2,13 +2,15 @@
 #include "ui_mainwindow.h"
 
 #include <QDesktopServices>
-#include <QFileDialog>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QAbstractButton>
 
 #include "evopediaapplication.h"
 #include "mapwindow.h"
 #include "dumpsettings.h"
 #include "utils.h"
+#include "defines.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,11 +21,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
-    foreach (StorageBackend *b, evopedia->getBackends())
+    foreach (LocalArchive *b, evopedia->getArchiveManager()->getDefaultLocalArchives())
        ui->languageChooser->addItem(b->getLanguage());
     ui->listView->setModel(titleListModel);
 
-    connect(evopedia, SIGNAL(backendsChanged(const QList<StorageBackend*>)), SLOT(backendsChanged(const QList<StorageBackend*>)));
+    connect(evopedia->getArchiveManager(),
+            SIGNAL(defaultLocalArchivesChanged(QList<LocalArchive*>)),
+            SLOT(backendsChanged(const QList<LocalArchive*>)));
     connect(evopedia->findChild<EvopediaWebServer *>("evopediaWebserver"),
             SIGNAL(mapViewRequested(qreal, qreal, uint)),
             SLOT(mapViewRequested(qreal,qreal,uint)));
@@ -35,13 +39,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QSettings settings("Evopedia", "GUI");
     int networkUse = settings.value("network use", 0).toInt();
-    //evopedia->setNetworkUse(networkUse);
+    evopedia->setNetworkUse(networkUse);
     if (networkUse < 0) ui->actionDeny->setChecked(true);
     else if (networkUse > 0) ui->actionAllow->setChecked(true);
     else ui->actionAuto->setChecked(true);
 
     QString defaultLanguage = settings.value("default language", "").toString();
-    if (evopedia->hasLanguage(defaultLanguage)) {
+    if (evopedia->getArchiveManager()->hasLanguage(defaultLanguage)) {
         for (int i = 0; i < ui->languageChooser->count(); i ++) {
             if (ui->languageChooser->itemText(i) == defaultLanguage) {
                 ui->languageChooser->setCurrentIndex(i);
@@ -65,27 +69,36 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mapWindow = new MapWindow(this);
     mapWindow->setPosition(mapPos.y(), mapPos.x(), mapZoom);
+
+    dumpSettings = new DumpSettings(this);
 #ifndef Q_OS_SYMBIAN
     mapWindow->resize(600, 450);
 #endif
 #ifdef Q_WS_MAEMO_5
     this->setAttribute(Qt::WA_Maemo5StackedWindow);
     mapWindow->setAttribute(Qt::WA_Maemo5StackedWindow);
+    dumpSettings->setAttribute(Qt::WA_Maemo5StackedWindow);
 #endif
 
-    if (evopedia->getBackends().length() == 0) {
-        QMessageBox msgBox(QMessageBox::NoIcon, tr("No Dumps Configured"),
-                           tr("To be able to use evopedia you have to "
-                                   "download and install a Wikipedia dump. "
-                                   "Download at least one dump file from the "
-                                   "<a href=\"%1\">website</a> and extract "
-                                   "this archive to a folder on your device. "
-                                   "After that, select this folder using "
-                                   "the menu option \"Configure Dumps\".")
-                           .arg(EVOPEDIA_DUMP_SITE),
-                           QMessageBox::Ok,
-                           this);
-        msgBox.exec();
+    ArchiveManager *archiveManager = evopedia->getArchiveManager();
+
+    if (archiveManager->getDefaultLocalArchives().isEmpty()) {
+        QMessageBox::StandardButton answer = QMessageBox::question(this,
+                              tr("No Archives Configured"),
+                              tr("To be able to use evopedia you have to "
+                                      "download a Wikipedia archive. "
+                                      "This can be done from within evopedia "
+                                      "via the menu option \"Archives\". "
+                                      "If you only want to try out evopedia, "
+                                      "you can use the language \"small\", which "
+                                      "is a small version of the English Wikipedia.<br />"
+                                      "Do you want to download an archive now?"),
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::Yes);
+        if (answer == QMessageBox::Yes) {
+            dumpSettings->show();
+            archiveManager->updateRemoteArchives();
+        }
     }
 }
 
@@ -133,11 +146,11 @@ void MainWindow::on_languageChooser_currentIndexChanged(const QString &text)
     refreshSearchResults();
 }
 
-void MainWindow::backendsChanged(const QList<StorageBackend *> backends)
+void MainWindow::backendsChanged(const QList<LocalArchive *> backends)
 {
     ui->languageChooser->blockSignals(true);
     ui->languageChooser->clear();
-    foreach (StorageBackend *b, backends)
+    foreach (LocalArchive *b, backends)
        ui->languageChooser->addItem(b->getLanguage());
     ui->languageChooser->blockSignals(false);
     refreshSearchResults();
@@ -152,7 +165,7 @@ void MainWindow::mapViewRequested(qreal lat, qreal lon, uint zoom)
 void MainWindow::refreshSearchResults()
 {
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
-    StorageBackend *backend = evopedia->getBackend(ui->languageChooser->currentText());
+    LocalArchive *backend = evopedia->getArchiveManager()->getLocalArchive(ui->languageChooser->currentText());
     TitleIterator it;
     if (backend != 0)
         it = backend->getTitlesWithPrefix(ui->searchField->text());
@@ -161,7 +174,6 @@ void MainWindow::refreshSearchResults()
 
 void MainWindow::on_actionMap_triggered()
 {
-    /* TODO0 show current location? */
     showMapWindow();
 }
 
@@ -178,19 +190,24 @@ void MainWindow::showMapWindow()
 
 void MainWindow::on_actionConfigure_Dumps_triggered()
 {
-    /* TODO2 list dump files and download them automatically */
+    dumpSettings->show();
 
-    DumpSettings dumpSettings(this);
-    dumpSettings.exec();
+    Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
+    if (evopedia->getArchiveManager()->getArchives().size() == 0) {
+        QMessageBox::information(dumpSettings, tr("Archive Download"),
+                                 tr("Use the menu to retrieve the list of available archives."));
+        return;
+    }
 }
 
 void MainWindow::on_actionAbout_triggered()
 {
     const QString version(EVOPEDIA_VERSION);
-    QMessageBox msgBox(QMessageBox::NoIcon, tr("About Evopedia"),
-                             tr("<h2>Evopedia %1</h2>"
-                             "Offline Wikipedia Viewer"
-                             "<p><b>Copyright Information<b><br/>"
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(tr("About Evopedia"));
+    msgBox.setText(tr("<h2>Evopedia %1</h2>"
+                             "<p>Offline Wikipedia Viewer</p>"
+                             "<p>Copyright Information<br/>"
                              "<small>This program shows articles from "
                              "<a href=\"http://wikipedia.org\">Wikipedia</a>, "
                              "available under the "
@@ -198,19 +215,33 @@ void MainWindow::on_actionAbout_triggered()
                              "Creative Commons Attribution/Share-Alike License</a>. "
                              "Further information can be found via the links "
                              "to the online versions of the respective "
-                             "articles.</small></p>").arg(version), QMessageBox::Ok, this);
-    msgBox.setIconPixmap(QPixmap(":/static/wikipedia.png"));
-    QPushButton *websiteButton = msgBox.addButton("Visit Website", QMessageBox::AcceptRole);
-    QPushButton *downloadButton = msgBox.addButton("Download Dumps", QMessageBox::AcceptRole);
-    QPushButton *bugButton = msgBox.addButton("Report Bug", QMessageBox::AcceptRole);
+                             "articles.</small></p>"
+                             "<p>Authors<br/>"
+                             "<small>"
+                             "Code: Christian Reitwiessner, Joachim Schiele<br/>"
+                             "Icon: Joachim Schiele<br/>"
+                             "Translations: mossroy (French), Santiago Crespo (Spanish)"
+                             "</small></p>").arg(version));
+    msgBox.setIconPixmap(QPixmap(":/web/evopedia-64x64.png"));
+    QPushButton *websiteButton = msgBox.addButton(tr("Visit Website"), QMessageBox::AcceptRole);
+    QPushButton *translateButton = msgBox.addButton(tr("Translate"), QMessageBox::AcceptRole);
+    QPushButton *bugButton = msgBox.addButton(tr("Report Bug"), QMessageBox::AcceptRole);
+    msgBox.setStandardButtons(QMessageBox::Close);
+    msgBox.setDefaultButton(QMessageBox::Close);
 
     msgBox.exec();
 
-    if (msgBox.clickedButton() == websiteButton) {
+    QPushButton *clickedButton = dynamic_cast<QPushButton*>(msgBox.clickedButton());
+
+    if (clickedButton == websiteButton) {
         QDesktopServices::openUrl(QUrl(EVOPEDIA_WEBSITE));
-    } else if (msgBox.clickedButton() == downloadButton) {
-        QDesktopServices::openUrl(QUrl(EVOPEDIA_DUMP_SITE));
-    } else if (msgBox.clickedButton() == bugButton) {
+    } else if (clickedButton == translateButton) {
+        QMessageBox::information(this, tr("Translate Evopedia"),
+                                 tr("To translate Evopedia to your language, download the translation file "
+                                    "from the website (<a href=\"http://evopedia.info\">evopedia.info</a>) "
+                                    "and send it back to devs@evopedia.info."),
+                                 QMessageBox::Ok);
+    } else if (clickedButton == bugButton) {
         QDesktopServices::openUrl(QUrl(EVOPEDIA_BUG_SITE));
     }
 }

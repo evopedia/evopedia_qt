@@ -1,6 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include "evopedia.h"
+
 #include <QObject>
 #include <QList>
 #include <QRect>
@@ -10,52 +12,71 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 
-#include "evopedia.h"
 #include "flickable.h"
+#include "tilefetcher.h"
 
+/* TODO1 try if loading from disk cache directly in GUI thread is more efficient */
 
 class SlippyMap: public QObject
 {
     Q_OBJECT
 
-public:
     int width;
     int height;
     int zoom;
-    qreal latitude;
-    qreal longitude;
+    bool visible;
 
+    TileFetcher *tileFetcher;
+
+    QPointF m_centerPos; /* in tiles */
+    QPoint m_topLeftOffset; /* pixals */
+    QRect m_tilesRect;
+    QPixmap m_emptyTile;
+    QHash<QPoint, QPixmap> m_tilePixmaps;
+
+    void fetchTiles();
+    void boundPosition();
+protected:
+    QRect tileRect(const QPoint &tp);
+
+public:
     SlippyMap(QObject *parent = 0);
     void invalidate();
     void render(QPainter *p, const QRect &rect);
     void pan(const QPoint &delta);
-    QPoint coordinateToPixels(const QPointF &c) const;
+    QPoint titleCoordinateToPixels(const QPointF &c) const;
     QPoint scrollOffset() const;
     void setScrollOffset(const QPoint &offset);
     const QRect &getTilesRect() const { return m_tilesRect; }
 
     void mouseClicked(const QPoint &pos);
 
-private slots:
+    int getZoom() { return zoom; }
+    void setZoom(int zoom);
+    void getPosition(qreal &lat, qreal &lng, int &zoom);
+    void setPosition(qreal lat, qreal lng, int zoom=-1);
+    void resize(int width, int height) {
+        this->width = width;
+        this->height = height;
+        invalidate();
+    }
 
-    void handleNetworkData(QNetworkReply *reply);
-    void fetchTiles();
+    void hide() { this->visible = false; }
+    void show() { this->visible = true; invalidate(); }
+
+    static inline QPointF unproject(const QPointF &xy, int zoom=0);
+    static inline QRectF unprojectTileRect(const QPoint &tile, int zoom=0);
+
+    static inline QPointF project(QPointF lnglat, int zoom=0);
+
+private slots:
+    void tileLoaded(int zoom, QPoint offset, QImage image);
 signals:
     void updated(const QRect &rect);
     void invalidate(const QRect &tilesRect);
     void tileRendered(QPainter *p, const QPoint &tile, const QRect drawBox);
     void mouseClicked(const QPoint &tile, const QPoint &pixelPos);
-
-protected:
-    QRect tileRect(const QPoint &tp);
-
-private:
-    QPoint m_offset;
-    QRect m_tilesRect;
-    QPixmap m_emptyTile;
-    QHash<QPoint, QPixmap> m_tilePixmaps;
-    QNetworkAccessManager m_manager;
-    QUrl m_url;
+    void tileNeeded(int zoom, QPoint offset);
 };
 
 class ArticleOverlay: public QObject
@@ -90,7 +111,7 @@ private slots:
     void invalidate(const QRect &tilesRect);
     void tileRendered(QPainter *p, const QPoint &tile, const QRect drawBox);
     void mouseClicked(const QPoint &tile, const QPoint &pixelPos);
-    void backendsChanged(const QList<StorageBackend *>);
+    void backendsChanged(const QList<LocalArchive *>);
 
 private:
     GeoTitleList getTitles(const QRectF &rect, int maxTitles);

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
+Encoding=UTF-8
 Name=Evopedia
 Comment=Offline Wikipedia Reader
 Categories=Utility;Education;Qt;

@@ -26,6 +26,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *);
     void keyPressEvent(QKeyEvent *event);
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
 
     virtual QPoint scrollOffset() const {
         return map->scrollOffset();

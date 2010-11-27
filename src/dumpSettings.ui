@@ -1,37 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DumpSettings</class>
- <widget class="QDialog" name="DumpSettings">
-  <property name="windowTitle">
-   <string>Dumps</string>
+ <widget class="QMainWindow" name="DumpSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <property name="sizeConstraint">
-    <enum>QLayout::SetMaximumSize</enum>
+  <property name="windowTitle">
+   <string>Evopedia Archives</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="ArchiveList" name="archiveList"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>23</height>
+    </rect>
    </property>
-   <item>
-    <widget class="QListWidget" name="dumpList"/>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="addDump">
-       <property name="text">
-        <string>Add Dump</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="removeDump">
-       <property name="text">
-        <string>Remove Dump</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-  </layout>
+   <widget class="QMenu" name="menuMenu">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <addaction name="actionManually_add_archive"/>
+    <addaction name="actionRefresh_archive_list"/>
+    <addaction name="actionChange_Default_Archive_Dir"/>
+    <addaction name="actionCompact_Layout"/>
+   </widget>
+   <addaction name="menuMenu"/>
+  </widget>
+  <action name="actionManually_add_archive">
+   <property name="text">
+    <string>Manually Add Archive</string>
+   </property>
+  </action>
+  <action name="actionRefresh_archive_list">
+   <property name="text">
+    <string>Refresh Archive List</string>
+   </property>
+  </action>
+  <action name="actionPause_all_downloads">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pause All Downloads</string>
+   </property>
+  </action>
+  <action name="actionChange_Default_Archive_Dir">
+   <property name="text">
+    <string>Change Default Archive Dir</string>
+   </property>
+  </action>
+  <action name="actionCompact_Layout">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Compact Layout</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ArchiveList</class>
+   <extends>QTreeWidget</extends>
+   <header>archivelist.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

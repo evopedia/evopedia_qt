@@ -12,6 +12,7 @@
 #include <QLocale>
 #include <QCryptographicHash>
 
+#include "evopedia.h"
 #include "utils.h"
 
 EvopediaWebServer::EvopediaWebServer(Evopedia *evopedia) :
@@ -77,12 +78,13 @@ void EvopediaWebServer::readClient()
 
 void EvopediaWebServer::outputIndexPage(QTcpSocket *socket)
 {
+    Q_UNUSED(socket);
     /* TODO1 */
 }
 
 void EvopediaWebServer::outputHeader(QTcpSocket *socket, const QString responseCode, const QString contentType)
 {
-    /* TODO 404 should not have "Ok" */
+    /* TODO2 404 should not have "Ok" */
     QString text = QString("HTTP/1.0 %1 Ok\r\n"
             "Content-Type: %2\r\n\r\n").arg(responseCode).arg(contentType);
     socket->write(text.toAscii());
@@ -136,11 +138,11 @@ void EvopediaWebServer::outputStatic(QTcpSocket *socket, const QStringList &path
 
 void EvopediaWebServer::redirectRandom(QTcpSocket *socket, const QStringList &pathParts)
 {
-    StorageBackend *backend = 0;
+    LocalArchive *backend = 0;
     if (pathParts.length() >= 2) {
-        backend = evopedia->getBackend(pathParts[1]);
+        backend = evopedia->getArchiveManager()->getLocalArchive(pathParts[1]);
     } else {
-        backend = evopedia->getRandomBackend();
+        backend = evopedia->getArchiveManager()->getRandomLocalArchive();
     }
     if (backend == 0) {
         outputHeader(socket, "404");
@@ -159,7 +161,7 @@ void EvopediaWebServer::outputMathImage(QTcpSocket *socket, const QStringList &p
 {
     const QByteArray hexHash = QByteArray::fromHex(pathParts.last().left(32).toAscii());
     QByteArray data;
-    foreach (StorageBackend *backend, evopedia->getBackends()) {
+    foreach (LocalArchive *backend, evopedia->getArchiveManager()->getDefaultLocalArchives()) {
         data = backend->getMathImage(hexHash);
         if (!data.isNull())
             break;
@@ -177,9 +179,9 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
         outputHeader(socket, "404");
         return;
     }
-    StorageBackend *backend = 0;
+    LocalArchive *backend = 0;
     if (pathParts.length() >= 3)
-        backend = evopedia->getBackend(pathParts[1]);
+        backend = evopedia->getArchiveManager()->getLocalArchive(pathParts[1]);
     if (backend == 0) {
         if (pathParts[1].length() > 1 && evopedia->networkConnectionAllowed() && pathParts.length() >= 3) {
             /* TODO special characters in title */
@@ -187,7 +189,7 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
             outputRedirect(socket, redirectTo);
             return;
         }
-        foreach (StorageBackend *b, evopedia->getBackends()) {
+        foreach (LocalArchive *b, evopedia->getArchiveManager()->getDefaultLocalArchives()) {
             const Title t = b->getTitleFromPath(pathParts);
             if (t.getName().isEmpty())
                 continue;
@@ -215,16 +217,18 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
         }
 
         QByteArray data = getResource(":/web/header.html");
+        data += QString("<a class=\"evopedianav\" title=\"" + tr("random article") + "\" "
+                        "href=\"/random\"><img src=\"/static/random.png\"></a>").toUtf8();
 
         bool ok(false);
         int zoom;
         QPair<qreal, qreal>coords = parseCoordinatesInArticle(articleData, &ok, &zoom);
         if (ok)
             data += QString("<a class=\"evopedianav\" "
-                            "href=\"#\" onclick=\"showMap(%1, %2, %3);\">"
+                            "href=\"#\" title=\"" + tr("show article on map") + "\" onclick=\"showMap(%1, %2, %3);\">"
                             "<img src=\"/static/maparticle.png\"></a>")
-                              .arg(coords.first).arg(coords.second).arg(zoom).toAscii();
-        data += QByteArray("<a class=\"evopedianav\" href=\"") +
+                              .arg(coords.first).arg(coords.second).arg(zoom).toUtf8();
+        data += QString("<a class=\"evopedianav\" title=\"" + tr("article at Wikipedia") + "\" href=\"").toUtf8() +
                 backend->getOrigUrl(t).toEncoded() +
                 QByteArray("\"><img src=\"/static/wikipedia.png\"></a>");
         data += extractInterLanguageLinks(articleData);
@@ -252,7 +256,7 @@ QByteArray &EvopediaWebServer::disableOnlineLinks(QByteArray &data)
 
 QByteArray EvopediaWebServer::extractInterLanguageLinks(QByteArray &data)
 {
-    static QRegExp rx("<a href=\"./../([^/]*)/([^\"]*)\">([^<]*)</a>");
+    static QRegExp rx("<a href=\"(\\./)?\\.\\./([^/]*)/([^\"]*)\">([^<]*)</a>");
     //static QRegExp startrx("<h5>[^<]*</h5>[^<]*<div class=\"pBody\">");
     //int langStart = data.lastIndexOf("<h5>Languages</h5>");
     int langStart = data.lastIndexOf("<h5>");
@@ -267,12 +271,12 @@ QByteArray EvopediaWebServer::extractInterLanguageLinks(QByteArray &data)
     const QString languageText = QString::fromUtf8(data.mid(langStart, langEnd - langStart).constData());
 
     for (int pos = 0; (pos = rx.indexIn(languageText, pos)) != -1; pos += rx.matchedLength()) {
-        const QString langID(rx.cap(1));
-        const QString link(rx.cap(2));
-        const QString language(rx.cap(3));
+        const QString langID(rx.cap(2));
+        const QString link(rx.cap(3));
+        const QString language(rx.cap(4));
         QByteArray option(QString("<option value=\"/wiki/%1/%2\">%3</option>")
                           .arg(langID).arg(link).arg(language).toUtf8());
-        if (evopedia->hasLanguage(langID))
+        if (evopedia->getArchiveManager()->hasLanguage(langID))
             installedLanguages += option;
         else
             otherLanguages += option;

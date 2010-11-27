@@ -4,11 +4,12 @@
 #include <QMainWindow>
 #include <QString>
 
-#include "storagebackend.h"
+#include "localarchive.h"
 #include "titlelistmodel.h"
 #include "evopedia.h"
 #include "mapwindow.h"
 #include "ui_dumpSettings.h"
+#include "dumpsettings.h"
 
 
 namespace Ui {
@@ -37,7 +38,7 @@ private slots:
     void on_listView_activated(QModelIndex index);
     void on_searchField_textChanged(const QString &text);
     void mapViewRequested(qreal lat, qreal lon, uint zoom);
-    void backendsChanged(const QList<StorageBackend *>backends);
+    void backendsChanged(const QList<LocalArchive *>backends);
 
     void refreshSearchResults();
 
@@ -48,6 +49,7 @@ private:
 
     TitleListModel *titleListModel;
     MapWindow *mapWindow;
+    DumpSettings *dumpSettings;
 };
 
 #endif // MAINWINDOW_H

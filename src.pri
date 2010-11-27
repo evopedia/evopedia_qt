@@ -1,50 +1,90 @@
-DEFINES += "EVOPEDIA_VERSION=\"\\\"0.4.0\\\"\""
-DEFINES += "EVOPEDIA_WEBSITE=\"\\\"http://evopedia.info\\\"\""
-DEFINES += "EVOPEDIA_DUMP_SITE=\"\\\"http://dumpathome.evopedia.info/dumps/finished\\\"\""
-DEFINES += "EVOPEDIA_BUG_SITE=\"\\\"https://bugs.maemo.org/enter_bug.cgi?product=evopedia\\\"\""
-
 QT += core gui network
 INCLUDEPATH += src
+
 SOURCES +=  src/mainwindow.cpp \
- src/storagebackend.cpp \
- src/title.cpp \
- src/titleiterator.cpp \
- src/titlelistmodel.cpp \
-    src/evopedia.cpp \
-    src/bzreader.cpp \
-    src/evopediawebserver.cpp \
-    src/utils.cpp \
-    src/map.cpp \
-    src/flickable.cpp \
-    src/dumpsettings.cpp \
-    src/mapwindow.cpp \
-    src/flickablemap.cpp \
-    src/evopediaapplication.cpp
+        src/localarchive.cpp \
+	src/title.cpp \
+	src/titleiterator.cpp \
+	src/titlelistmodel.cpp \
+	src/evopedia.cpp \
+	src/bzreader.cpp \
+	src/evopediawebserver.cpp \
+	src/utils.cpp \
+        src/archive.cpp \
+        src/downloadablearchive.cpp \
+        src/partialarchive.cpp \
+        src/map.cpp \
+	src/flickable.cpp \
+	src/dumpsettings.cpp \
+	src/mapwindow.cpp \
+	src/flickablemap.cpp \
+	src/evopediaapplication.cpp \
+	src/archivemanager.cpp \
+        src/archivelist.cpp \
+        src/tilefetcher.cpp \
+        src/torrent/bencodeparser.cpp \
+	src/torrent/connectionmanager.cpp \
+	src/torrent/filemanager.cpp \
+	src/torrent/metainfo.cpp \
+	src/torrent/peerwireclient.cpp \
+	src/torrent/ratecontroller.cpp \
+	src/torrent/torrentclient.cpp \
+	src/torrent/torrentserver.cpp \
+	src/torrent/trackerclient.cpp \
+        src/archivedetailsdialog.cpp
 
 HEADERS += src/mainwindow.h \
- src/storagebackend.h \
- src/title.h \
- src/titlelistmodel.h \
- src/titleiterator.h \
-    src/evopedia.h \
-    src/bzreader.h \
-    src/evopediawebserver.h \
-    src/utils.h \
-    src/map.h \
-    src/geotitle.h \
-    src/flickable.h \
-    src/dumpsettings.h \
-    src/mapwindow.h \
-    src/flickablemap.h \
-    src/evopediaapplication.h
+        src/localarchive.h \
+	src/title.h \
+	src/titlelistmodel.h \
+	src/titleiterator.h \
+	src/evopedia.h \
+	src/bzreader.h \
+	src/evopediawebserver.h \
+	src/utils.h \
+        src/archive.h \
+        src/downloadablearchive.h \
+        src/partialarchive.h \
+        src/map.h \
+	src/geotitle.h \
+	src/flickable.h \
+	src/dumpsettings.h \
+	src/mapwindow.h \
+	src/flickablemap.h \
+	src/evopediaapplication.h \
+	src/defines.h \
+	src/archivemanager.h \
+        src/archivelist.h \
+        src/tilefetcher.h \
+	src/torrent/bencodeparser.h \
+	src/torrent/connectionmanager.h \
+	src/torrent/filemanager.h \
+	src/torrent/metainfo.h \
+	src/torrent/peerwireclient.h \
+	src/torrent/ratecontroller.h \
+	src/torrent/torrentclient.h \
+	src/torrent/torrentserver.h \
+	src/torrent/trackerclient.h \
+        src/archivedetailsdialog.h
 
-TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts
+TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts src/tr/evopedia_en.ts src/tr/evopedia_nl.ts
 
-CONFIG += warn_on
-unix:LIBS += -lbz2
 FORMS += src/mainwindow.ui \
     src/dumpSettings.ui \
-    src/mapwindow.ui
+    src/mapwindow.ui \
+    src/archivedetailsdialog.ui
+
+CONFIG += warn_on
+maemo5 {
+    CONFIG += mobility
+    DEFINES += USE_MOBILITY
+    MOBILITY += location
+}
+
+unix {
+    LIBS += -lbz2
+}
+
 DEFINES += QT_NO_CAST_TO_ASCII
 DEFINES += QT_NO_CAST_FROM_BYTEARRAY
 
@@ -62,7 +102,8 @@ OTHER_FILES += \
     src/footer.html
 
 RESOURCES += \
-    src/resources.qrc
+    src/resources.qrc \
+    src/torrent/icons.qrc
 
 unix {
   #VARIABLES
@@ -85,6 +126,11 @@ unix {
   target.path =$$BINDIR
 
   desktop.path = $$DATADIR/applications
+
+  maemo5 {
+      desktop.path = $$DATADIR/applications/hildon
+  }
+
   desktop.files += src/$${TARGET}.desktop
 
   iconxpm.path = $$DATADIR/pixmaps

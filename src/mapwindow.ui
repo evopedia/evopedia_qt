@@ -30,6 +30,9 @@
     <addaction name="actionShow_Articles"/>
     <addaction name="actionZoom_In"/>
     <addaction name="actionZoom_Out"/>
+    <addaction name="actionUse_GPS"/>
+    <addaction name="actionGo_to_GPS_Position"/>
+    <addaction name="actionFollow_GPS"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -58,6 +61,33 @@
    </property>
    <property name="softKeyRole">
     <enum>QAction::NegativeSoftKey</enum>
+   </property>
+  </action>
+  <action name="actionGo_to_GPS_Position">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Go to GPS Position</string>
+   </property>
+  </action>
+  <action name="actionUse_GPS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use GPS</string>
+   </property>
+  </action>
+  <action name="actionFollow_GPS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Follow GPS</string>
    </property>
   </action>
  </widget>

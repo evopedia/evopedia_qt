@@ -88,6 +88,8 @@ body {
 	color: black;
 	margin: 0;
 	padding: 0;
+        margin-left: 3px;
+        margin-right: 3px;
 }
 
 /* scale back up to a sane default */
@@ -335,10 +337,10 @@ span.subpages {
 	color: green;
 	font-size: larger;
 }
-.error {
+/*.error {
 	color: red;
 	font-size: larger;
-}
+}*/
 .errorbox, .successbox {
 	font-size: larger;
 	border: 2px solid;
