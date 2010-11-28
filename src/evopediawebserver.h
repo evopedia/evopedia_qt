@@ -30,6 +30,8 @@ private:
      void redirectRandom(QTcpSocket *socket, const QStringList &pathParts);
      void outputMathImage(QTcpSocket *socket, const QStringList &pathParts);
      void outputWikiPage(QTcpSocket *socket, const QStringList &pathParts);
+     void outputSearchResult(QTcpSocket *socket, const QString &query, const QString &archive);
+
      QByteArray &disableOnlineLinks(QByteArray &data);
      QByteArray extractInterLanguageLinks(QByteArray &data);
 

@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(evopedia->getArchiveManager(),
             SIGNAL(defaultLocalArchivesChanged(QList<LocalArchive*>)),
-            SLOT(backendsChanged(const QList<LocalArchive*>)));
+            SLOT(backendsChanged(QList<LocalArchive*>)));
     connect(evopedia->findChild<EvopediaWebServer *>("evopediaWebserver"),
             SIGNAL(mapViewRequested(qreal, qreal, uint)),
             SLOT(mapViewRequested(qreal,qreal,uint)));
@@ -146,7 +146,7 @@ void MainWindow::on_languageChooser_currentIndexChanged(const QString &text)
     refreshSearchResults();
 }
 
-void MainWindow::backendsChanged(const QList<LocalArchive *> backends)
+void MainWindow::backendsChanged(QList<LocalArchive *> backends)
 {
     ui->languageChooser->blockSignals(true);
     ui->languageChooser->clear();

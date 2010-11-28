@@ -44,7 +44,7 @@ Q_OBJECT
 private slots:
     void handleNetworkFinished(QNetworkReply *reply);
     void updateDefaultLocalArchivesUponExchange(PartialArchive *from, LocalArchive *to);
-    void updateDefaultLocalArchives(const QList<Archive *> &archives);
+    void updateDefaultLocalArchives(QList<Archive *> archives);
 
 
 public:
@@ -73,10 +73,10 @@ public:
     void exchangeArchives(PartialArchive *from, LocalArchive *to);
 
 signals:
-    void defaultLocalArchivesChanged(const QList<LocalArchive *> &archives);
+    void defaultLocalArchivesChanged(QList<LocalArchive *> archives);
 
     /* this one is not emitted if archivesExchanged is emitted */
-    void archivesChanged(const QList<Archive *> &archives);
+    void archivesChanged(QList<Archive *> archives);
     void archivesExchanged(DownloadableArchive *from, PartialArchive *to);
     void archivesExchanged(PartialArchive *from, LocalArchive *to);
 

@@ -224,7 +224,7 @@ void ArchiveManager::updateDefaultLocalArchivesUponExchange(PartialArchive *from
 }
 
 
-void ArchiveManager::updateDefaultLocalArchives(const QList<Archive *> &archives)
+void ArchiveManager::updateDefaultLocalArchives(QList<Archive *> archives)
 {
     /* TODO1, default archive should be adjustable */
     QHash<QString, LocalArchive *> newDefaultLocalArchives;

@@ -111,7 +111,7 @@ private slots:
     void invalidate(const QRect &tilesRect);
     void tileRendered(QPainter *p, const QPoint &tile, const QRect drawBox);
     void mouseClicked(const QPoint &tile, const QPoint &pixelPos);
-    void backendsChanged(const QList<LocalArchive *>);
+    void backendsChanged(QList<LocalArchive *>);
 
 private:
     GeoTitleList getTitles(const QRectF &rect, int maxTitles);

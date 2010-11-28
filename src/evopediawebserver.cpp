@@ -2,6 +2,7 @@
 
 #include <QTcpSocket>
 #include <QString>
+#include <QStringBuilder>
 #include <QStringList>
 #include <QDateTime>
 #include <QUrl>
@@ -50,14 +51,16 @@ void EvopediaWebServer::readClient()
         path = "/static/magnify-clip.png";
 
     const QStringList pathParts = path.mid(1).split('/');
-    if (pathParts.length() < 1) {
+    if (pathParts.length() < 1 || pathParts[0].isEmpty()) {
         outputIndexPage(socket);
         closeConnection(socket);
         return;
     }
-    const QString firstPart = pathParts[0];
+    const QString &firstPart = pathParts[0];
     if (firstPart == "static") {
         outputStatic(socket, pathParts);
+    } else if (firstPart == "search") {
+        outputSearchResult(socket, url.queryItemValue("q"), url.queryItemValue("lang"));
     } else if (firstPart == "map") {
         qreal lat = url.queryItemValue("lat").toDouble();
         qreal lon = url.queryItemValue("lon").toDouble();
@@ -78,8 +81,43 @@ void EvopediaWebServer::readClient()
 
 void EvopediaWebServer::outputIndexPage(QTcpSocket *socket)
 {
-    Q_UNUSED(socket);
-    /* TODO1 */
+    QByteArray data = getResource(":/web/header.html");
+    data += QString("<a class=\"evopedianav\" title=\"" + tr("random article") + "\" "
+                    "href=\"/random\"><img src=\"/static/random.png\"></a>").toUtf8();
+    data += "</div>";
+
+    QStringList languages = evopedia->getArchiveManager()->getDefaultLocalArchives().keys();
+    data += tr("<h3>Evopedia - Search</h3>").toUtf8();
+    data += "<form method=\"get\" action=\"/search\" target=\"searchresult\">" +
+            tr("Title:").toUtf8() +
+            " <input name=\"q\"> " +
+            tr("Language:").toUtf8() +
+            " <select name=\"lang\">";
+    foreach (QString lang, languages) {
+        lang.replace("\"", "&quot;").replace("<", "&lt;");
+        data += QString("<option value=\"%1\">%2</option>")
+                .arg(lang, lang)
+                .toUtf8();
+    }
+    data += "</select><input type=\"submit\" value=\"" +
+            tr("Search").toUtf8() + "\">";
+    if (languages.isEmpty()) {
+        data += tr("<p>No archives are configured. In order to use evopedia you have "
+                   "to download a Wikipedia archive. "
+                   "If you do not have access to the Qt user interface of evopedia, "
+                   "you have to download them manually from "
+                   "<a href=\"http://dumpathome.evopedia.info/dumps/finished\">"
+                   "http://dumpathome.evopedia.info/dumps/finished</a> "
+                   "and install them by editing ~/.evopediarc. "
+                   "Please refer to the web for more information.</p>").toUtf8();
+    } else {
+        QString lang(languages[0]);
+        lang.replace("\"", "&quot;");
+        data += "<iframe src=\"/search?q=&lang=" +
+                lang.toUtf8() + "\" name=\"searchresult\" width=\"100%\" height=\"500\"></iframe>";
+    }
+    data += getResource(":/web/footer.html");
+    outputResponse(socket, data, "text/html; charset=\"utf-8\"", false);
 }
 
 void EvopediaWebServer::outputHeader(QTcpSocket *socket, const QString responseCode, const QString contentType)
@@ -244,6 +282,29 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
         data += getResource(":/web/footer.html");
         outputResponse(socket, data, "text/html; charset=\"utf-8\"", false);
     }
+}
+
+void EvopediaWebServer::outputSearchResult(QTcpSocket *socket, const QString &query, const QString &archive)
+{
+    QByteArray data = getResource(":/web/header.html") + "</div>";
+    LocalArchive *a = evopedia->getArchiveManager()->getLocalArchive(archive);
+    if (a) {
+        TitleIterator it(a->getTitlesWithPrefix(query));
+        if (!it.hasNext()) {
+            data += tr("Nothing found.").toUtf8();
+        } else {
+            for (int titles = 0; it.hasNext() && titles < 50; titles ++) {
+                Title t(it.next());
+                data += QString("<a href=\"%1\" target=\"_top\">%2</a><br/>")
+                        .arg(evopedia->getArticleUrl(t).toEncoded(),
+                             t.getReadableName()).toUtf8();
+            }
+        }
+    } else {
+        data += tr("Unknown archive/language.").toUtf8();
+    }
+    data += getResource(":web/footer.html");
+    outputResponse(socket, data, "text/html; charset=\"utf-8\"", false);
 }
 
 QByteArray &EvopediaWebServer::disableOnlineLinks(QByteArray &data)

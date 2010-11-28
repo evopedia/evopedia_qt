@@ -337,7 +337,7 @@ ArticleOverlay::ArticleOverlay(SlippyMap *parent)
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
     connect(evopedia->getArchiveManager(),
             SIGNAL(defaultLocalArchivesChanged(QList<LocalArchive*>)),
-            SLOT(backendsChanged(const QList<LocalArchive*>)));
+            SLOT(backendsChanged(QList<LocalArchive*>)));
 }
 
 ArticleOverlay::GeoTitleList ArticleOverlay::getTitles(const QRectF &rect, int maxTitles)
@@ -478,7 +478,7 @@ void ArticleOverlay::showNearTitleList(const QList<Title> &list)
     }
 }
 
-void ArticleOverlay::backendsChanged(const QList<LocalArchive *>)
+void ArticleOverlay::backendsChanged(QList<LocalArchive *>)
 {
     titles.clear();
     slippyMap->invalidate();

@@ -62,7 +62,7 @@ void ArchiveList::exchangeArchives(PartialArchive *from, LocalArchive *to)
     }
 }
 
-void ArchiveList::updateArchives(const QList<Archive *> &archivesOrig)
+void ArchiveList::updateArchives(QList<Archive *> archivesOrig)
 {
     QSet<QString> expandedLanguages;
     QSet<QString> knownLanguages;
