@@ -109,7 +109,7 @@ RESOURCES += \
 unix {
   #VARIABLES
   isEmpty(PREFIX) {
-    PREFIX = /usr/local
+    PREFIX = /usr
   }
   BINDIR = $$PREFIX/bin
   DATADIR =$$PREFIX/share
