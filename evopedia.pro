@@ -14,3 +14,5 @@ TARGET = evopedia
 TEMPLATE = app
 include(src.pri)
 symbian:include(bzlib.pri)
+
+

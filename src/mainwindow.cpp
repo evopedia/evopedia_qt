@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     network->addAction(ui->actionDeny);
 
     QSettings settings("Evopedia", "GUI");
-    int networkUse = settings.value("network use", 0).toInt();
+    int networkUse = settings.value("network use", 1).toInt();
     evopedia->setNetworkUse(networkUse);
     if (networkUse < 0) ui->actionDeny->setChecked(true);
     else if (networkUse > 0) ui->actionAllow->setChecked(true);
