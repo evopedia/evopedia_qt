@@ -129,7 +129,7 @@ unix {
   LIBS += -lbz2
   #VARIABLES
   isEmpty(PREFIX) {
-    PREFIX = /usr/local
+    PREFIX = /usr
   }
   BINDIR = $$PREFIX/bin
   DATADIR =$$PREFIX/share
