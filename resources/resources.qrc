@@ -13,6 +13,7 @@
         <file>wikipedia.png</file>
         <file>evopedia.js</file>
         <file>evopedia-64x64.png</file>
+        <file>evopedia.svg</file>
     </qresource>
     <qresource prefix="/map_icons">
         <file>wikipedia.png</file>
