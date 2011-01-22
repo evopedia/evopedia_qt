@@ -3,6 +3,8 @@
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Qt Software Information (qt-info@nokia.com)
 **
+** Changes 2010 by the evopedia developers.
+**
 ** This file is part of the Graphics Dojo project on Qt Labs.
 **
 ** This file may be used under the terms of the GNU General Public
