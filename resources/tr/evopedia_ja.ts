@@ -353,7 +353,7 @@
         <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: mossroy (French), Santiago Crespo (Spanish)&lt;/small&gt;&lt;/p&gt;</source>
         <translation type="obsolete">&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;オフライン Wikipedia 表示器&lt;/p&gt;&lt;p&gt;Copyright 情報&lt;br/&gt;&lt;small&gt;このソフトウェアは&lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;からページを表示する, ライセンスは &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons　表示 - 継承 ライセンス&lt;/a&gt;. 
 詳しくはウェブサイトリンクでオンライン版に見つかります。
-&lt;/small&gt;&lt;/p&gt;&lt;p&gt;作者&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;アイコン: Joachim Schiele&lt;br/&gt;翻訳: mossroy (French), Santiago Crespo (Spanish), boscowitich(日本語)&lt;/small&gt;&lt;/p&gt;</translation>
+&lt;/small&gt;&lt;/p&gt;&lt;p&gt;作者&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;アイコン: Joachim Schiele&lt;br/&gt;翻訳: mossroy (French), Santiago Crespo (Spanish), boscowitch(日本語)&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Visit Website</source>
