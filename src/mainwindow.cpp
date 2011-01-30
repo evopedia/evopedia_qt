@@ -240,7 +240,7 @@ void MainWindow::on_actionAbout_triggered()
                              "<small>"
                              "Code: Christian Reitwiessner, Joachim Schiele<br/>"
                              "Icon: Joachim Schiele<br/>"
-                             "Translations: mossroy (French), Santiago Crespo (Spanish)"
+                             "Translations: Toni Hermoso (Catalan), Christian Reitwiessner (German), Daniel Ronde (Dutch), mossroy (French), boscowitch (Japanese), Santiago Crespo (Spanish)"
                              "</small></p>").arg(version));
     msgBox.setIconPixmap(QPixmap(":/web/evopedia-64x64.png"));
     QPushButton *websiteButton = msgBox.addButton(tr("Visit Website"), QMessageBox::AcceptRole);

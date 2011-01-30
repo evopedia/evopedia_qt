@@ -281,6 +281,34 @@
         <source>article at Wikipedia</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;h3&gt;Evopedia - Search&lt;/h3&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;No archives are configured. In order to use evopedia you have to download a Wikipedia archive. If you do not have access to the Qt user interface of evopedia, you have to download them manually from &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; and install them by editing ~/.evopediarc. Please refer to the web for more information.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown archive/language.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FileManager</name>
@@ -391,7 +419,7 @@
     </message>
     <message>
         <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: mossroy (French), Santiago Crespo (Spanish)&lt;/small&gt;&lt;/p&gt;</source>
-        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Lecteur Wikipedia en mode déconnecté&lt;/p&gt;&lt;p&gt;Informations de Copyright&lt;br/&gt;&lt;small&gt;Ce programme affiche des articles issus de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, qui sont disponibles sous la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;licence Creative Commons Attribution/Share-Alike&lt;/a&gt;. Plus d&apos;informations sont disponibles via les liens vers la version en ligne de chaque article.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Auteurs&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icône: Joachim Schiele&lt;br/&gt;Traductions: mossroy (Français), Santiago Crespo (Espagnol)&lt;/small&gt;&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Lecteur Wikipedia en mode déconnecté&lt;/p&gt;&lt;p&gt;Informations de Copyright&lt;br/&gt;&lt;small&gt;Ce programme affiche des articles issus de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, qui sont disponibles sous la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;licence Creative Commons Attribution/Share-Alike&lt;/a&gt;. Plus d&apos;informations sont disponibles via les liens vers la version en ligne de chaque article.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Auteurs&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icône: Joachim Schiele&lt;br/&gt;Traductions: mossroy (Français), Santiago Crespo (Espagnol)&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Translate</source>
@@ -404,6 +432,10 @@
     <message>
         <source>To translate Evopedia to your language, download the translation file from the website (&lt;a href=&quot;http://evopedia.info&quot;&gt;evopedia.info&lt;/a&gt;) and send it back to devs@evopedia.info.</source>
         <translation>Pour traduire Evopedia dans votre langue, téléchargez le fichier de traduction depuis le site web (&lt;a href=&quot;http://evopedia.info&quot;&gt;evopedia.info&lt;/a&gt;) et renvoyez-le à devs@evopedia.info.</translation>
+    </message>
+    <message>
+        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: Toni Hermoso (Catalan), Christian Reitwiessner (German), Daniel Ronde (Dutch), mossroy (French), boscowitch (Japanese), Santiago Crespo (Spanish)&lt;/small&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

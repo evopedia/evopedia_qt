@@ -75,7 +75,9 @@ TRANSLATIONS += \
         resources/tr/evopedia_fr.ts \
         resources/tr/evopedia_es.ts \
         resources/tr/evopedia_en.ts \
-        resources/tr/evopedia_nl.ts
+        resources/tr/evopedia_nl.ts \
+        resources/tr/evopedia_ca.ts \
+        resources/tr/evopedia_ja.ts
 
 FORMS += src/ui/mainwindow.ui \
         src/ui/dumpSettings.ui \
