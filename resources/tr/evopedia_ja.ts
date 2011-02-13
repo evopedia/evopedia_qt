@@ -238,31 +238,32 @@
     </message>
     <message>
         <source>&lt;h3&gt;Evopedia - Search&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;Evopedia - 検索&lt;/h3&gt;</translation>
     </message>
     <message>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>タイトル：</translation>
     </message>
     <message>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>言語：</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>検索</translation>
     </message>
     <message>
         <source>&lt;p&gt;No archives are configured. In order to use evopedia you have to download a Wikipedia archive. If you do not have access to the Qt user interface of evopedia, you have to download them manually from &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; and install them by editing ~/.evopediarc. Please refer to the web for more information.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;書庫がありません。Evopediaを使えるためにはWikipedia書庫をダウンロードしなければなりません。
+EvopediaのQTインタフェースが使わない場合は自分で&lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt;から書庫をダウンロードしてそして自分でevopediarcに書かないと、詳しく情報はウェブサイトにあります。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Nothing found.</source>
-        <translation type="unfinished"></translation>
+        <translation>検索結果は見つかりませんでした。</translation>
     </message>
     <message>
         <source>Unknown archive/language.</source>
-        <translation type="unfinished"></translation>
+        <translation>不明書庫/言語。</translation>
     </message>
 </context>
 <context>
@@ -377,7 +378,9 @@
     </message>
     <message>
         <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: Toni Hermoso (Catalan), Christian Reitwiessner (German), Daniel Ronde (Dutch), mossroy (French), boscowitch (Japanese), Santiago Crespo (Spanish)&lt;/small&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;オフライン Wikipedia 表示器&lt;/p&gt;&lt;p&gt;Copyright 情報&lt;br/&gt;&lt;small&gt;このソフトウェアは&lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;からページを表示する, ライセンスは &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons　表示 - 継承 ライセンス&lt;/a&gt;. 
+詳しくは記事のウェブサイトリンクでオンライン版に見つかります。
+&lt;/small&gt;&lt;/p&gt;&lt;p&gt;作者&lt;br/&gt;&lt;small&gt;ソースコード: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;アイコン: Joachim Schiele&lt;br/&gt;翻訳: Toni Hermoso (カタルーニャ語), Christian Reitwiessner (ドイツ語), Daniel Ronde (オランダ語), mossroy (フランス語), boscowitch (日本語), Santiago Crespo (スペイン語)&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
