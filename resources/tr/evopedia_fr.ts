@@ -5,7 +5,7 @@
     <name>ArchiveDetailsDialog</name>
     <message>
         <source>Archive Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Détails de l&apos;archive</translation>
     </message>
     <message>
         <source>Language, Date:</source>
@@ -13,7 +13,7 @@
     </message>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Taille:</translation>
+        <translation>Taille:</translation>
     </message>
     <message>
         <source>State:</source>
@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>Download Now</source>
-        <translation type="unfinished">Télécharge maintenant</translation>
+        <translation>Télécharger maintenant</translation>
     </message>
     <message>
         <source>Peers:</source>
@@ -37,7 +37,7 @@
     </message>
     <message>
         <source>Speed:</source>
-        <translation type="unfinished">Vitesse:</translation>
+        <translation>Vitesse:</translation>
     </message>
 </context>
 <context>
@@ -201,7 +201,7 @@
     </message>
     <message>
         <source>Compact Layout</source>
-        <translation type="unfinished">Présentation compacte</translation>
+        <translation>Présentation compacte</translation>
     </message>
 </context>
 <context>
@@ -271,43 +271,43 @@
     </message>
     <message>
         <source>random article</source>
-        <translation></translation>
+        <translation>article au hasard</translation>
     </message>
     <message>
         <source>show article on map</source>
-        <translation type="unfinished">montre article </translation>
+        <translation>montrer l&apos;article sur la carte</translation>
     </message>
     <message>
         <source>article at Wikipedia</source>
-        <translation type="unfinished"></translation>
+        <translation>article sur Wikipedia</translation>
     </message>
     <message>
         <source>&lt;h3&gt;Evopedia - Search&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;Evopedia - Recherche&lt;/h3&gt;</translation>
     </message>
     <message>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Titre:</translation>
     </message>
     <message>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Langue:</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Chercher</translation>
     </message>
     <message>
         <source>&lt;p&gt;No archives are configured. In order to use evopedia you have to download a Wikipedia archive. If you do not have access to the Qt user interface of evopedia, you have to download them manually from &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; and install them by editing ~/.evopediarc. Please refer to the web for more information.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Aucune archive n&apos;est configurée. Pour être en mesure d&apos;utiliser evopedia, vous devez télécharger une archive Wikipedia. Si vous n&apos;avez pas accès à l&apos;interface Qt de evopedia, vous devez les télécharger manuellement depuis &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; et les installer en éditant le fichier ~/.evopediarc. Merci de vous référer au site web pour plus d&apos;informations.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Nothing found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rien de trouvé.</translation>
     </message>
     <message>
         <source>Unknown archive/language.</source>
-        <translation type="unfinished"></translation>
+        <translation>Archive ou langue inconnue.</translation>
     </message>
 </context>
 <context>
@@ -435,7 +435,7 @@
     </message>
     <message>
         <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: Toni Hermoso (Catalan), Christian Reitwiessner (German), Daniel Ronde (Dutch), mossroy (French), boscowitch (Japanese), Santiago Crespo (Spanish)&lt;/small&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Lecteur Wikipedia en mode déconnecté&lt;/p&gt;&lt;p&gt;Informations de Copyright&lt;br/&gt;&lt;small&gt;Ce programme affiche des articles issus de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, qui sont disponibles sous la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;licence Creative Commons Attribution/Share-Alike&lt;/a&gt;. Plus d&apos;informations sont disponibles via les liens vers la version en ligne de chaque article.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Auteurs&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icône: Joachim Schiele&lt;br/&gt;Traductions: Toni Hermoso (Catalan), Christian Reitwiessner (Allemand), Daniel Ronde (Hollandais), mossroy (Français), boscowitch (Japonais), Santiago Crespo (Espagnol)&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
