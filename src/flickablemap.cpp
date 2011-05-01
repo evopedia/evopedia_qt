@@ -152,6 +152,20 @@ void FlickableMap::mouseReleaseEvent(QMouseEvent *event)
         return;
 }
 
+void FlickableMap::wheelEvent(QWheelEvent *event)
+{
+    if (event->orientation() == Qt::Horizontal) {
+        event->ignore();
+    } else {
+        if (event->delta() > 0) {
+            zoomIn();
+        } else {
+            zoomOut();
+        }
+        event->accept();
+    }
+}
+
 void FlickableMap::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event);
