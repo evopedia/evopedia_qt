@@ -151,7 +151,7 @@ unix {
   maemo5 {
       desktop.path = $$DATADIR/applications/hildon
   }
-  desktop.files += src/$${TARGET}.desktop
+  desktop.files += resources/$${TARGET}.desktop
 
   iconxpm.path = $$DATADIR/pixmaps
   iconxpm.files += resources/evopedia-64x64.png
