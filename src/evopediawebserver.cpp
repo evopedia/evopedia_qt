@@ -295,6 +295,7 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
             data += "<div dir=\"rtl\">";
         if (!evopedia->networkConnectionAllowed()) {
             articleData = disableOnlineLinks(articleData);
+            data += QString("<small>" + tr("Network access disabled in application, images blocked.") + "</small>").toUtf8();
         }
         data += articleData;
         if (getLayoutDirection(backend->getLanguage()) == Qt::RightToLeft)

@@ -301,6 +301,10 @@
         <source>Unknown archive/language.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Network access disabled in application, images blocked.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FileManager</name>

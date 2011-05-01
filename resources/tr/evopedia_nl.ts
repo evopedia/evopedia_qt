@@ -326,17 +326,22 @@
         <translation>artikel op Wikipedia</translation>
     </message>
     <message>
-        <location filename="../../src/evopediawebserver.cpp" line="314"/>
+        <location filename="../../src/evopediawebserver.cpp" line="298"/>
+        <source>Network access disabled in application, images blocked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/evopediawebserver.cpp" line="315"/>
         <source>Nothing found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/evopediawebserver.cpp" line="324"/>
+        <location filename="../../src/evopediawebserver.cpp" line="325"/>
         <source>Unknown archive/language.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/evopediawebserver.cpp" line="370"/>
+        <location filename="../../src/evopediawebserver.cpp" line="371"/>
         <source>Other Languages</source>
         <translation>Andere Talen</translation>
     </message>

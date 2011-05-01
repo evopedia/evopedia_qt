@@ -265,6 +265,10 @@ EvopediaのQTインタフェースが使わない場合は自分で&lt;a href=&q
         <source>Unknown archive/language.</source>
         <translation>不明書庫/言語。</translation>
     </message>
+    <message>
+        <source>Network access disabled in application, images blocked.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FileManager</name>

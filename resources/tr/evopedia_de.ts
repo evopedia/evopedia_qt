@@ -313,6 +313,10 @@
         <source>Unknown archive/language.</source>
         <translation>Archiv/Sprache unbekannt.</translation>
     </message>
+    <message>
+        <source>Network access disabled in application, images blocked.</source>
+        <translation type="unfinished">Netzwerkzugriff in der Anwendung gesperrt, Bilder blockiert.</translation>
+    </message>
 </context>
 <context>
     <name>FileManager</name>
