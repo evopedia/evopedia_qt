@@ -21,7 +21,7 @@
     </message>
     <message>
         <source>%1 MB</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 MB</translation>
     </message>
     <message>
         <source>not downloaded</source>
@@ -267,7 +267,7 @@ EvopediaのQTインタフェースが使わない場合は自分で&lt;a href=&q
     </message>
     <message>
         <source>Network access disabled in application, images blocked.</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワークアクセス許可ありませんから、映像を表示させません</translation>
     </message>
 </context>
 <context>
@@ -355,12 +355,6 @@ EvopediaのQTインタフェースが使わない場合は自分で&lt;a href=&q
         <translation>Evopediaについて</translation>
     </message>
     <message>
-        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: mossroy (French), Santiago Crespo (Spanish)&lt;/small&gt;&lt;/p&gt;</source>
-        <translation type="obsolete">&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;オフライン Wikipedia 表示器&lt;/p&gt;&lt;p&gt;Copyright 情報&lt;br/&gt;&lt;small&gt;このソフトウェアは&lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;からページを表示する, ライセンスは &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons　表示 - 継承 ライセンス&lt;/a&gt;. 
-詳しくはウェブサイトリンクでオンライン版に見つかります。
-&lt;/small&gt;&lt;/p&gt;&lt;p&gt;作者&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;アイコン: Joachim Schiele&lt;br/&gt;翻訳: mossroy (French), Santiago Crespo (Spanish), boscowitch(日本語)&lt;/small&gt;&lt;/p&gt;</translation>
-    </message>
-    <message>
         <source>Visit Website</source>
         <translation>ウェブサイトへ</translation>
     </message>
@@ -380,11 +374,9 @@ EvopediaのQTインタフェースが使わない場合は自分で&lt;a href=&q
         <source>To translate Evopedia to your language, download the translation file from the website (&lt;a href=&quot;http://evopedia.info&quot;&gt;evopedia.info&lt;/a&gt;) and send it back to devs@evopedia.info.</source>
         <translation>Evopediaを母国語に翻訳する為にウェブサイト(&lt;a href=&quot;http://evopedia.info&quot;&gt;evopedia.info&lt;/a&gt;)から翻訳ファイルをダウンロードして、訳したファイルをdevs@evopedia.infoへ返送してください。</translation>
     </message>
-    <message>
-        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: Toni Hermoso (Catalan), Christian Reitwiessner (German), Daniel Ronde (Dutch), mossroy (French), boscowitch (Japanese), Santiago Crespo (Spanish)&lt;/small&gt;&lt;/p&gt;</source>
-        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;オフライン Wikipedia 表示器&lt;/p&gt;&lt;p&gt;Copyright 情報&lt;br/&gt;&lt;small&gt;このソフトウェアは&lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;からページを表示する, ライセンスは &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons　表示 - 継承 ライセンス&lt;/a&gt;. 
-詳しくは記事のウェブサイトリンクでオンライン版に見つかります。
-&lt;/small&gt;&lt;/p&gt;&lt;p&gt;作者&lt;br/&gt;&lt;small&gt;ソースコード: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;アイコン: Joachim Schiele&lt;br/&gt;翻訳: Toni Hermoso (カタルーニャ語), Christian Reitwiessner (ドイツ語), Daniel Ronde (オランダ語), mossroy (フランス語), boscowitch (日本語), Santiago Crespo (スペイン語)&lt;/small&gt;&lt;/p&gt;</translation>
+    <message utf8="true">
+        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: Catalan: Toni Hermoso, Czech: Veronika Kočová, Dutch: Daniel Ronde, French: mossroy, German: Christian Reitwiessner, Italian: Stefano Ravazzolo, Japanese: boscowitch, Spanish: Santiago Crespo, Vietnamese: Thuy Duong&lt;/small&gt;&lt;/p&gt;</source>
+        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;オフライン Wikipedia 表示器&lt;/p&gt;&lt;p&gt;Copyright 情報&lt;br/&gt;&lt;small&gt;このソフトウェアは&lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;,からページを表示する、ライセンスは &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons 表示 - 継承 ライセンス&lt;/a&gt;. 詳しくは選んだ記事のウェブサイトリンクでオンライン版に見つかります。&lt;/small&gt;&lt;/p&gt;&lt;p&gt;作者&lt;br/&gt;&lt;small&gt;ソースコード: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;イコン: Joachim Schiele&lt;br/&gt;翻訳: Catalan: Toni Hermoso, Czech: Veronika Kočová, Dutch: Daniel Ronde, French: mossroy, German: Christian Reitwiessner, Italian: Stefano Ravazzolo, Japanese: boscowitch, Spanish: Santiago Crespo, Vietnamese: Thuy Duong&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
