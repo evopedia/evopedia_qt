@@ -225,7 +225,7 @@ void MainWindow::on_actionAbout_triggered()
     const QString version(EVOPEDIA_VERSION);
     QMessageBox msgBox;
     msgBox.setWindowTitle(tr("About Evopedia"));
-    msgBox.setText(tr("<h2>Evopedia %1</h2>"
+    msgBox.setText(trUtf8("<h2>Evopedia %1</h2>"
                              "<p>Offline Wikipedia Viewer</p>"
                              "<p>Copyright Information<br/>"
                              "<small>This program shows articles from "
@@ -240,7 +240,11 @@ void MainWindow::on_actionAbout_triggered()
                              "<small>"
                              "Code: Christian Reitwiessner, Joachim Schiele<br/>"
                              "Icon: Joachim Schiele<br/>"
-                             "Translations: Toni Hermoso (Catalan), Christian Reitwiessner (German), Daniel Ronde (Dutch), mossroy (French), boscowitch (Japanese), Santiago Crespo (Spanish)"
+                             "Translations: Catalan: Toni Hermoso, Czech: Veronika Kočová, "
+                                       "Dutch: Daniel Ronde, French: mossroy, "
+                                       "German: Christian Reitwiessner, Italian: Stefano Ravazzolo, "
+                                       "Japanese: boscowitch, "
+                                       "Spanish: Santiago Crespo, Vietnamese: Thuy Duong"
                              "</small></p>").arg(version));
     msgBox.setIconPixmap(QPixmap(":/web/evopedia-64x64.png"));
     QPushButton *websiteButton = msgBox.addButton(tr("Visit Website"), QMessageBox::AcceptRole);

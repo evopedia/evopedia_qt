@@ -71,13 +71,16 @@ HEADERS += src/mainwindow.h \
         src/archivedetailsdialog.h
 
 TRANSLATIONS += \
-        resources/tr/evopedia_de.ts \
-        resources/tr/evopedia_fr.ts \
-        resources/tr/evopedia_es.ts \
-        resources/tr/evopedia_en.ts \
-        resources/tr/evopedia_nl.ts \
         resources/tr/evopedia_ca.ts \
-        resources/tr/evopedia_ja.ts
+        resources/tr/evopedia_cz.ts \
+        resources/tr/evopedia_de.ts \
+        resources/tr/evopedia_en.ts \
+        resources/tr/evopedia_es.ts \
+        resources/tr/evopedia_fr.ts \
+        resources/tr/evopedia_it.ts \
+        resources/tr/evopedia_ja.ts \
+        resources/tr/evopedia_nl.ts \
+        resources/tr/evopedia_vi.ts
 
 FORMS += src/ui/mainwindow.ui \
         src/ui/dumpSettings.ui \

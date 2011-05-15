@@ -113,7 +113,7 @@
     <name>DownloadableArchive</name>
     <message>
         <source>Select Base Download Directory For Archives</source>
-        <translation>Selecciona el directori base per baixar els arxius</translation>
+        <translation>Seleccioneu el directori base per baixar els arxius</translation>
     </message>
     <message>
         <source>Error Downloading Torrent</source>
@@ -240,35 +240,35 @@
     </message>
     <message>
         <source>&lt;h3&gt;Evopedia - Search&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;Evopedia - Cerca&lt;/h3&gt;</translation>
     </message>
     <message>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Títol:</translation>
     </message>
     <message>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Llengua:</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <source>&lt;p&gt;No archives are configured. In order to use evopedia you have to download a Wikipedia archive. If you do not have access to the Qt user interface of evopedia, you have to download them manually from &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; and install them by editing ~/.evopediarc. Please refer to the web for more information.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;No s&apos;ha configurat cap arxiu. Per utilitzar l&apos;Evopedia heu de baixar un arxiu de la Viquipèdia. Si no teniu accés a la interfície Qt de l&apos;Evopedia, cal que els baixeu llavors manualment de &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; i els instal·leu editant ~/.evopediarc. Consulteu el lloc web per a més informació.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Nothing found.</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha trobat res.</translation>
     </message>
     <message>
         <source>Unknown archive/language.</source>
-        <translation type="unfinished"></translation>
+        <translation>Arxiu o llengua desconeguts.</translation>
     </message>
     <message>
         <source>Network access disabled in application, images blocked.</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;ha inhabilitat l&apos;accés a la xarxa per a l&apos;aplicació. S&apos;han blocat les imatges.</translation>
     </message>
 </context>
 <context>
@@ -376,7 +376,7 @@
     </message>
     <message utf8="true">
         <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: Catalan: Toni Hermoso, Czech: Veronika Kočová, Dutch: Daniel Ronde, French: mossroy, German: Christian Reitwiessner, Italian: Stefano Ravazzolo, Japanese: boscowitch, Spanish: Santiago Crespo, Vietnamese: Thuy Duong&lt;/small&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Visualitzador de la Viquipèdia fora de línia&lt;/p&gt;&lt;p&gt;Informació del Copyright&lt;br/&gt;&lt;small&gt;Aquest programa mostra articles de la &lt;a href=&quot;http://wikipedia.org&quot;&gt;Viquipèdia&lt;/a&gt;, disponibles sota la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;llicència Creative Commons Atribució/Compartir Igual&lt;/a&gt;. Pot trobar-se més informació als enllaços de les versions en línia dels respectius articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Autors&lt;br/&gt;&lt;small&gt;Codi: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icones: Joachim Schiele&lt;br/&gt;Traduccions: Català: Toni Hermoso, Txec: Veronika Kočová, Neerlandès: Daniel Ronde, Francès: mossroy, Alemany: Christian Reitwiessner, Italià: Stefano Ravazzolo, Japonès: boscowitch, Espanyol: Santiago Crespo, Vietnamita: Thuy Duong&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
