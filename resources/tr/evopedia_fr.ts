@@ -5,7 +5,7 @@
     <name>ArchiveDetailsDialog</name>
     <message>
         <source>Archive Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Détails de l&apos;archive</translation>
     </message>
     <message>
         <source>Language, Date:</source>
@@ -13,7 +13,7 @@
     </message>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Taille:</translation>
+        <translation>Taille:</translation>
     </message>
     <message>
         <source>State:</source>
@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>Download Now</source>
-        <translation type="unfinished">Télécharge maintenant</translation>
+        <translation>Télécharger maintenant</translation>
     </message>
     <message>
         <source>Peers:</source>
@@ -37,7 +37,7 @@
     </message>
     <message>
         <source>Speed:</source>
-        <translation type="unfinished">Vitesse:</translation>
+        <translation>Vitesse:</translation>
     </message>
 </context>
 <context>
@@ -126,32 +126,8 @@
 <context>
     <name>DumpSettings</name>
     <message>
-        <source>Dumps</source>
-        <translation type="obsolete">Dumps</translation>
-    </message>
-    <message>
-        <source>Add Dump</source>
-        <translation type="obsolete">Ajouter un dump</translation>
-    </message>
-    <message>
-        <source>Remove Dump</source>
-        <translation type="obsolete">Supprimer le dump</translation>
-    </message>
-    <message>
-        <source>Open Dump Directory</source>
-        <translation type="obsolete">Ouvrir le répertoire du dump</translation>
-    </message>
-    <message>
         <source>Error</source>
         <translation>Erreur</translation>
-    </message>
-    <message>
-        <source>Directory %1 does not contain a valid evopedia dump (%2).</source>
-        <translation type="obsolete">Le répertoire %1 ne contient pas de dump Evopedia valide (%2).</translation>
-    </message>
-    <message>
-        <source>%1 (%2), %3 articles</source>
-        <translation type="obsolete">%1 (%2), %3 articles</translation>
     </message>
     <message>
         <source>Menu</source>
@@ -201,7 +177,7 @@
     </message>
     <message>
         <source>Compact Layout</source>
-        <translation type="unfinished">Présentation compacte</translation>
+        <translation>Présentation compacte</translation>
     </message>
 </context>
 <context>
@@ -215,28 +191,12 @@
         <translation>Menu</translation>
     </message>
     <message>
-        <source>Configure Dumps</source>
-        <translation type="obsolete">Configurer les dumps</translation>
-    </message>
-    <message>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
         <source>About</source>
         <translation>A propos de Evopedia</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="obsolete">Erreur</translation>
-    </message>
-    <message>
-        <source>Unable to store settings.</source>
-        <translation type="obsolete">Impossible d&apos;enregistrer les paramètres.</translation>
-    </message>
-    <message>
-        <source>Error storing settings.</source>
-        <translation type="obsolete">Erreur à l&apos;enregistrement des paramètres.</translation>
     </message>
     <message>
         <source>Network</source>
@@ -255,10 +215,6 @@
         <translation>Refuser</translation>
     </message>
     <message>
-        <source>Download Dumps</source>
-        <translation type="obsolete">Télécharger des dumps</translation>
-    </message>
-    <message>
         <source>Archives</source>
         <translation>Archives</translation>
     </message>
@@ -271,15 +227,47 @@
     </message>
     <message>
         <source>random article</source>
-        <translation></translation>
+        <translation>article au hasard</translation>
     </message>
     <message>
         <source>show article on map</source>
-        <translation type="unfinished">montre article </translation>
+        <translation>montrer l&apos;article sur la carte</translation>
     </message>
     <message>
         <source>article at Wikipedia</source>
-        <translation type="unfinished"></translation>
+        <translation>article sur Wikipedia</translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;Evopedia - Search&lt;/h3&gt;</source>
+        <translation>&lt;h3&gt;Evopedia - Recherche&lt;/h3&gt;</translation>
+    </message>
+    <message>
+        <source>Title:</source>
+        <translation>Titre:</translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation>Langue:</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Chercher</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;No archives are configured. In order to use evopedia you have to download a Wikipedia archive. If you do not have access to the Qt user interface of evopedia, you have to download them manually from &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; and install them by editing ~/.evopediarc. Please refer to the web for more information.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Aucune archive n&apos;est configurée. Pour être en mesure d&apos;utiliser evopedia, vous devez télécharger une archive Wikipedia. Si vous n&apos;avez pas accès à l&apos;interface Qt de evopedia, vous devez les télécharger manuellement depuis &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; et les installer en éditant le fichier ~/.evopediarc. Merci de vous référer au site web pour plus d&apos;informations.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Nothing found.</source>
+        <translation>Rien de trouvé.</translation>
+    </message>
+    <message>
+        <source>Unknown archive/language.</source>
+        <translation>Archive ou langue inconnue.</translation>
+    </message>
+    <message>
+        <source>Network access disabled in application, images blocked.</source>
+        <translation>Accès Internet désactivé dans l&apos;application, les images sont bloquées.</translation>
     </message>
 </context>
 <context>
@@ -327,10 +315,6 @@
         <translation>Fichier de titre non lisible.</translation>
     </message>
     <message>
-        <source>Dump directory does not exist.</source>
-        <translation type="obsolete">Le répertoire de dump n&apos;existe pas.</translation>
-    </message>
-    <message>
         <source>Metadata file does not exist.</source>
         <translation>Le fichier de métadonnées n&apos;existe pas.</translation>
     </message>
@@ -350,20 +334,8 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>No Dumps Configured</source>
-        <translation type="obsolete">Aucun dump configuré</translation>
-    </message>
-    <message>
-        <source>To be able to use evopedia you have to download and install a Wikipedia dump. Download at least one dump file from the &lt;a href=&quot;%1&quot;&gt;website&lt;/a&gt; and extract this archive to a folder on your device. After that, select this folder using the menu option &quot;Configure Dumps&quot;.</source>
-        <translation type="obsolete">Pour être en mesure d&apos;utiliser Evopedia, vous devez télécharger et installer un dump de Wikpedia. Téléchargez au moins un fichier dump depuis le &lt;a href=&quot;%1&quot;&gt;site web&lt;/a&gt; et décompressez cette archive dans un répertoire de votre appareil. Ensuite, sélectionnez ce répertoire en utilisant le menu Option &quot;Configurer les dumps&quot;.</translation>
-    </message>
-    <message>
         <source>About Evopedia</source>
         <translation>A propos de Evopedia</translation>
-    </message>
-    <message>
-        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;Offline Wikipedia Viewer&lt;p&gt;&lt;b&gt;Copyright Information&lt;b&gt;&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;</source>
-        <translation type="obsolete">&lt;h2&gt;Evopedia %1&lt;/h2&gt;Wikipedia Offline&lt;p&gt;&lt;b&gt;Informations de Copyright&lt;b&gt;&lt;br/&gt;&lt;small&gt;Ce programme affiche des articles issus de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, qui sont disponibles sous la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;licence Creative Commons Attribution/Share-Alike&lt;/a&gt;. Plus d&apos;information peut être trouvé via les liens vers la version originale des articles respectifs.&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Visit Website</source>
@@ -390,10 +362,6 @@
         <translation>Utilisez le menu pour récupérer la liste des archives disponibles.</translation>
     </message>
     <message>
-        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: mossroy (French), Santiago Crespo (Spanish)&lt;/small&gt;&lt;/p&gt;</source>
-        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Lecteur Wikipedia en mode déconnecté&lt;/p&gt;&lt;p&gt;Informations de Copyright&lt;br/&gt;&lt;small&gt;Ce programme affiche des articles issus de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, qui sont disponibles sous la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;licence Creative Commons Attribution/Share-Alike&lt;/a&gt;. Plus d&apos;informations sont disponibles via les liens vers la version en ligne de chaque article.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Auteurs&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icône: Joachim Schiele&lt;br/&gt;Traductions: mossroy (Français), Santiago Crespo (Espagnol)&lt;/small&gt;&lt;/p&gt;</translation>
-    </message>
-    <message>
         <source>Translate</source>
         <translation>Traduire</translation>
     </message>
@@ -404,6 +372,10 @@
     <message>
         <source>To translate Evopedia to your language, download the translation file from the website (&lt;a href=&quot;http://evopedia.info&quot;&gt;evopedia.info&lt;/a&gt;) and send it back to devs@evopedia.info.</source>
         <translation>Pour traduire Evopedia dans votre langue, téléchargez le fichier de traduction depuis le site web (&lt;a href=&quot;http://evopedia.info&quot;&gt;evopedia.info&lt;/a&gt;) et renvoyez-le à devs@evopedia.info.</translation>
+    </message>
+    <message utf8="true">
+        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: Catalan: Toni Hermoso, Czech: Veronika Kočová, Dutch: Daniel Ronde, French: mossroy, German: Christian Reitwiessner, Italian: Stefano Ravazzolo, Japanese: boscowitch, Spanish: Santiago Crespo, Vietnamese: Thuy Duong&lt;/small&gt;&lt;/p&gt;</source>
+        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Lecteur Wikipedia Offline&lt;/p&gt;&lt;p&gt;Informations de Copyright&lt;br/&gt;&lt;small&gt;Ce programme montre des articles issus de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, qui sont disponibles sous la licence &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Pour plus d&apos;information, merci de suivre les liens aux versions en ligne des articles respectifs.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Auteurs&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icone: Joachim Schiele&lt;br/&gt;Traductions: Catalan: Toni Hermoso, Tchèque: Veronika Kočová, Néerlandais: Daniel Ronde, Français: mossroy, Allemand: Christian Reitwiessner, Italien: Stefano Ravazzolo, Japonais: boscowitch, Espagnol: Santiago Crespo, Vietnamien: Thuy Duong&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -536,25 +508,6 @@
     <message>
         <source>unknown</source>
         <translation>inconnue</translation>
-    </message>
-</context>
-<context>
-    <name>StorageBackend</name>
-    <message>
-        <source>Title file not readable.</source>
-        <translation type="obsolete">Fichier de titre non lisible.</translation>
-    </message>
-    <message>
-        <source>Dump directory does not exist.</source>
-        <translation type="obsolete">Le répertoire de dump n&apos;existe pas.</translation>
-    </message>
-    <message>
-        <source>Metadata file does not exist.</source>
-        <translation type="obsolete">Le fichier de métadonnées n&apos;existe pas.</translation>
-    </message>
-    <message>
-        <source>Title file does not exist.</source>
-        <translation type="obsolete">Le fichier de titre n&apos;existe pas.</translation>
     </message>
 </context>
 </TS>

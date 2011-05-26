@@ -1,3 +1,23 @@
+/*
+ * evopedia: An offline Wikipedia reader.
+ *
+ * Copyright (C) 2010-2011 evopedia developers
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -27,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(evopedia->getArchiveManager(),
             SIGNAL(defaultLocalArchivesChanged(QList<LocalArchive*>)),
-            SLOT(backendsChanged(const QList<LocalArchive*>)));
+            SLOT(backendsChanged(QList<LocalArchive*>)));
     connect(evopedia->findChild<EvopediaWebServer *>("evopediaWebserver"),
             SIGNAL(mapViewRequested(qreal, qreal, uint)),
             SLOT(mapViewRequested(qreal,qreal,uint)));
@@ -38,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     network->addAction(ui->actionDeny);
 
     QSettings settings("Evopedia", "GUI");
-    int networkUse = settings.value("network use", 0).toInt();
+    int networkUse = settings.value("network use", 1).toInt();
     evopedia->setNetworkUse(networkUse);
     if (networkUse < 0) ui->actionDeny->setChecked(true);
     else if (networkUse > 0) ui->actionAllow->setChecked(true);
@@ -146,7 +166,7 @@ void MainWindow::on_languageChooser_currentIndexChanged(const QString &text)
     refreshSearchResults();
 }
 
-void MainWindow::backendsChanged(const QList<LocalArchive *> backends)
+void MainWindow::backendsChanged(QList<LocalArchive *> backends)
 {
     ui->languageChooser->blockSignals(true);
     ui->languageChooser->clear();
@@ -205,7 +225,7 @@ void MainWindow::on_actionAbout_triggered()
     const QString version(EVOPEDIA_VERSION);
     QMessageBox msgBox;
     msgBox.setWindowTitle(tr("About Evopedia"));
-    msgBox.setText(tr("<h2>Evopedia %1</h2>"
+    msgBox.setText(trUtf8("<h2>Evopedia %1</h2>"
                              "<p>Offline Wikipedia Viewer</p>"
                              "<p>Copyright Information<br/>"
                              "<small>This program shows articles from "
@@ -220,7 +240,11 @@ void MainWindow::on_actionAbout_triggered()
                              "<small>"
                              "Code: Christian Reitwiessner, Joachim Schiele<br/>"
                              "Icon: Joachim Schiele<br/>"
-                             "Translations: mossroy (French), Santiago Crespo (Spanish)"
+                             "Translations: Catalan: Toni Hermoso, Czech: Veronika Kočová, "
+                                       "Dutch: Daniel Ronde, French: mossroy, "
+                                       "German: Christian Reitwiessner, Italian: Stefano Ravazzolo, "
+                                       "Japanese: boscowitch, "
+                                       "Spanish: Santiago Crespo, Vietnamese: Thuy Duong"
                              "</small></p>").arg(version));
     msgBox.setIconPixmap(QPixmap(":/web/evopedia-64x64.png"));
     QPushButton *websiteButton = msgBox.addButton(tr("Visit Website"), QMessageBox::AcceptRole);

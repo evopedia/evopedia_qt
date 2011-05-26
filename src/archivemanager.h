@@ -1,3 +1,23 @@
+/*
+ * evopedia: An offline Wikipedia reader.
+ *
+ * Copyright (C) 2010-2011 evopedia developers
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #ifndef ARCHIVEMANAGER_H
 #define ARCHIVEMANAGER_H
 
@@ -44,7 +64,7 @@ Q_OBJECT
 private slots:
     void handleNetworkFinished(QNetworkReply *reply);
     void updateDefaultLocalArchivesUponExchange(PartialArchive *from, LocalArchive *to);
-    void updateDefaultLocalArchives(const QList<Archive *> &archives);
+    void updateDefaultLocalArchives(QList<Archive *> archives);
 
 
 public:
@@ -73,10 +93,10 @@ public:
     void exchangeArchives(PartialArchive *from, LocalArchive *to);
 
 signals:
-    void defaultLocalArchivesChanged(const QList<LocalArchive *> &archives);
+    void defaultLocalArchivesChanged(QList<LocalArchive *> archives);
 
     /* this one is not emitted if archivesExchanged is emitted */
-    void archivesChanged(const QList<Archive *> &archives);
+    void archivesChanged(QList<Archive *> archives);
     void archivesExchanged(DownloadableArchive *from, PartialArchive *to);
     void archivesExchanged(PartialArchive *from, LocalArchive *to);
 

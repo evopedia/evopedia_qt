@@ -13,6 +13,7 @@
         <file>wikipedia.png</file>
         <file>evopedia.js</file>
         <file>evopedia-64x64.png</file>
+        <file>evopedia.svg</file>
     </qresource>
     <qresource prefix="/map_icons">
         <file>wikipedia.png</file>
@@ -20,5 +21,13 @@
     <qresource prefix="/tr">
         <file alias="evopedia_de.qm">tr/evopedia_de.qm</file>
         <file alias="evopedia_fr.qm">tr/evopedia_fr.qm</file>
+        <file alias="evopedia_ca.qm">tr/evopedia_ca.qm</file>
+        <file alias="evopedia_cz.qm">tr/evopedia_cz.qm</file>
+        <file alias="evopedia_en.qm">tr/evopedia_en.qm</file>
+        <file alias="evopedia_es.qm">tr/evopedia_es.qm</file>
+        <file alias="evopedia_it.qm">tr/evopedia_it.qm</file>
+        <file alias="evopedia_ja.qm">tr/evopedia_ja.qm</file>
+        <file alias="evopedia_nl.qm">tr/evopedia_nl.qm</file>
+        <file alias="evopedia_vi.qm">tr/evopedia_vi.qm</file>
     </qresource>
 </RCC>

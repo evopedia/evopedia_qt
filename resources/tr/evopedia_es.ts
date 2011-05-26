@@ -5,39 +5,39 @@
     <name>ArchiveDetailsDialog</name>
     <message>
         <source>Archive Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Detalles del Archivo</translation>
     </message>
     <message>
         <source>Language, Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma, Fecha:</translation>
     </message>
     <message>
         <source>Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño:</translation>
     </message>
     <message>
         <source>State:</source>
-        <translation type="unfinished"></translation>
+        <translation>Estado:</translation>
     </message>
     <message>
         <source>%1 MB</source>
-        <translation type="unfinished">%1 MB</translation>
+        <translation>%1 MB</translation>
     </message>
     <message>
         <source>not downloaded</source>
-        <translation type="unfinished"></translation>
+        <translation>no descargado</translation>
     </message>
     <message>
         <source>Download Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargar Ahora</translation>
     </message>
     <message>
         <source>Peers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Peers:</translation>
     </message>
     <message>
         <source>Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad:</translation>
     </message>
 </context>
 <context>
@@ -91,7 +91,7 @@
     </message>
     <message>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Detalles</translation>
     </message>
 </context>
 <context>
@@ -126,28 +126,12 @@
 <context>
     <name>DumpSettings</name>
     <message>
-        <source>Dumps</source>
-        <translation type="obsolete">Volcados</translation>
-    </message>
-    <message>
         <source>Menu</source>
         <translation>Menú</translation>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation type="obsolete">Refrescar</translation>
-    </message>
-    <message>
-        <source>Open Dump Directory</source>
-        <translation type="obsolete">Abrir directorio con Volcado</translation>
-    </message>
-    <message>
         <source>Error</source>
         <translation>Error</translation>
-    </message>
-    <message>
-        <source>Directory %1 does not contain a valid evopedia dump (%2).</source>
-        <translation type="obsolete">El directorio %1 no contiene un Volcado de Wikipedia correcto (%2).</translation>
     </message>
     <message>
         <source>Evopedia Archives</source>
@@ -185,15 +169,15 @@
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Volver</translation>
     </message>
     <message>
         <source>Open Archive Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Archivo Directorio</translation>
     </message>
     <message>
         <source>Compact Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Distribución Compacta</translation>
     </message>
 </context>
 <context>
@@ -209,10 +193,6 @@
     <message>
         <source>Network</source>
         <translation>Red</translation>
-    </message>
-    <message>
-        <source>Configure Dumps</source>
-        <translation type="obsolete">Configurar Volcados</translation>
     </message>
     <message>
         <source>Map</source>
@@ -235,22 +215,6 @@
         <translation>Denegar</translation>
     </message>
     <message>
-        <source>Download Dumps</source>
-        <translation type="obsolete">Descargar Volcados</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="obsolete">Error</translation>
-    </message>
-    <message>
-        <source>Unable to store settings.</source>
-        <translation type="obsolete">Imposible guardar configuración.</translation>
-    </message>
-    <message>
-        <source>Error storing settings.</source>
-        <translation type="obsolete">Error guardando la configuración.</translation>
-    </message>
-    <message>
         <source>Archives</source>
         <translation>Archivos</translation>
     </message>
@@ -263,15 +227,47 @@
     </message>
     <message>
         <source>random article</source>
-        <translation type="unfinished"></translation>
+        <translation>artículo aleatorio</translation>
     </message>
     <message>
         <source>show article on map</source>
-        <translation type="unfinished"></translation>
+        <translation>mostrar artículo en el mapa</translation>
     </message>
     <message>
         <source>article at Wikipedia</source>
-        <translation type="unfinished"></translation>
+        <translation>artículo en Wikipedia</translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;Evopedia - Search&lt;/h3&gt;</source>
+        <translation>&lt;h3&gt;Evopedia - Búsqueda&lt;/h3&gt;</translation>
+    </message>
+    <message>
+        <source>Title:</source>
+        <translation>Título:</translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation>Idioma:</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Búsqueda</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;No archives are configured. In order to use evopedia you have to download a Wikipedia archive. If you do not have access to the Qt user interface of evopedia, you have to download them manually from &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; and install them by editing ~/.evopediarc. Please refer to the web for more information.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;No se han configurado archivos. Para poder usar evopedia tienes que descargar un archivo Wikipedia. Si no tienes acceso a la interfaz de usuario Qt de evopedia, tendrás que descargarlo manualmente desde &lt;a href=&quot;http://dumpathome.evopedia.info/dumps/finished&quot;&gt;http://dumpathome.evopedia.info/dumps/finished&lt;/a&gt; e instalarlos editando ~/.evopediarc. Por favor, consulta la web para más información.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Nothing found.</source>
+        <translation>No se ha encontrado nada.</translation>
+    </message>
+    <message>
+        <source>Unknown archive/language.</source>
+        <translation>Archivo/lenguaje desconocido.</translation>
+    </message>
+    <message>
+        <source>Network access disabled in application, images blocked.</source>
+        <translation>Red desactivada en la aplicación, imagenes bloqueadas.</translation>
     </message>
 </context>
 <context>
@@ -319,10 +315,6 @@
         <translation>No se puede leer el archivo de título.</translation>
     </message>
     <message>
-        <source>Dump directory does not exist.</source>
-        <translation type="obsolete">El directorio del volcado no existe.</translation>
-    </message>
-    <message>
         <source>Metadata file does not exist.</source>
         <translation>El archivo con metadatos no existe.</translation>
     </message>
@@ -336,34 +328,18 @@
     </message>
     <message>
         <source>Archive directory does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo directorio no existe.</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <source>No Dumps Configured</source>
-        <translation type="obsolete">No hay Volcados configurados</translation>
-    </message>
-    <message>
-        <source>To be able to use evopedia you have to download and install a Wikipedia dump. Download at least one dump file from the &lt;a href=&quot;%1&quot;&gt;website&lt;/a&gt; and extract this archive to a folder on your device. After that, select this folder using the menu option &quot;Configure Dumps&quot;.</source>
-        <translation type="obsolete">Para usar evopedia necesitas descargar e instalar un Volcado de Wikipedia. Descárgate al menos un archivo de Volcado de &lt;a href=&quot;%1&quot;&gt;website&lt;/a&gt; y extráelo en una directorio. Despúes, selecciona esta directorio usando la opción de menú &quot;Configurar Volcados&quot;.</translation>
-    </message>
-    <message>
         <source>About Evopedia</source>
         <translation>Acerca de Evopedia</translation>
     </message>
     <message>
-        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: mossroy (French)&lt;/small&gt;&lt;/p&gt;</source>
-        <translation type="obsolete">&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Lector de Wikipedia Offline&lt;/p&gt;&lt;p&gt;Información del Copyright&lt;br/&gt;&lt;small&gt;Este programa muestra artículos de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, disponibles bajo la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Licencia Creative Commons Attribution/Share-Alike&lt;/a&gt;. Hay más información en los enlaces de a las versiones online de los respectivos artículos.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Autores&lt;br/&gt;&lt;small&gt;Código: Christian Reitwiessner&lt;br/&gt;Icono: Joachim Schiele&lt;br/&gt;Traduccións: mossroy (francés), Santiago Crespo (español)&lt;/small&gt;&lt;/p&gt;</translation>
-    </message>
-    <message>
         <source>Visit Website</source>
         <translation>Visitar sitio web</translation>
-    </message>
-    <message>
-        <source>Download Dumps</source>
-        <translation type="obsolete">Descargar Volcados</translation>
     </message>
     <message>
         <source>Report Bug</source>
@@ -386,10 +362,6 @@
         <translation>Usa el menú para recibir la lista de los archivos disponibles.</translation>
     </message>
     <message>
-        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: mossroy (French), Santiago Crespo (Spanish)&lt;/small&gt;&lt;/p&gt;</source>
-        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Lector off-line de Wikipedia&lt;/p&gt;&lt;p&gt;Información de copyright&lt;br/&gt;&lt;small&gt;Este programa muestra artículos de  &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, disponibles bajo la licencia &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Puedes encontrar más información a través de los enlaces a las versiones online de los artículos.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Autores&lt;br/&gt;&lt;small&gt;Código: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icono: Joachim Schiele&lt;br/&gt;Traducciones: mossroy (Francés), Santiago Crespo (Español)&lt;/small&gt;&lt;/p&gt;</translation>
-    </message>
-    <message>
         <source>Translate</source>
         <translation>Traduce</translation>
     </message>
@@ -400,6 +372,10 @@
     <message>
         <source>To translate Evopedia to your language, download the translation file from the website (&lt;a href=&quot;http://evopedia.info&quot;&gt;evopedia.info&lt;/a&gt;) and send it back to devs@evopedia.info.</source>
         <translation>Para traducir Evopedia a tu idioma, descarga el archivo de traducción del sitio (&lt;a href=&quot;http://evopedia.info&quot;&gt;evopedia.info&lt;/a&gt;) y envíalos de vuelta a devs@evopedia.info.</translation>
+    </message>
+    <message utf8="true">
+        <source>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Offline Wikipedia Viewer&lt;/p&gt;&lt;p&gt;Copyright Information&lt;br/&gt;&lt;small&gt;This program shows articles from &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, available under the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Creative Commons Attribution/Share-Alike License&lt;/a&gt;. Further information can be found via the links to the online versions of the respective articles.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Authors&lt;br/&gt;&lt;small&gt;Code: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icon: Joachim Schiele&lt;br/&gt;Translations: Catalan: Toni Hermoso, Czech: Veronika Kočová, Dutch: Daniel Ronde, French: mossroy, German: Christian Reitwiessner, Italian: Stefano Ravazzolo, Japanese: boscowitch, Spanish: Santiago Crespo, Vietnamese: Thuy Duong&lt;/small&gt;&lt;/p&gt;</source>
+        <translation>&lt;h2&gt;Evopedia %1&lt;/h2&gt;&lt;p&gt;Visor de Wikipedia Offline&lt;/p&gt;&lt;p&gt;Información de Copyright&lt;br/&gt;&lt;small&gt;Este programa muestra artículos de &lt;a href=&quot;http://wikipedia.org&quot;&gt;Wikipedia&lt;/a&gt;, disponibles bajo la &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;Licencia Creative Commons Atribución Compartir Igual&lt;/a&gt;. Puedes encontrar más información usando los enlaces a las versiones online de cada artículo.&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Autoresbr/&gt;&lt;small&gt;Código: Christian Reitwiessner, Joachim Schiele&lt;br/&gt;Icono: Joachim Schiele&lt;br/&gt;Traducciones: Alemán: Christian Reitwiessner, Catalán: Toni Hermoso, Checo: Veronika Kočová, Español: Santiago Crespo, Francés: mossroy, Italiano: Stefano Ravazzolo, Japonés: boscowitch, Neerlandés: Daniel Ronde, Vietnamita: Thuy Duong&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -446,7 +422,7 @@
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Volver</translation>
     </message>
 </context>
 <context>
@@ -531,26 +507,7 @@
     </message>
     <message>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>StorageBackend</name>
-    <message>
-        <source>Title file not readable.</source>
-        <translation type="obsolete">No se puede leer el ficher de título.</translation>
-    </message>
-    <message>
-        <source>Dump directory does not exist.</source>
-        <translation type="obsolete">La directorio del Volcado no existe.</translation>
-    </message>
-    <message>
-        <source>Metadata file does not exist.</source>
-        <translation type="obsolete">El archivo con metadatos no existe.</translation>
-    </message>
-    <message>
-        <source>Title file does not exist.</source>
-        <translation type="obsolete">El archivo del título no existe.</translation>
+        <translation>desconocido</translation>
     </message>
 </context>
 </TS>

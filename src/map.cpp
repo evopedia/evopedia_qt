@@ -3,6 +3,8 @@
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Qt Software Information (qt-info@nokia.com)
 **
+** Changes 2010 by the evopedia developers.
+**
 ** This file is part of the Graphics Dojo project on Qt Labs.
 **
 ** This file may be used under the terms of the GNU General Public
@@ -337,7 +339,7 @@ ArticleOverlay::ArticleOverlay(SlippyMap *parent)
     Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
     connect(evopedia->getArchiveManager(),
             SIGNAL(defaultLocalArchivesChanged(QList<LocalArchive*>)),
-            SLOT(backendsChanged(const QList<LocalArchive*>)));
+            SLOT(backendsChanged(QList<LocalArchive*>)));
 }
 
 ArticleOverlay::GeoTitleList ArticleOverlay::getTitles(const QRectF &rect, int maxTitles)
@@ -478,7 +480,7 @@ void ArticleOverlay::showNearTitleList(const QList<Title> &list)
     }
 }
 
-void ArticleOverlay::backendsChanged(const QList<LocalArchive *>)
+void ArticleOverlay::backendsChanged(QList<LocalArchive *>)
 {
     titles.clear();
     slippyMap->invalidate();

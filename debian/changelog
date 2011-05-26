@@ -1,3 +1,10 @@
+evopedia (0.4.3) maverick natty; urgency=low
+
+  * Catalan, Dutch, Japanese and Vietnamese translations
+  * added http-only interface
+
+ -- Evopedia Developers <devs@evopedia.info>  Wed, 27 Apr 2011 22:04:41 +0200
+
 evopedia (0.4.2+gitr88fbd724b722ef757aa479eed68f1467a989da61) maverick; urgency=low
 
   * integrated Bittorrent download manager

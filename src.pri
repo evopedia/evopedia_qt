@@ -1,6 +1,9 @@
 QT += core gui network
 INCLUDEPATH += src
 
+DEFINES += QT_NO_CAST_TO_ASCII
+DEFINES += QT_NO_CAST_FROM_BYTEARRAY
+
 SOURCES +=  src/mainwindow.cpp \
         src/localarchive.cpp \
 	src/title.cpp \
@@ -67,48 +70,71 @@ HEADERS += src/mainwindow.h \
 	src/torrent/trackerclient.h \
         src/archivedetailsdialog.h
 
-TRANSLATIONS += src/tr/evopedia_de.ts src/tr/evopedia_fr.ts src/tr/evopedia_es.ts src/tr/evopedia_en.ts src/tr/evopedia_nl.ts
+TRANSLATIONS += \
+        resources/tr/evopedia_ca.ts \
+        resources/tr/evopedia_cz.ts \
+        resources/tr/evopedia_de.ts \
+        resources/tr/evopedia_en.ts \
+        resources/tr/evopedia_es.ts \
+        resources/tr/evopedia_fr.ts \
+        resources/tr/evopedia_it.ts \
+        resources/tr/evopedia_ja.ts \
+        resources/tr/evopedia_nl.ts \
+        resources/tr/evopedia_vi.ts
 
-FORMS += src/mainwindow.ui \
-    src/dumpSettings.ui \
-    src/mapwindow.ui \
-    src/archivedetailsdialog.ui
-
-CONFIG += warn_on
-maemo5 {
-    CONFIG += mobility
-    DEFINES += USE_MOBILITY
-    MOBILITY += location
-}
-
-unix {
-    LIBS += -lbz2
-}
-
-DEFINES += QT_NO_CAST_TO_ASCII
-DEFINES += QT_NO_CAST_FROM_BYTEARRAY
+FORMS += src/ui/mainwindow.ui \
+        src/ui/dumpSettings.ui \
+        src/ui/mapwindow.ui \
+        src/ui/archivedetailsdialog.ui
 
 OTHER_FILES += \
-    src/evopedia.desktop \
-    src/evopedia.js \
-    src/header.html \
-    src/wikipedia.png \
-    src/transtbl.dat \
-    src/random.png \
-    src/maparticle.png \
-    src/map.png \
-    src/main.css \
-    src/magnify-clip.png \
-    src/footer.html
+        resources/evopedia.desktop \
+        resources/evopedia.js \
+        resources/header.html \
+        resources/wikipedia48.png \
+        resources/wikipedia.png \
+        resources/transtbl.dat \
+        resources/random.png \
+        resources/maparticle.png \
+        resources/map.png \
+        resources/main.css \
+        resources/magnify-clip.png \
+        resources/footer.html
 
 RESOURCES += \
-    src/resources.qrc \
-    src/torrent/icons.qrc
+        resources/resources.qrc \
+        src/torrent/icons.qrc
+
+CONFIG += warn_on
+
+maemo5 {
+        CONFIG += mobility
+        DEFINES += USE_MOBILITY
+        MOBILITY += location
+}
+
+windows {
+    # download the lib/dll/include for bzip2 and copy it to the source directory
+    INCLUDEPATH += bzip2/include
+    LIBS += $$quote($$_PRO_FILE_PWD_)/bzip2/lib/bzip2.lib
+
+    RC_FILE += \
+       resources/windows/windows.rc
+}
+
+macx {
+     ICON = resources/evopedia.icns
+}
+
+symbian {
+     ICON = resources/evopedia.svg
+}
 
 unix {
+  LIBS += -lbz2
   #VARIABLES
   isEmpty(PREFIX) {
-    PREFIX = /usr/local
+    PREFIX = /usr
   }
   BINDIR = $$PREFIX/bin
   DATADIR =$$PREFIX/share
@@ -120,7 +146,6 @@ unix {
   DEFINES += DATADIR=\\\"$$DATADIR\\\" PKGDATADIR=\\\"$$PKGDATADIR\\\"
 
   #MAKE INSTALL
-
   INSTALLS += target desktop iconxpm
 
   target.path =$$BINDIR
@@ -130,9 +155,8 @@ unix {
   maemo5 {
       desktop.path = $$DATADIR/applications/hildon
   }
-
-  desktop.files += src/$${TARGET}.desktop
+  desktop.files += resources/$${TARGET}.desktop
 
   iconxpm.path = $$DATADIR/pixmaps
-  iconxpm.files += src/evopedia-64x64.png
+  iconxpm.files += resources/evopedia-64x64.png
 }
