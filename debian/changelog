@@ -1,4 +1,4 @@
-evopedia (0.4.3) maverick natty; urgency=low
+evopedia (0.4.3) maverick; urgency=low
 
   * Catalan, Dutch, Japanese and Vietnamese translations
   * added http-only interface
