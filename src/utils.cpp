@@ -32,6 +32,7 @@
 
 quint32 randomNumber(quint32 maxExcl)
 {
+    if (maxExcl == 0) return 0;
     static bool seedInitialized(false);
     if (!seedInitialized) {
         qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));

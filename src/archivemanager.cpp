@@ -287,6 +287,8 @@ LocalArchive *ArchiveManager::getRandomLocalArchive() const
     quint32 numArticles = 0;
     foreach (LocalArchive *b, archives)
         numArticles += b->getNumArticles();
+    if (numArticles == 0)
+        return 0;
     quint32 articleId = randomNumber(numArticles);
     foreach (LocalArchive *b, archives) {
         quint32 bArticles = b->getNumArticles();
