@@ -23,8 +23,8 @@
 #include "utils.h"
 #include "localarchive.h"
 
-Evopedia::Evopedia(QObject *parent)
-    : QObject(parent), networkUse(0)
+Evopedia::Evopedia(QObject *parent, bool guiEnabled)
+    : QObject(parent), networkUse(0), guiEnabled(guiEnabled)
 {
     archiveManager = new ArchiveManager(this);
     webServer = new EvopediaWebServer(this);

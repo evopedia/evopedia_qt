@@ -41,19 +41,27 @@ EvopediaApplication::EvopediaApplication(int &argc, char **argv) :
     qtTranslator->load(":tr/evopedia_" + QLocale::system().name());
     installTranslator(qtTranslator);
 
+    bool guiEnabled = !arguments().contains("--server-only");
+    m_evopedia = new Evopedia(this, guiEnabled);
 
-    m_evopedia = new Evopedia(this);
-    m_mainwindow = new MainWindow();
+    if (m_evopedia->isGUIEnabled()) {
+        m_mainwindow = new MainWindow();
 
 #if defined(Q_WS_S60)
-    m_mainwindow->showMaximized();
+        m_mainwindow->showMaximized();
 #else
-    m_mainwindow->show();
+        m_mainwindow->show();
 #endif
+    } else {
+        m_mainwindow = 0;
+        connect(m_evopedia->findChild<EvopediaWebServer *>("evopediaWebserver"),
+                SIGNAL(applicationExitRequested()), SLOT(quit()));
+    }
 }
 
 EvopediaApplication::~EvopediaApplication()
 {
+    delete m_evopedia;
     delete m_mainwindow;
 }
 

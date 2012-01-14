@@ -37,6 +37,7 @@ public:
 
 signals:
     void mapViewRequested(qreal lat, qreal lon, uint zoom);
+    void applicationExitRequested();
 
 public slots:
 
@@ -50,6 +51,9 @@ private:
      void redirectRandom(QTcpSocket *socket, const QStringList &pathParts);
      void outputMathImage(QTcpSocket *socket, const QStringList &pathParts);
      void outputWikiPage(QTcpSocket *socket, const QStringList &pathParts);
+     void outputSettings(QTcpSocket *socket);
+     void selectArchiveLocation(QTcpSocket *socket, const QString &path);
+     void addArchive(QTcpSocket *socket, const QString &path);
      void outputSearchResult(QTcpSocket *socket, const QString &query, const QString &archive);
 
      QByteArray &disableOnlineLinks(QByteArray &data);

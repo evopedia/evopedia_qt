@@ -24,6 +24,7 @@
 #include <QString>
 #include <QStringBuilder>
 #include <QStringList>
+#include <QTextDocument>
 #include <QDateTime>
 #include <QUrl>
 #include <QDir>
@@ -81,6 +82,17 @@ void EvopediaWebServer::readClient()
         outputStatic(socket, pathParts);
     } else if (firstPart == "search") {
         outputSearchResult(socket, url.queryItemValue("q"), url.queryItemValue("lang"));
+    } else if (firstPart == "settings") {
+        outputSettings(socket);
+    } else if (firstPart == "select_archive_location") {
+        selectArchiveLocation(socket, url.queryItemValue("p"));
+    } else if (firstPart == "add_archive") {
+        addArchive(socket, url.queryItemValue("p"));
+    } else if (firstPart == "exit") {
+        /* only quit via browser if we do not have a GUI */
+        if (!evopedia->isGUIEnabled())
+            applicationExitRequested();
+        /* TODO message and error */
     } else if (firstPart == "map") {
         qreal lat = url.queryItemValue("lat").toDouble();
         qreal lon = url.queryItemValue("lon").toDouble();
@@ -104,6 +116,12 @@ void EvopediaWebServer::outputIndexPage(QTcpSocket *socket)
     QByteArray data = getResource(":/web/header.html");
     data += QString("<a class=\"evopedianav\" title=\"" + tr("random article") + "\" "
                     "href=\"/random\"><img src=\"/static/random.png\"></a>").toUtf8();
+    if (!evopedia->isGUIEnabled()) {
+        data += QString("<a class=\"evopedianav\" title=\"" + tr("settings") + "\" "
+                        "href=\"/settings\"><img src=\"/static/settings.png\"></a>").toUtf8();
+        data += QString("<a class=\"evopedianav\" title=\"" + tr("exit") + "\" "
+                        "href=\"/exit\"><img src=\"/static/exit.png\"></a>").toUtf8();
+    }
     data += "</div>";
 
     QStringList languages = evopedia->getArchiveManager()->getDefaultLocalArchives().keys();
@@ -277,15 +295,23 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
         QByteArray data = getResource(":/web/header.html");
         data += QString("<a class=\"evopedianav\" title=\"" + tr("random article") + "\" "
                         "href=\"/random\"><img src=\"/static/random.png\"></a>").toUtf8();
+        if (!evopedia->isGUIEnabled()) {
+            data += QString("<a class=\"evopedianav\" title=\"" + tr("settings") + "\" "
+                            "href=\"/settings\"><img src=\"/static/settings.png\"></a>").toUtf8();
+            data += QString("<a class=\"evopedianav\" title=\"" + tr("exit") + "\" "
+                            "href=\"/exit\"><img src=\"/static/exit.png\"></a>").toUtf8();
+        }
 
         bool ok(false);
         int zoom;
-        QPair<qreal, qreal>coords = parseCoordinatesInArticle(articleData, &ok, &zoom);
-        if (ok)
-            data += QString("<a class=\"evopedianav\" "
-                            "href=\"#\" title=\"" + tr("show article on map") + "\" onclick=\"showMap(%1, %2, %3);\">"
-                            "<img src=\"/static/maparticle.png\"></a>")
-                              .arg(coords.first).arg(coords.second).arg(zoom).toUtf8();
+        if (evopedia->isGUIEnabled()) {
+            QPair<qreal, qreal>coords = parseCoordinatesInArticle(articleData, &ok, &zoom);
+            if (ok)
+                data += QString("<a class=\"evopedianav\" "
+                                "href=\"#\" title=\"" + tr("show article on map") + "\" onclick=\"showMap(%1, %2, %3);\">"
+                                "<img src=\"/static/maparticle.png\"></a>")
+                                  .arg(coords.first).arg(coords.second).arg(zoom).toUtf8();
+        }
         data += QString("<a class=\"evopedianav\" title=\"" + tr("article at Wikipedia") + "\" href=\"").toUtf8() +
                 backend->getOrigUrl(t).toEncoded() +
                 QByteArray("\"><img src=\"/static/wikipedia.png\"></a>");
@@ -303,6 +329,124 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
         data += getResource(":/web/footer.html");
         outputResponse(socket, data, "text/html; charset=\"utf-8\"", false);
     }
+}
+
+void EvopediaWebServer::outputSettings(QTcpSocket *socket)
+{
+    QByteArray data = getResource(":/web/header.html");
+    data += QString("<a class=\"evopedianav\" title=\"" + tr("search") + "\" "
+                    "href=\"/\"><img src=\"/static/search.png\"></a>").toUtf8();
+    data += QString("<a class=\"evopedianav\" title=\"" + tr("random article") + "\" "
+                    "href=\"/random\"><img src=\"/static/random.png\"></a>").toUtf8();
+    data += QString("<a class=\"evopedianav\" title=\"" + tr("settings") + "\" "
+                    "href=\"/settings\"><img src=\"/static/settings.png\"></a>").toUtf8();
+    data += QString("<a class=\"evopedianav\" title=\"" + tr("exit") + "\" "
+                    "href=\"/exit\"><img src=\"/static/exit.png\"></a>").toUtf8();
+    data += "</div>";
+
+    data += tr("<h2>Wikipedia Archives Installed:</h2>").toUtf8();
+    data += QString("<table class=\"prettytable\"><tr><th>" +
+                    tr("Language") + "</th><th>" + tr("Date") + "</th>" +
+                    "<th>" + tr("Articles") + "</th></tr>").toUtf8();
+    data += QString("<tr><td colspan=\"3\"><a href=\"/select_archive_location\">" +
+                            tr("add archive") + "</a></td></tr>").toUtf8();
+
+    QList<LocalArchive *> archives(evopedia->getArchiveManager()->getDefaultLocalArchives().values());
+    qSort(archives.begin(), archives.end(), Archive::comparePointers);
+
+    foreach (LocalArchive *a, archives) {
+        data += QString("<tr><td>" + a->getLanguage() +
+                        "</td><td>" + a->getDate() +
+                        "</td><td>" + QString::number(a->getNumArticles()) +
+                        "</td></tr>").toUtf8();
+    }
+    data += "</table>";
+
+    const QString version(EVOPEDIA_VERSION);
+    /* TODO define this as a macro */
+    data += trUtf8("<h2>Evopedia %1</h2>"
+                             "<p>Offline Wikipedia Viewer</p>"
+                             "<p>Copyright Information<br/>"
+                             "<small>This program shows articles from "
+                             "<a href=\"http://wikipedia.org\">Wikipedia</a>, "
+                             "available under the "
+                             "<a href=\"http://creativecommons.org/licenses/by-sa/3.0/\">"
+                             "Creative Commons Attribution/Share-Alike License</a>. "
+                             "Further information can be found via the links "
+                             "to the online versions of the respective "
+                             "articles.</small></p>"
+                             "<p>Authors<br/>"
+                             "<small>"
+                             "Code: Christian Reitwiessner, Joachim Schiele<br/>"
+                             "Icon: Joachim Schiele<br/>"
+                             "Translations: Catalan: Toni Hermoso, Czech: Veronika Kočová, "
+                                       "Dutch: Daniel Ronde, French: mossroy, "
+                                       "German: Christian Reitwiessner, Italian: Stefano Ravazzolo, "
+                                       "Japanese: boscowitch, "
+                                       "Spanish: Santiago Crespo, Vietnamese: Thuy Duong"
+                   "</small></p>").arg(version).toUtf8();
+
+    data += getResource(":/web/footer.html");
+    outputResponse(socket, data, "text/html; charset=\"utf-8\"", false);
+}
+
+void EvopediaWebServer::selectArchiveLocation(QTcpSocket *socket, const QString &path)
+{
+    QByteArray data = getResource(":/web/header.html");
+    data += QString("<a class=\"evopedianav\" title=\"" + tr("search") + "\" "
+                    "href=\"/\"><img src=\"/static/search.png\"></a>").toUtf8();
+    data += QString("<a class=\"evopedianav\" title=\"" + tr("random article") + "\" "
+                    "href=\"/random\"><img src=\"/static/random.png\"></a>").toUtf8();
+    data += QString("<a class=\"evopedianav\" title=\"" + tr("settings") + "\" "
+                    "href=\"/settings\"><img src=\"/static/settings.png\"></a>").toUtf8();
+    data += QString("<a class=\"evopedianav\" title=\"" + tr("exit") + "\" "
+                    "href=\"/exit\"><img src=\"/static/exit.png\"></a>").toUtf8();
+    data += "</div>";
+
+    data += tr("<h2>Please Choose Archive Directory:</h2>").toUtf8();
+
+
+    QDir dir(path);
+    if (path == "" || !dir.exists())
+        dir = QDir::root();
+    data += QString("<p>" + Qt::escape(dir.canonicalPath()) + "</p>").toUtf8();
+
+    LocalArchive *a = new LocalArchive(path);
+    if (a->isReadable()) {
+        data += QString("<p>" + tr("Archive for language %1 (%2)").arg(a->getLanguage(), a->getDate()) +
+                        "<a href=\"/add_archive?p=" + QUrl::toPercentEncoding(path) + "\"> " +
+                        tr("add this") + "</a></p>").toUtf8();
+    }
+    delete a;
+
+    data += "<ul>";
+    dir.setFilter(QDir::Dirs | QDir::Drives | QDir::NoDot);
+    QFileInfoList subdirs = dir.entryInfoList();
+    foreach (const QFileInfo &fileInfo, subdirs) {
+        QString name = fileInfo.fileName();
+        QString path = fileInfo.canonicalFilePath();
+        data += QString("<li><a href=\"/select_archive_location?p=" +
+                QUrl::toPercentEncoding(path) + "\">" +
+                Qt::escape(name) + "</a></li>").toUtf8();
+    }
+    data += "</ul>";
+
+    data += getResource(":/web/footer.html");
+    outputResponse(socket, data, "text/html; charset=\"utf-8\"", false);
+}
+
+void EvopediaWebServer::addArchive(QTcpSocket *socket, const QString &path)
+{
+    LocalArchive *a = new LocalArchive(path);
+    if (a->isReadable()) {
+        if (evopedia->getArchiveManager()->addArchive(a)) {
+            /* ownership transferred */
+            outputRedirect(socket, QUrl("/settings"));
+            return;
+        }
+    }
+    delete a;
+    /*TODO error message */
 }
 
 void EvopediaWebServer::outputSearchResult(QTcpSocket *socket, const QString &query, const QString &archive)
