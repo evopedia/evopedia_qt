@@ -34,7 +34,7 @@ DownloadableArchive::DownloadableArchive(const QString &language, const QString 
 
 QString DownloadableArchive::askAndCreateDownloadDirectory()
 {
-    ArchiveManager *am((static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager());
+    ArchiveManager *am((static_cast<EvopediaApplication *>(QCoreApplication::instance()))->evopedia()->getArchiveManager());
     const QDir d;
     QString baseDir = am->getArchivesBaseDir();
 
@@ -86,7 +86,7 @@ void DownloadableArchive::torrentDownloadFinished(QNetworkReply* reply) {
     f.write(reply->readAll());
     f.close();
 
-    ArchiveManager *am((static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager());
+    ArchiveManager *am((static_cast<EvopediaApplication *>(QCoreApplication::instance()))->evopedia()->getArchiveManager());
     PartialArchive *a = new PartialArchive(language, date, size,
                                            torrentFile, downloadDirectory);
     am->exchangeArchives(this, a);

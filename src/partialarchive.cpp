@@ -250,7 +250,7 @@ void PartialArchive::changeToLocalArchive()
                                                   "is not valid and cannot be used (%1).").arg(err));
         delete a;
     } else {
-        ArchiveManager *am((static_cast<EvopediaApplication *>(qApp))->evopedia()->getArchiveManager());
+        ArchiveManager *am((static_cast<EvopediaApplication *>(QCoreApplication::instance()))->evopedia()->getArchiveManager());
         am->exchangeArchives(this, a);
     }
 }

@@ -27,7 +27,7 @@
 #include "utils.h"
 
 EvopediaApplication::EvopediaApplication(int &argc, char **argv) :
-    QApplication(argc, argv)
+    QCoreApplication(argc, argv)
 {
 #if defined(Q_WS_X11)
     QApplication::setGraphicsSystem("raster");
@@ -42,15 +42,20 @@ EvopediaApplication::EvopediaApplication(int &argc, char **argv) :
     installTranslator(qtTranslator);
 
     bool guiEnabled = !arguments().contains("--server-only");
+#if defined(NO_GUI)
+    guiEnabled = false;
+#endif
     m_evopedia = new Evopedia(this, guiEnabled);
 
     if (m_evopedia->isGUIEnabled()) {
+#if not defined(NO_GUI)
         m_mainwindow = new MainWindow();
 
 #if defined(Q_WS_S60)
         m_mainwindow->showMaximized();
 #else
         m_mainwindow->show();
+#endif
 #endif
     } else {
         m_mainwindow = 0;

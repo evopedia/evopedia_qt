@@ -1,14 +1,19 @@
-QT += core gui network
+QT += core network
+maemo {
+    QT += gui
+}
 INCLUDEPATH += src
 
 DEFINES += QT_NO_CAST_TO_ASCII
 DEFINES += QT_NO_CAST_FROM_BYTEARRAY
 
-SOURCES +=  src/mainwindow.cpp \
+CONFIG += NO_GUI
+DEFINES += NO_GUI
+
+SOURCES += \
         src/localarchive.cpp \
 	src/title.cpp \
 	src/titleiterator.cpp \
-	src/titlelistmodel.cpp \
 	src/evopedia.cpp \
 	src/bzreader.cpp \
 	src/evopediawebserver.cpp \
@@ -16,15 +21,8 @@ SOURCES +=  src/mainwindow.cpp \
         src/archive.cpp \
         src/downloadablearchive.cpp \
         src/partialarchive.cpp \
-        src/map.cpp \
-	src/flickable.cpp \
-	src/dumpsettings.cpp \
-	src/mapwindow.cpp \
-	src/flickablemap.cpp \
 	src/evopediaapplication.cpp \
 	src/archivemanager.cpp \
-        src/archivelist.cpp \
-        src/tilefetcher.cpp \
         src/torrent/bencodeparser.cpp \
 	src/torrent/connectionmanager.cpp \
 	src/torrent/filemanager.cpp \
@@ -33,32 +31,36 @@ SOURCES +=  src/mainwindow.cpp \
 	src/torrent/ratecontroller.cpp \
 	src/torrent/torrentclient.cpp \
 	src/torrent/torrentserver.cpp \
-	src/torrent/trackerclient.cpp \
-        src/archivedetailsdialog.cpp
+	src/torrent/trackerclient.cpp
 
-HEADERS += src/mainwindow.h \
+maemo {
+    SOURCES += \
+        src/archivedetailsdialog.cpp \
+        src/mainwindow.cpp \
+        src/map.cpp \
+	src/flickable.cpp \
+	src/dumpsettings.cpp \
+	src/mapwindow.cpp \
+        src/archivelist.cpp \
+        src/tilefetcher.cpp \
+	src/titlelistmodel.cpp \
+	src/flickablemap.cpp
+}
+
+HEADERS += \
         src/localarchive.h \
 	src/title.h \
-	src/titlelistmodel.h \
-	src/titleiterator.h \
-	src/evopedia.h \
+        src/evopedia.h \
 	src/bzreader.h \
 	src/evopediawebserver.h \
 	src/utils.h \
         src/archive.h \
         src/downloadablearchive.h \
         src/partialarchive.h \
-        src/map.h \
-	src/geotitle.h \
-	src/flickable.h \
-	src/dumpsettings.h \
-	src/mapwindow.h \
-	src/flickablemap.h \
-	src/evopediaapplication.h \
+	src/titleiterator.h \
+        src/evopediaapplication.h \
 	src/defines.h \
 	src/archivemanager.h \
-        src/archivelist.h \
-        src/tilefetcher.h \
 	src/torrent/bencodeparser.h \
 	src/torrent/connectionmanager.h \
 	src/torrent/filemanager.h \
@@ -67,8 +69,22 @@ HEADERS += src/mainwindow.h \
 	src/torrent/ratecontroller.h \
 	src/torrent/torrentclient.h \
 	src/torrent/torrentserver.h \
-	src/torrent/trackerclient.h \
+	src/torrent/trackerclient.h
+        
+maemo5 {
+    HEADERS += \
+        src/mainwindow.h \
+        src/map.h \
+	src/geotitle.h \
+	src/flickable.h \
+	src/dumpsettings.h \
+	src/mapwindow.h \
+	src/flickablemap.h \
+        src/tilefetcher.h \
+        src/archivelist.h \
+        src/titlelistmodel.h \
         src/archivedetailsdialog.h
+}
 
 TRANSLATIONS += \
         resources/tr/evopedia_ca.ts \
@@ -82,10 +98,12 @@ TRANSLATIONS += \
         resources/tr/evopedia_nl.ts \
         resources/tr/evopedia_vi.ts
 
+maemo 5 {
 FORMS += src/ui/mainwindow.ui \
         src/ui/dumpSettings.ui \
         src/ui/mapwindow.ui \
         src/ui/archivedetailsdialog.ui
+}
 
 OTHER_FILES += \
         resources/evopedia.desktop \

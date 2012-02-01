@@ -21,13 +21,13 @@
 #ifndef EVOPEDIAAPPLICATION_H
 #define EVOPEDIAAPPLICATION_H
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDesktopServices>
 
 #include "evopedia.h"
 #include "mainwindow.h"
 
-class EvopediaApplication : public QApplication
+class EvopediaApplication : public QCoreApplication
 {
     Q_OBJECT
 public:
@@ -38,7 +38,7 @@ public:
 
     void openArticle(const Title &title)
     {
-        QDesktopServices::openUrl(m_evopedia->getArticleUrl(title));
+//        QDesktopServices::openUrl(m_evopedia->getArticleUrl(title));
     }
 
 
