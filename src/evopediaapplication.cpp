@@ -23,13 +23,16 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 
-#include "mainwindow.h"
 #include "utils.h"
 
 EvopediaApplication::EvopediaApplication(int &argc, char **argv) :
+#if defined(NO_GUI)
     QCoreApplication(argc, argv)
+#else
+    QApplication(argc, argv)
+#endif
 {
-#if defined(Q_WS_X11)
+#if defined(Q_WS_X11) && !defined(NO_GUI)
     QApplication::setGraphicsSystem("raster");
 #endif
 
@@ -48,9 +51,9 @@ EvopediaApplication::EvopediaApplication(int &argc, char **argv) :
     m_evopedia = new Evopedia(this, guiEnabled);
 
     if (m_evopedia->isGUIEnabled()) {
-#if not defined(NO_GUI)
         m_mainwindow = new MainWindow();
 
+#if !defined(NO_GUI)
 #if defined(Q_WS_S60)
         m_mainwindow->showMaximized();
 #else

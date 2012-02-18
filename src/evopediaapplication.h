@@ -21,13 +21,26 @@
 #ifndef EVOPEDIAAPPLICATION_H
 #define EVOPEDIAAPPLICATION_H
 
-#include <QCoreApplication>
+#if !defined(NO_GUI)
+#include <QApplication>
 #include <QDesktopServices>
+#endif
+#include <QCoreApplication>
 
 #include "evopedia.h"
+#if defined(NO_GUI)
+class MainWindow {};
+#else
 #include "mainwindow.h"
+#endif
 
-class EvopediaApplication : public QCoreApplication
+
+class EvopediaApplication :
+#if defined(NO_GUI)
+        public QCoreApplication
+#else
+        public QApplication
+#endif
 {
     Q_OBJECT
 public:
@@ -36,10 +49,12 @@ public:
 
     Evopedia *evopedia() { return m_evopedia; }
 
+#if !defined(NO_GUI)
     void openArticle(const Title &title)
     {
-//        QDesktopServices::openUrl(m_evopedia->getArticleUrl(title));
+        QDesktopServices::openUrl(m_evopedia->getArticleUrl(title));
     }
+#endif
 
 
 signals:
