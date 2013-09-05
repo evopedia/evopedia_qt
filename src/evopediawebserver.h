@@ -46,6 +46,7 @@ private slots:
      void discardClient();
 
 private:
+     QByteArray getHTMLHeader();
      void outputIndexPage(QTcpSocket *socket);
      void outputStatic(QTcpSocket *socket, const QStringList &pathParts);
      void redirectRandom(QTcpSocket *socket, const QStringList &pathParts);
@@ -54,6 +55,8 @@ private:
      void outputSettings(QTcpSocket *socket);
      void selectArchiveLocation(QTcpSocket *socket, const QString &path);
      void addArchive(QTcpSocket *socket, const QString &path);
+     void outputOpenSearchDescription(QTcpSocket *socket, const QString &language);
+     void outputSearchSuggestion(QTcpSocket *socket, const QString &query, const QString &archive);
      void outputSearchResult(QTcpSocket *socket, const QString &query, const QString &archive);
 
      QByteArray &disableOnlineLinks(QByteArray &data);

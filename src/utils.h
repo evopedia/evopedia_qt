@@ -26,6 +26,7 @@
 #include <QByteArray>
 
 quint32 randomNumber(quint32 maxExcl);
+QString jsonEncodeString(QString str);
 QPair<qreal, qreal> parseCoordinatesInArticle(QByteArray &text, bool *error=0, int *zoom=0);
 int parseCoordinatesZoom(const QString &zoomstr);
 inline Qt::LayoutDirection getLayoutDirection(const QString &language)
