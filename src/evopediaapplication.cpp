@@ -22,16 +22,28 @@
 
 #include <QTranslator>
 #include <QLibraryInfo>
+#include <QTimer>
 
 #include "utils.h"
 
 EvopediaApplication::EvopediaApplication(int &argc, char **argv) :
 #if defined(NO_GUI)
-    QCoreApplication(argc, argv)
+    QCoreApplication(argc, argv),
 #else
-    QApplication(argc, argv)
+    QApplication(argc, argv),
 #endif
+    m_evopedia(0), m_mainwindow(0)
 {
+    if (arguments().contains("--help") || arguments().contains("-h")) {
+        qDebug() << "Usage: evopedia [--server-only] [--public]\n"
+                 << "  --server-only  Does not show a graphical user interface,\n"
+                 << "                 the application is still accessible at\n"
+                 << "                 http://127.0.0.1:8080/\n"
+                 << "  --public       Makes the application also accessible at\n"
+                 << "                 any network interface on port 8080\n";
+        QTimer::singleShot(0, this, SLOT(quit()));
+        return;
+    }
 #if defined(Q_WS_X11) && !defined(NO_GUI)
     QApplication::setGraphicsSystem("raster");
 #endif
@@ -45,10 +57,11 @@ EvopediaApplication::EvopediaApplication(int &argc, char **argv) :
     installTranslator(qtTranslator);
 
     bool guiEnabled = !arguments().contains("--server-only");
+    bool publicAccess = arguments().contains("--public");
 #if defined(NO_GUI)
     guiEnabled = false;
 #endif
-    m_evopedia = new Evopedia(this, guiEnabled);
+    m_evopedia = new Evopedia(this, guiEnabled, publicAccess);
 
     if (m_evopedia->isGUIEnabled()) {
         m_mainwindow = new MainWindow();

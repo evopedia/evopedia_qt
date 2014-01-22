@@ -23,18 +23,19 @@
 #include "utils.h"
 #include "localarchive.h"
 
-Evopedia::Evopedia(QObject *parent, bool guiEnabled)
-    : QObject(parent), networkUse(0), guiEnabled(guiEnabled)
+Evopedia::Evopedia(QObject *parent, bool guiEnabled, bool publicAccess)
+    : QObject(parent), networkUse(0), guiEnabled(guiEnabled), publicAccess(publicAccess)
 {
     archiveManager = new ArchiveManager(this);
     webServer = new EvopediaWebServer(this);
     webServer->setObjectName("evopediaWebserver");
 }
 
-QUrl Evopedia::getArticleUrl(const Title &t) const
+QUrl Evopedia::getArticleUrl(const Title &t, const QHostAddress address) const
 {
     /* TODO1 direct link to title (not via name); include date? */
-    return QUrl(QString("http://127.0.0.1:%1/wiki/%2/%3")
+    return QUrl(QString("http://%1:%2/wiki/%3/%4")
+                .arg(address.toString())
                 .arg(webServer->serverPort())
                 .arg(t.getLanguage())
                 .arg(t.getName()));

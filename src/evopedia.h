@@ -32,17 +32,19 @@ class Evopedia : public QObject
 {
     Q_OBJECT
 public:
-    explicit Evopedia(QObject *parent=0, bool guiEnabled=true);
-    QUrl getArticleUrl(const Title &t) const;
+    explicit Evopedia(QObject *parent=0, bool guiEnabled=true, bool publicAccess=false);
+    QUrl getArticleUrl(const Title &t, QHostAddress address=QHostAddress::LocalHost) const;
     void setNetworkUse(int use);
     bool networkConnectionAllowed();
     bool isGUIEnabled() const { return guiEnabled; }
+    bool isPubliclyAccessible() const { return publicAccess; }
     ArchiveManager *getArchiveManager() const { return archiveManager; }
 private:
     ArchiveManager *archiveManager;
     EvopediaWebServer *webServer;
     int networkUse;
     bool guiEnabled;
+    bool publicAccess;
 };
 
 #endif // EVOPEDIA_H

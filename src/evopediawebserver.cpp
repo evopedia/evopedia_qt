@@ -40,8 +40,11 @@
 EvopediaWebServer::EvopediaWebServer(Evopedia *evopedia) :
     QTcpServer(evopedia), evopedia(evopedia)
 {
-    if (!listen(QHostAddress::LocalHost, 8080))
-        listen(QHostAddress::LocalHost);
+    const QHostAddress address = evopedia->isPubliclyAccessible()
+                                 ? QHostAddress::Any
+                                 : QHostAddress::LocalHost;
+
+    listen(address, 8080) || listen(address);
 }
 
 void EvopediaWebServer::incomingConnection(int socket)
@@ -81,6 +84,7 @@ void EvopediaWebServer::readClient()
         closeConnection(socket);
         return;
     }
+    const bool isLocal = socket->peerAddress() == QHostAddress::LocalHost;
     const QString &firstPart = pathParts[0];
     if (firstPart == "static") {
         outputStatic(socket, pathParts);
@@ -88,18 +92,18 @@ void EvopediaWebServer::readClient()
         outputSearchSuggestion(socket, url.queryItemValue("q"), url.queryItemValue("lang"));
     } else if (firstPart == "search") {
         outputSearchResult(socket, url.queryItemValue("q"), url.queryItemValue("lang"));
-    } else if (firstPart == "settings") {
+    } else if (firstPart == "settings" && isLocal) {
         outputSettings(socket);
-    } else if (firstPart == "select_archive_location") {
+    } else if (firstPart == "select_archive_location" && isLocal) {
         selectArchiveLocation(socket, url.queryItemValue("p"));
-    } else if (firstPart == "add_archive") {
+    } else if (firstPart == "add_archive" && isLocal) {
         addArchive(socket, url.queryItemValue("p"));
-    } else if (firstPart == "exit") {
+    } else if (firstPart == "exit" && isLocal) {
         /* only quit via browser if we do not have a GUI */
         if (!evopedia->isGUIEnabled())
             applicationExitRequested();
         /* TODO message and error */
-    } else if (firstPart == "map") {
+    } else if (firstPart == "map" && isLocal) {
         qreal lat = url.queryItemValue("lat").toDouble();
         qreal lon = url.queryItemValue("lon").toDouble();
         int zoom = url.queryItemValue("zoom").toInt();
@@ -140,10 +144,11 @@ QByteArray EvopediaWebServer::getHTMLHeader()
 
 void EvopediaWebServer::outputIndexPage(QTcpSocket *socket)
 {
+    const bool isLocal = socket->peerAddress() == QHostAddress::LocalHost;
     QByteArray data = getHTMLHeader();
     data += QString("<a class=\"evopedianav\" title=\"" + tr("random article") + "\" "
                     "href=\"/random\"><img src=\"/static/random.png\"></a>").toUtf8();
-    if (!evopedia->isGUIEnabled()) {
+    if (!evopedia->isGUIEnabled() && isLocal) {
         data += QString("<a class=\"evopedianav\" title=\"" + tr("settings") + "\" "
                         "href=\"/settings\"><img src=\"/static/settings.png\"></a>").toUtf8();
         data += QString("<a class=\"evopedianav\" title=\"" + tr("exit") + "\" "
@@ -321,19 +326,24 @@ void EvopediaWebServer::outputWikiPage(QTcpSocket *socket, const QStringList &pa
             }
         }
 
+        const bool isLocal = socket->peerAddress() == QHostAddress::LocalHost;
         QByteArray data = getHTMLHeader();
         data += QString("<a class=\"evopedianav\" title=\"" + tr("random article") + "\" "
                         "href=\"/random\"><img src=\"/static/random.png\"></a>").toUtf8();
-        if (!evopedia->isGUIEnabled()) {
-            data += QString("<a class=\"evopedianav\" title=\"" + tr("settings") + "\" "
-                            "href=\"/settings\"><img src=\"/static/settings.png\"></a>").toUtf8();
-            data += QString("<a class=\"evopedianav\" title=\"" + tr("exit") + "\" "
-                            "href=\"/exit\"><img src=\"/static/exit.png\"></a>").toUtf8();
+        if (!evopedia->isGUIEnabled() || !isLocal) {
+            data += QString("<a class=\"evopedianav\" title=\"" + tr("search") + "\" "
+                            "href=\"/\"><img src=\"/static/search.png\"></a>").toUtf8();
+            if (isLocal) {
+                data += QString("<a class=\"evopedianav\" title=\"" + tr("settings") + "\" "
+                                "href=\"/settings\"><img src=\"/static/settings.png\"></a>").toUtf8();
+                data += QString("<a class=\"evopedianav\" title=\"" + tr("exit") + "\" "
+                                "href=\"/exit\"><img src=\"/static/exit.png\"></a>").toUtf8();
+            }
         }
 
         bool ok(false);
         int zoom;
-        if (evopedia->isGUIEnabled()) {
+        if (evopedia->isGUIEnabled() && isLocal) {
             QPair<qreal, qreal>coords = parseCoordinatesInArticle(articleData, &ok, &zoom);
             if (ok)
                 data += QString("<a class=\"evopedianav\" "
@@ -548,7 +558,7 @@ void EvopediaWebServer::outputSearchResult(QTcpSocket *socket, const QString &qu
             for (int titles = 0; it.hasNext() && titles < 50; titles ++) {
                 Title t(it.next());
                 data += QString("<a href=\"%1\" target=\"_top\">%2</a><br/>")
-                        .arg(evopedia->getArticleUrl(t).toEncoded(),
+                        .arg(evopedia->getArticleUrl(t, socket->localAddress()).toEncoded(),
                              t.getReadableName()).toUtf8();
             }
         }
