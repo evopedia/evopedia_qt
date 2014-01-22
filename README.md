@@ -6,10 +6,14 @@ For more information, please visit the [website](http://evopedia.info).
 
 ## Compiling
 
-Evopedia uses Qt and qmake, so simply running
+Evopedia uses Qt and qmake, so simply running these commands on Ubuntu 12.04 (example):
 
+    # apt-get install -y qt4-qmake libqt4-dev build-essential libghc-bzlib-dev
+    # git clone https://github.com/evopedia/evopedia_qt.git
+    # cd evopedia_qt
     # qmake
     # make
+    # make install
 
 should build Evopedia.
 
