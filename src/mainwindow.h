@@ -51,6 +51,8 @@ private slots:
     void on_actionDeny_toggled(bool v);
     void on_actionAllow_toggled(bool v);
     void on_actionAuto_toggled(bool v);
+    void on_actionLocal_toggled(bool v);
+    void on_actionNetwork_toggled(bool v);
     void on_actionConfigure_Dumps_triggered();
     void on_actionMap_triggered();
     void on_actionAbout_triggered();

@@ -57,12 +57,19 @@ MainWindow::MainWindow(QWidget *parent) :
     network->addAction(ui->actionAllow);
     network->addAction(ui->actionDeny);
 
+    QActionGroup *access = new QActionGroup(this);
+    access->addAction(ui->actionLocal);
+    access->addAction(ui->actionNetwork);
+
     QSettings settings("Evopedia", "GUI");
     int networkUse = settings.value("network use", 1).toInt();
     evopedia->setNetworkUse(networkUse);
     if (networkUse < 0) ui->actionDeny->setChecked(true);
     else if (networkUse > 0) ui->actionAllow->setChecked(true);
     else ui->actionAuto->setChecked(true);
+
+    if (evopedia->isPubliclyAccessible()) ui->actionNetwork->setChecked(true);
+    else ui->actionLocal->setChecked(true);
 
     QString defaultLanguage = settings.value("default language", "").toString();
     if (evopedia->getArchiveManager()->hasLanguage(defaultLanguage)) {
@@ -291,5 +298,19 @@ void MainWindow::on_actionDeny_toggled(bool v)
     if (v) {
         Evopedia *evopedia = (static_cast<EvopediaApplication *>(qApp))->evopedia();
         evopedia->setNetworkUse(-1);
+    }
+}
+
+void MainWindow::on_actionLocal_toggled(bool v)
+{
+    if (v) {
+        (static_cast<EvopediaApplication *>(qApp))->evopedia()->setPubliclyAccessible(false);
+    }
+}
+
+void MainWindow::on_actionNetwork_toggled(bool v)
+{
+    if (v) {
+        (static_cast<EvopediaApplication *>(qApp))->evopedia()->setPubliclyAccessible(true);
     }
 }

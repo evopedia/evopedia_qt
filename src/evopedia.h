@@ -38,6 +38,7 @@ public:
     bool networkConnectionAllowed();
     bool isGUIEnabled() const { return guiEnabled; }
     bool isPubliclyAccessible() const { return publicAccess; }
+    void setPubliclyAccessible(bool publicAccess) { this->publicAccess = publicAccess; }
     ArchiveManager *getArchiveManager() const { return archiveManager; }
 private:
     ArchiveManager *archiveManager;

@@ -33,6 +33,7 @@ class EvopediaWebServer : public QTcpServer
     Q_OBJECT
 public:
     explicit EvopediaWebServer(Evopedia *evopedia);
+    void startListening();
     void incomingConnection(int socket);
 
 signals:

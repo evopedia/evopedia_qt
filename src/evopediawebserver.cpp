@@ -40,10 +40,12 @@
 EvopediaWebServer::EvopediaWebServer(Evopedia *evopedia) :
     QTcpServer(evopedia), evopedia(evopedia)
 {
-    const QHostAddress address = evopedia->isPubliclyAccessible()
-                                 ? QHostAddress::Any
-                                 : QHostAddress::LocalHost;
+    startListening();
+}
 
+void EvopediaWebServer::startListening()
+{
+    const QHostAddress address = QHostAddress::Any;
     listen(address, 8080) || listen(address);
 }
 
@@ -53,6 +55,11 @@ void EvopediaWebServer::incomingConnection(int socket)
     connect(s, SIGNAL(readyRead()), this, SLOT(readClient()));
     connect(s, SIGNAL(disconnected()), this, SLOT(discardClient()));
     s->setSocketDescriptor(socket);
+    if (s->peerAddress() != QHostAddress::LocalHost &&
+            !evopedia->isPubliclyAccessible())
+    {
+        s->close();
+    }
 }
 
 void EvopediaWebServer::readClient()
