@@ -71,9 +71,17 @@
      <addaction name="actionAllow"/>
      <addaction name="actionDeny"/>
     </widget>
+    <widget class="QMenu" name="menuAccess">
+     <property name="title">
+      <string>Network Share</string>
+     </property>
+     <addaction name="actionLocal"/>
+     <addaction name="actionNetwork"/>
+    </widget>
     <addaction name="actionConfigure_Dumps"/>
     <addaction name="actionMap"/>
     <addaction name="menuNetwork"/>
+    <addaction name="menuAccess"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuSettings"/>
@@ -118,6 +126,28 @@
    </property>
    <property name="text">
     <string>Deny</string>
+   </property>
+  </action>
+  <action name="actionLocal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Local Host Only</string>
+   </property>
+  </action>
+  <action name="actionNetwork">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Network</string>
    </property>
   </action>
  </widget>

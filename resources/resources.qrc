@@ -14,6 +14,9 @@
         <file>evopedia.js</file>
         <file>evopedia-64x64.png</file>
         <file>evopedia.svg</file>
+        <file>settings.png</file>
+        <file>search.png</file>
+        <file>exit.png</file>
     </qresource>
     <qresource prefix="/map_icons">
         <file>wikipedia.png</file>

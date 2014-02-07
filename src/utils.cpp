@@ -32,6 +32,7 @@
 
 quint32 randomNumber(quint32 maxExcl)
 {
+    if (maxExcl == 0) return 0;
     static bool seedInitialized(false);
     if (!seedInitialized) {
         qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
@@ -44,6 +45,24 @@ quint32 randomNumber(quint32 maxExcl)
     } else {
         return qrand() % maxExcl;
     }
+}
+
+QString jsonEncodeString(QString str)
+{
+    QString encoded = "\"";
+    for (int i = 0; i < str.length(); i ++) {
+        QChar c = str[i];
+        if (!c.isPrint()) {
+            encoded += QString("\\u%1").arg(uint(c.unicode()), 4, 16, QLatin1Char('0')).toUtf8();
+        } else if (c == '\\') {
+            encoded += "\\\\";
+        } else if (c == '"') {
+            encoded += '\\';
+        } else {
+            encoded += c;
+        }
+    }
+    return encoded + "\"";
 }
 
 QPair<qreal, qreal> parseCoordinatesInArticle(QByteArray &text, bool *ok, int *zoom)

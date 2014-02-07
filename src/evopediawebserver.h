@@ -33,10 +33,12 @@ class EvopediaWebServer : public QTcpServer
     Q_OBJECT
 public:
     explicit EvopediaWebServer(Evopedia *evopedia);
+    void startListening();
     void incomingConnection(int socket);
 
 signals:
     void mapViewRequested(qreal lat, qreal lon, uint zoom);
+    void applicationExitRequested();
 
 public slots:
 
@@ -45,11 +47,17 @@ private slots:
      void discardClient();
 
 private:
+     QByteArray getHTMLHeader();
      void outputIndexPage(QTcpSocket *socket);
      void outputStatic(QTcpSocket *socket, const QStringList &pathParts);
      void redirectRandom(QTcpSocket *socket, const QStringList &pathParts);
      void outputMathImage(QTcpSocket *socket, const QStringList &pathParts);
      void outputWikiPage(QTcpSocket *socket, const QStringList &pathParts);
+     void outputSettings(QTcpSocket *socket);
+     void selectArchiveLocation(QTcpSocket *socket, const QString &path);
+     void addArchive(QTcpSocket *socket, const QString &path);
+     void outputOpenSearchDescription(QTcpSocket *socket, const QString &language);
+     void outputSearchSuggestion(QTcpSocket *socket, const QString &query, const QString &archive);
      void outputSearchResult(QTcpSocket *socket, const QString &query, const QString &archive);
 
      QByteArray &disableOnlineLinks(QByteArray &data);

@@ -1,3 +1,9 @@
+evopedia (0.4.4~saucy) saucy; urgency=low
+
+  * Provide public web interface on port 8080.
+
+ -- Evopedia Developers <devs@evopedia.info>  Fri, 07 Feb 2014 12:00:00 +0200
+
 evopedia (0.4.3) maverick; urgency=low
 
   * Catalan, Dutch, Japanese and Vietnamese translations
